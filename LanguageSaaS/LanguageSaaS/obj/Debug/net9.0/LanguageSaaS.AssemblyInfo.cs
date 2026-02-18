@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LanguageSaaS")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+92c3b85d04bbc67814382df573db6c5e21f6f66a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7849ef7bed4a8b828367ddb7c779ecb887bd0eee")]
 [assembly: System.Reflection.AssemblyProductAttribute("LanguageSaaS")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LanguageSaaS")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
