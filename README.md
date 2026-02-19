@@ -56,3 +56,26 @@ Project general purpose is to create platform for different language schools to 
     - teacher certificate: native, non-native
     - availability
     - schedule
+
+## ERD scheme
+
+### Version 1 without attributes
+
+![alt text](image.png)
+
+| Table name | Description |
+| ---------- | ----------- |
+| user       | users represent all the individuals who are on the platform |
+| company    | All the companies represented on the platform |
+| courses    | Courses of different languages and levels under companies |
+| material   | Material needed or related to the courses |
+| user_material | Many to many table to represent which materials users have |
+| in_ courses | Many to many to represent what users in which user groups are in the courses and if they have access or subscription or if they have passed the test |
+| certificate | Different obtainable certificates - do I need certificate_liik?|
+| user_certificate | Many to many to say what certificates users have |
+| user_group | Many to many to represent in which user role the user has |
+| usergroup | Different user groups like teacher, student, admin |
+| usergroup_activity | Many to many to represent which activities are allowed in certain user groups |
+| Activity | Activities that are possible to do on the platform |
+| user_schedule | Many to many to represent certain user or course availability |
+| schedule | Different time blocks for scheduling |
