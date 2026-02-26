@@ -1,0 +1,285 @@
+
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table user {
+  id integer [primary key]
+  username varchar [not null, unique]
+  password varchar [not null]
+}
+
+Table role {
+  id integer [primary key]
+  name varchar [not null]
+  comment varchar [null]
+}
+
+Table userrole {
+  id integer [primary key]
+  user_id integer [not null, ref: > user.id]
+  role_id integer [ref: > role.id]
+  registration datetime
+  delete datetime [null]
+  updated_at datetime [null]
+}
+
+Table instituteuser {
+  id integer [primary key]
+  user_id integer [ref: > user.id]
+  institute_id integer [ref: > institute.id]
+  role varchar [not null, default: 'Employee'] 
+}
+
+
+Table institute {
+  id integer [primary key]
+  institutetype_id integer [ref: > institutetype.id]
+  name varchar
+  country varchar
+  contact_email varchar [null]
+  phone varchar
+  created_at datetime
+  updates_at datetime [null]
+  Deleted_at datetime [null]
+  active boolean [default:True]
+}
+
+Table institutetype {
+  id integer [primary key]
+  name varchar
+  description varchar [null]
+}
+
+Table institutelab {
+  id integer [primary key]
+  institute_id integer [ref: > institute.id]
+  lab_id integer [ref: > lab.id]
+  created_at datetime
+  updates_at datetime [null]
+  Deleted_at datetime [null]
+}
+
+Table instituteproject {
+  id integer [primary key]
+  institute_id integer [ref: > institute.id]
+  project_id integer [ref: > project.id]
+  created_at datetime
+  updates_at datetime [null]
+  Deleted_at datetime [null]
+}
+
+Table labtype {
+  id integer [primary key]
+  name varchar
+  description varchar [null]
+}
+
+Table lab {
+  id integer [primary key]
+  labtype_id integer [ref: > labtype.id]
+  name varchar
+  address varchar
+  capacity integer
+  created_at datetime
+  updates_at datetime [null]
+  Deleted_at datetime [null]
+  active boolean [default: true]
+}
+
+Table certification {
+  id integer [primary key]
+  certificationtype_id integer [ref: > certificationtype.id]
+  instituteuser_id integer [ref: > instituteuser.id]
+  handedover datetime
+  expiration_date datetime [not null]
+}
+Table certificationtype {
+  id integer [primary key]
+  name varchar
+  description varchar [null]
+}
+
+Table reagantlab {
+  id integer [primary key]
+  lab_id integer [not null, ref: > lab.id]
+  reagant_id integer [not null, ref: > reagant.id]
+  quantity integer [not null]
+  unit varchar [not null]
+  created_at datetime [not null]
+  updated_at datetime [null]
+  deleted_at datetime [null]
+  indexes {
+    (lab_id, reagant_id) [unique]
+  }
+}
+
+Table reagant {
+  id integer [primary key]
+  reaganttype_id integer [ref: > reaganttype.id]
+  name varchar
+}
+
+Table reaganttype {
+  id integer [primary key]
+  name varchar
+  description varchar [null]
+  category varchar [null]
+  defaultstorage varchar [null]
+  hazardlevel varchar [null]
+  standardconcentration varchar [null]
+  materialfilepath varchar [null]
+  ishazardous boolean
+  colorcode varchar [null]
+}
+
+Table equipment {
+  id integer [primary key]
+  equipmenttype_id integer [not null, ref: > equipmenttype.id]
+  name varchar
+  serialcode varchar
+  manualfilepath varchar
+  created_at datetime [not null]
+  updated_at datetime [null]
+  deleted_at datetime [null]
+
+}
+
+Table schedule {
+  id integer [primary key]
+  lab_id integer [null, ref: > lab.id]
+  instituteuser_id integer [ref: > instituteuser.id]
+  equipment_id integer [not null, ref: > equipment.id]
+  task_id integer [ref: > task.id]
+  name varchar
+  description varchar [null]
+  colorcode varchar [null]
+  created_at datetime [not null]
+  updated_at datetime [null]
+  deleted_at datetime [null]
+  start_at datetime
+  end_at datetime
+  schedulestatus varchar [not null, default: 'Scheduled'] 
+}
+
+Table equipmenttype {
+  id integer [primary key]
+  name varchar
+  description varchar [null]
+}
+Table equipmentlab {
+  id integer [primary key]
+  lab_id integer [not null, ref: > lab.id]
+  equipment_id integer [not null, ref: > equipment.id]
+  quantity integer [not null]
+  created_at datetime [not null]
+  updated_at datetime [null]
+  deleted_at datetime [null]
+  indexes {
+    (lab_id, equipment_id) [unique]
+  }
+}
+
+Table project {
+  id integer [primary key]
+  projecttype_id integer [ref: > projecttype.id]
+  name varchar
+  funding float
+  requirements varchar
+  requirementspath varchar
+}
+
+Table projecttype {
+  id integer [primary key]
+  name varchar
+  description varchar [null]
+}
+
+Table experiment {
+  id integer [primary key]
+  experimenttype_id integer [ref: > experimenttype.id]
+  project_id integer [ref: > project.id]
+  user_id integer [ref: > user.id]
+  task integer [ref: > task.id]
+  name varchar
+  created_at datetime [not null]
+  updated_at datetime [null]
+  deleted_at datetime [null]
+}
+
+Table experimenttype {
+  id integer [primary key]
+  name varchar
+  description varchar [null]
+}
+
+Table experimentequipment {
+  id integer [primary key]
+  experiment_id integer [ref: > experiment.id]
+  equipment_id integer [ref: > equipment.id]
+  created_at datetime [not null]
+  updated_at datetime [null]
+  deleted_at datetime [null]
+}
+
+Table task {
+  id integer [primary key]
+  experiment_id integer [ref: > experiment.id]
+  tasktype_id integer [ref: > tasktype.id]
+  user_id integer [ref: > user.id]
+  name varchar
+  description varchar
+  created_at datetime [not null]
+  updated_at datetime [null]
+  deleted_at datetime [null]
+  status varchar [not null, default: 'Pending'] 
+}
+
+Table tasktype {
+  id integer [primary key]
+  name varchar
+  description varchar [null]
+}
+
+
+Table result {
+  id integer [primary key]
+  experiment_id integer [not null, ref: > experiment.id]
+  task_id integer [not null, ref: > task.id]
+  documentresult_id integer [not null, ref: > documentresult.id]
+  description varchar
+  measurmentname varchar [null]
+  measurmentvalue varchar [null]
+  unit varchar [null]
+  notes varchar [null]
+  filepath varchar [null]
+  created_at datetime [not null]
+  updated_at datetime [null]
+  deleted_at datetime [null]
+}
+
+
+Table document {
+  id integer [primary key]
+  documentresult_id integer [ref: > documentresult.id]
+  documenttype_id integer [ref: > documenttype.id]
+  created_at datetime [not null]
+  updated_at datetime [null]
+  deleted_at datetime [null]
+  filepath varchar
+  name varcahr
+}
+
+Table documenttype {
+  id integer [primary key]
+  name varchar
+  description varchar [null]
+}
+Table documentresult {
+  id integer [primary key]
+  created_at datetime [not null]
+  updated_at datetime [null]
+  deleted_at datetime [null]
+  result_id integer [not null, ref: > result.id]
+  document_id integer [not null, ref: > document.id]
+
+}

@@ -1,0 +1,83 @@
+@model IEnumerable<App.Domain.Entities.ReagentType>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ReagentName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReagentDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Category)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DefaultStorage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HazardLevel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StandardConcentration)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaterialFilePath)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsHazardous)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ColorCode)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReagentName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReagentDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DefaultStorage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HazardLevel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StandardConcentration)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaterialFilePath)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsHazardous)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ColorCode)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

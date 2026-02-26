@@ -1,0 +1,73 @@
+@model App.Domain.Entities.ReagentType
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>ReagentType</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ReagentName" class="control-label"></label>
+                <input asp-for="ReagentName" class="form-control" />
+                <span asp-validation-for="ReagentName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReagentDescription" class="control-label"></label>
+                <input asp-for="ReagentDescription" class="form-control" />
+                <span asp-validation-for="ReagentDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Category" class="control-label"></label>
+                <input asp-for="Category" class="form-control" />
+                <span asp-validation-for="Category" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DefaultStorage" class="control-label"></label>
+                <input asp-for="DefaultStorage" class="form-control" />
+                <span asp-validation-for="DefaultStorage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="HazardLevel" class="control-label"></label>
+                <input asp-for="HazardLevel" class="form-control" />
+                <span asp-validation-for="HazardLevel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StandardConcentration" class="control-label"></label>
+                <input asp-for="StandardConcentration" class="form-control" />
+                <span asp-validation-for="StandardConcentration" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaterialFilePath" class="control-label"></label>
+                <input asp-for="MaterialFilePath" class="form-control" />
+                <span asp-validation-for="MaterialFilePath" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsHazardous" /> @Html.DisplayNameFor(model => model.IsHazardous)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="ColorCode" class="control-label"></label>
+                <input asp-for="ColorCode" class="form-control" />
+                <span asp-validation-for="ColorCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
