@@ -59,23 +59,32 @@ Project general purpose is to create platform for different language schools to 
 
 ## ERD scheme
 
-### Version 1 without attributes
+### Version 2 with FK 
 
-![alt text](image.png)
+![alt text](LanguageSaaSReal.svg)
 
 | Table name | Description |
 | ---------- | ----------- |
 | user       | users represent all the individuals who are on the platform |
+| role | Data of roles user can take which will give the user access and rights in the webapp |
+| userrole | Many to many which shows which user has what role in system wise |
+| companyuser | Many to many specifically to company. This table will show which users are with which company and give them roles inside the table |
 | company    | All the companies represented on the platform |
-| courses    | Courses of different languages and levels under companies |
+| companyconfig | Special settings or configurations for companies to set their environment |
+| subs | Data of subscription plans |
+| teacher | Data of existing teachers within the company |
+| availability | Time slots of teacher available times |
+| teachercertificate | Data of teacher language and level proficency |
+| student | Learners under company |
+| placementtest | Test to determine student level in specific language |
+| language | Data of available languages |
+| level | Language proficency mark like A1, B2 |
+| certificate | Course own certificate that is given out after finishing |
+| course    | Courses of different languages and levels under companies |
+| enrollment | Data of students who are enrolled to which courses |
+| materialdistribution | Which materials enrolled students need and have |
 | material   | Material needed or related to the courses |
-| user_material | Many to many table to represent which materials users have |
-| in_ courses | Many to many to represent what users in which user groups are in the courses and if they have access or subscription or if they have passed the test |
-| certificate | Different obtainable certificates - do I need certificate_liik?|
-| user_certificate | Many to many to say what certificates users have |
-| user_group | Many to many to represent in which user role the user has |
-| usergroup | Different user groups like teacher, student, admin |
-| usergroup_activity | Many to many to represent which activities are allowed in certain user groups |
-| Activity | Activities that are possible to do on the platform |
-| user_schedule | Many to many to represent certain user or course availability |
+| attendancerecord | Data of course time slots and attendance of them by students |
 | schedule | Different time blocks for scheduling |
+| consultation | Data of special one-on-one meetings with the teacher |
+| session | Data of classes the course has |
