@@ -245,7 +245,6 @@ Table result {
   id integer [primary key]
   experiment_id integer [not null, ref: > experiment.id]
   task_id integer [not null, ref: > task.id]
-  documentresult_id integer [not null, ref: > documentresult.id]
   description varchar
   measurmentname varchar [null]
   measurmentvalue varchar [null]
