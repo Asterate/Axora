@@ -59,7 +59,7 @@ Project general purpose is to create platform for different language schools to 
 
 ## ERD scheme
 
-### Version 2 with FK 
+### Version 3 with attributes
 
 ![alt text](LanguageSaaSReal.svg)
 
