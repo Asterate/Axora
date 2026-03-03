@@ -1,0 +1,95 @@
+@model IEnumerable<App.Domain.Entities.CompanyConfig>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Company)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompanyConfigEnabled)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompanyConfigTimeZone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompanyConfigAllowOneOnOneSessions)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompanyConfigEnableMaterialTracking)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompanyConfigThemeColour)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompanyConfigCompanyLogoPath)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompanyConfigCreatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompanyConfigUpdatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompanyConfigMaxStudentsPerCourse)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompanyConfigEnableCertificates)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Company.CompanyAddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompanyConfigEnabled)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompanyConfigTimeZone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompanyConfigAllowOneOnOneSessions)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompanyConfigEnableMaterialTracking)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompanyConfigThemeColour)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompanyConfigCompanyLogoPath)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompanyConfigCreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompanyConfigUpdatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompanyConfigMaxStudentsPerCourse)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompanyConfigEnableCertificates)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

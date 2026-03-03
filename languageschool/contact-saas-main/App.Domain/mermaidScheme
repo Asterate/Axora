@@ -1,0 +1,249 @@
+﻿
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table user {
+  id integer [primary key]
+  username varchar [not null, unique]
+  password varchar [not null]
+}
+
+Table role {
+  id integer [primary key]
+  name varchar [not null]
+  comment varchar [null]
+}
+
+Table userrole {
+  id integer [primary key]
+  user_id integer [not null, ref: > user.id]
+  role_id integer [ref: > role.id]
+}
+
+Table companyuser -roles{
+  id integer [primary key]
+  company_id integer [null, ref: > company.id]
+  user_id integer [not null, ref: > user.id]
+}
+
+Table company {
+  id integer [primary key]
+  name varchar [not null]
+  address varchar [not null]
+  phone varchar [not null]
+  email varchar [not null]
+}
+
+Table companyconfig - public, private?{
+  id integer [primary key]
+  company_id integer [not null, ref: > company.id]
+  active boolean [default: true]
+  timezone varchar [null]
+  allow_one_on_one_sessions boolean [not null]
+  enable_material_tracking boolean [not null]
+  theme_color varchar [null]
+  company_logo_path varchar [null]
+  created_at datetime [not null]
+  updated_at datetime [null]
+  max_students_per_course integer [not null]
+  enable_certificates boolean [not null]
+}
+
+Table subs - add free{
+  id integer [primary key]
+  company_id integer [not null, ref: > company.id]
+  standard_price integer [not null]
+  premium_price integer [not null]
+  created_at datetime [not null]
+  updated_at datetime [null]
+}
+
+Table teacher {
+  id integer [primary key]
+  company_id integer [not null, ref: > company.id]
+  companyuser_id integer [not null, ref: > companyuser.id]
+  firstname varchar [not null]
+  lastname varchar [not null]
+  nativelanguage varchar [not null]
+  nationality varchar [not null]
+  phone varchar [not null]
+  email varchar [not null]
+  gender varchar [not null]
+  address varchar [not null]
+}
+
+Table teacherlanguage {
+   id integer [primary key]
+   language_id integer [not null, ref: > language.id]
+   level_id integer [not null, ref: > level.id]
+   teacher_id integer [not null, ref: > teacher.id]
+}
+
+Table availability {
+  id integer [primary key]
+  teacher_id integer [not null, ref: > teacher.id]
+  startat datetime [not null]
+  endat datetime [not null]
+  createdat datetime [not null]
+  updatedat datetime [null]
+  deletedat datetime [null]
+}
+
+Table teachercertificate {
+  id integer [primary key]
+  teacher_id integer [not null, ref: > teacher.id]
+  language_id integer [not null, ref: > language.id]
+  level_id integer [not null, ref: > level.id]
+  givenout datetime [not null]
+  name varchar [not null]
+  description varchar [not null]
+}
+
+Table student {
+  id integer [primary key]
+  company_id integer [not null, ref: > company.id]
+  companyuser_id integer [not null, ref: > companyuser.id]
+  firstname varchar [not null]
+  lastname varchar [not null]
+  nativelanguage varchar [not null]
+  nationality varchar [not null]
+  phone varchar [not null]
+  email varchar [not null]
+  gender varchar [not null]
+}
+
+Table placementtest {
+  id integer [primary key]
+  language_id integer [not null, ref: > language.id]
+  level_id integer [not null, ref: > level.id]
+  name varchar [not null]
+  description varchar [not null]
+  grade varchar [null]
+  pass boolean [null]
+}
+
+Table studentplacementtest {
+  id integer [primary key]
+  student_id integer [not null, ref: > student.id]
+  placementtest_id integer [not null, ref: > placementtest.id]
+  createdat datetime [not null]
+  updatedat datetime [null]
+  deletedat datetime [null]
+}
+
+
+Table language {
+  id integer [primary key]
+  company_id integer [null, ref: > company.id]
+  level_id integer [not null, ref: > level.id]
+  name varchar [not null]
+  description varchar [not null]
+  createdat datetime [not null]
+  updatedat datetime [null]
+  deletedat datetime [null]
+}
+
+Table level {
+  id integer [primary key]
+  name varchar [not null]
+  description varchar [not null]
+}
+
+Table certificate {
+  id integer [primary key]
+  course_id integer [not null, ref: > course.id]
+  language_id integer [not null, ref: > language.id]
+  level_id integer [not null, ref: > level.id]
+  enrollment_id integer [not null, ref: > enrollment.id]
+  name varchar [not null]
+  description varchar [not null]
+  givenout datetime [not null]
+}
+
+Table course {
+  id integer [primary key]
+  company_id integer [not null, ref: > company.id]
+  language_id integer [not null, ref: > language.id]
+  level_id integer [not null, ref: > level.id]
+  teacher_id integer [not null, ref: > teacher.id]
+  name varchar [not null]
+  description varchar [not null]
+  createdat datetime [not null]
+  updatedat datetime [null]
+  deletedat datetime [null]
+  season varchar [not null]
+}
+
+Table enrollment - course progress? {
+  id integer [primary key]
+  course_id integer [not null, ref: > course.id]
+  student_id integer [not null, ref: > student.id]
+  createdat datetime [not null]
+  updatedat datetime [null]
+  deletedat datetime [null]
+  season varchar [not null]
+  repeat boolean [not null]
+}
+
+Table materialdistribution {
+  id integer [primary key]
+  enrollment_id integer [not null, ref: > enrollment.id]
+  material_id integer [not null, ref: > material.id]
+  createdat datetime [not null]
+  updatedat datetime [null]
+  deletedat datetime [null]
+}
+
+Table material {
+  id integer [primary key]
+  course_id integer [null, ref: > course.id]
+  name varchar [not null]
+  description varchar [not null]
+  version varchar [not null]
+  environment varchar [not null]
+}
+
+Table attendancerecord {
+  id integer [primary key]
+  enrollment_id integer [not null, ref: > enrollment.id]
+  schedule_id integer [not null, ref: > schedule.id]
+  createdat datetime [not null]
+  updatedat datetime [null]
+  deletedat datetime [null]
+  attendance boolean [not null]
+  confirmedby integer [not null, ref: > teacher.id]
+}
+
+Table schedule {
+  id integer [primary key]
+  availability_id integer [not null, ref: > availability.id]
+  type enum [not null]
+  startat datetime [not null]
+  endat datetime [not null]
+  createdat datetime [not null]
+  updateat datetime [null]
+  deletedat datetime [null]
+  environment varchar [not null]
+}
+
+Table consultation {
+  id integer [primary key]
+  schedule_id integer [not null, ref: > schedule.id]
+  teacher_id integer [not null, ref: > teacher.id]
+  student_id integer [not null, ref: > student.id]
+  name varchar [not null]
+  description varchar [not null]
+  createdat datetime [not null]
+  updateat datetime [null]
+  deletedat datetime [null]
+}
+
+Table session {
+  id integer [primary key]
+  schedule_id integer [not null, ref: > schedule.id]
+  course_id integer [not null, ref: > course.id]
+  teacher_id integer [not null, ref: > teacher.id]
+  createdat datetime [not null]
+  updateat datetime [null]
+  deletedat datetime [null]
+}

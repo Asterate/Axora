@@ -1,0 +1,89 @@
+@model IEnumerable<App.Domain.Entities.Course>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Company)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Language)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Level)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Teacher)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CourseName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CourseDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CourseCreatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CourseUpdatedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CourseDeletedAt)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CourseSeason)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Company.CompanyAddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Language.LanguageDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Level.LevelDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Teacher.TeacherAddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CourseName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CourseDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CourseCreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CourseUpdatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CourseDeletedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CourseSeason)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

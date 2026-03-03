@@ -1,0 +1,69 @@
+@model App.Domain.Entities.Schedule
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Schedule</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="AvailabilityId" class="control-label"></label>
+                <select asp-for="AvailabilityId" class="form-control" asp-items="ViewBag.AvailabilityId"></select>
+                <span asp-validation-for="AvailabilityId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EScheduleType" class="control-label"></label>
+                <select asp-for="EScheduleType" class="form-control"></select>
+                <span asp-validation-for="EScheduleType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ScheduleStartAt" class="control-label"></label>
+                <input asp-for="ScheduleStartAt" class="form-control" />
+                <span asp-validation-for="ScheduleStartAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ScheduleEndAt" class="control-label"></label>
+                <input asp-for="ScheduleEndAt" class="form-control" />
+                <span asp-validation-for="ScheduleEndAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ScheduleCreatedAt" class="control-label"></label>
+                <input asp-for="ScheduleCreatedAt" class="form-control" />
+                <span asp-validation-for="ScheduleCreatedAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ScheduleModifiedAt" class="control-label"></label>
+                <input asp-for="ScheduleModifiedAt" class="form-control" />
+                <span asp-validation-for="ScheduleModifiedAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ScheduleDeletedAt" class="control-label"></label>
+                <input asp-for="ScheduleDeletedAt" class="form-control" />
+                <span asp-validation-for="ScheduleDeletedAt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ScheduleEnvironment" class="control-label"></label>
+                <input asp-for="ScheduleEnvironment" class="form-control" />
+                <span asp-validation-for="ScheduleEnvironment" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

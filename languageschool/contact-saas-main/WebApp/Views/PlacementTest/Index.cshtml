@@ -1,0 +1,65 @@
+@model IEnumerable<App.Domain.Entities.PlacementTest>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Language)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Level)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PlacementTestName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PlacementTestDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PlacementTestGrade)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PlacementTestPassed)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Language.LanguageDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Level.LevelDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlacementTestName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlacementTestDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlacementTestGrade)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlacementTestPassed)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
