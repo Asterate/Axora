@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "Owner Dashboard";
+}
+
+<h1>Welcome to Owner Dashboard</h1>
+<p>This is your owner dashboard. You can manage your companies here.</p>
+
+<div class="card-deck">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">My Companies</h5>
+            <p class="card-text">View and manage your companies</p>
+            <a href="@Url.Action("Index", "Companies", new { area = "Owner" })" class="btn btn-primary">Go to Companies</a>
+        </div>
+    </div>
+</div>

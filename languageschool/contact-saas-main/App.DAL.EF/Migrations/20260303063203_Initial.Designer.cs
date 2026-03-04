@@ -3,6 +3,7 @@ using System;
 using App.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace App.DAL.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260303063203_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -161,15 +164,7 @@ namespace App.DAL.EF.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<int>("CompanyStatus")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
 
                     b.ToTable("Companies");
                 });
@@ -237,9 +232,6 @@ namespace App.DAL.EF.Migrations
 
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uuid");
-
-                    b.Property<int>("Roles")
-                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -951,12 +943,6 @@ namespace App.DAL.EF.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("FirstName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("text");
-
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
 
@@ -1197,16 +1183,6 @@ namespace App.DAL.EF.Migrations
                     b.Navigation("Level");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.Company", b =>
-                {
-                    b.HasOne("App.Domain.Identity.AppUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-                });
-
             modelBuilder.Entity("App.Domain.Entities.CompanyConfig", b =>
                 {
                     b.HasOne("App.Domain.Entities.Company", "Company")
@@ -1227,7 +1203,7 @@ namespace App.DAL.EF.Migrations
                         .IsRequired();
 
                     b.HasOne("App.Domain.Entities.Company", "Company")
-                        .WithMany("CompanyUsers")
+                        .WithMany()
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -1606,11 +1582,6 @@ namespace App.DAL.EF.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("App.Domain.Entities.Company", b =>
-                {
-                    b.Navigation("CompanyUsers");
                 });
 
             modelBuilder.Entity("App.Domain.Identity.AppUser", b =>

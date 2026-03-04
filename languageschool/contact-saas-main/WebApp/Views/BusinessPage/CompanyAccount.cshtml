@@ -1,0 +1,181 @@
+﻿@using App.Domain.Entities
+@model App.Domain.Entities.Company
+
+@{
+    ViewData["Title"] = "Company Account";
+}
+
+<h1>Company Account: @ViewBag.CompanyName</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2>Create New User</h2>
+        <hr />
+        <form asp-action="CreateUser" asp-route-companyId="@ViewBag.CompanyId" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group">
+                <label for="Email" class="control-label">Email</label>
+                <input class="form-control" type="email" name="email" required />
+            </div>
+            
+            <div class="form-group">
+                <label for="FirstName" class="control-label">First Name</label>
+                <input class="form-control" type="text" name="firstName" required />
+            </div>
+            
+            <div class="form-group">
+                <label for="LastName" class="control-label">Last Name</label>
+                <input class="form-control" type="text" name="lastName" required />
+            </div>
+            
+            <div class="form-group">
+                <label for="Role" class="control-label">Role</label>
+                <select class="form-control" name="role" required>
+                    <option value="">Select a role</option>
+                    <option value="@((int)App.Domain.Entities.ECompanyRoles.Admin)">Admin</option>
+                    <option value="@((int)App.Domain.Entities.ECompanyRoles.Manager)">Manager</option>
+                    <option value="@((int)App.Domain.Entities.ECompanyRoles.Teacher)">Teacher</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <input type="submit" value="Create User" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+    
+    <div class="col-md-6">
+        <h2>Existing Users</h2>
+        <text>Created password can be seen only when created once. Save it</text>
+        <hr />
+        @if (Model.CompanyUsers.Any())
+        {
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Roles</th>
+                        <th>Password</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var companyUser in Model.CompanyUsers)
+                {
+                    <tr>
+                        <td>@companyUser.AppUser.FirstName @companyUser.AppUser.LastName</td>
+                        <td>@companyUser.AppUser.Email</td>
+                        <td>@GetRoleNames(companyUser.Roles)</td>
+                        <td>
+                            @* Show initial password if this is the newly created user or the auto-created admin/manager *@
+                            @if (TempData["NewUserId"]?.ToString() == companyUser.AppUserId.ToString())
+                            {
+                                <strong>@TempData["InitialPassword"]</strong>
+                            }
+                            else if (TempData["AdminUserId"]?.ToString() == companyUser.AppUserId.ToString())
+                            {
+                                <strong>@TempData["AdminPassword"]</strong>
+                            }
+                            else if (TempData["ManagerUserId"]?.ToString() == companyUser.AppUserId.ToString())
+                            {
+                                <strong>@TempData["ManagerPassword"]</strong>
+                            }
+                            else
+                            {
+                                <span>********</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!companyUser.Roles.HasFlag(App.Domain.Entities.ECompanyRoles.Student))
+                            {
+                                <a asp-action="PasswordLink" asp-route-id="@companyUser.AppUserId" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-key"></i> Reset Password
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No users found for this company.</p>
+        }
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h2>Courses</h2>
+        <hr />
+        <a asp-action="CreateCourse" asp-route-id="@ViewBag.CompanyId" class="btn btn-primary mb-3">Create Course</a>
+        
+        @if (ViewBag.Courses != null && ViewBag.Courses.Any())
+        {
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Course Name</th>
+                        <th>Language</th>
+                        <th>Level</th>
+                        <th>Teacher</th>
+                        <th>Season</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var course in ViewBag.Courses)
+                {
+                    <tr>
+                        <td>@course.CourseName</td>
+                        <td>@course.Language.LanguageName</td>
+                        <td>@course.Level.LevelName</td>
+                        <td>@course.Teacher.TeacherFirstName @course.Teacher.TeacherLastName</td>
+                        <td>@course.CourseSeason</td>
+                        <td>
+                            <a asp-action="CourseDesktop" asp-route-id="@course.Id" class="btn btn-sm btn-info">
+                                Course Desktop
+                            </a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No courses found for this company. Create your first course above.</p>
+        }
+    </div>
+</div>
+
+<div class="mt-4">
+    <a asp-action="CompanyDesktop" asp-route-id="@ViewBag.CompanyId" class="btn btn-default">Back to Company Desktop</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+@functions {
+    private string GetRoleNames(App.Domain.Entities.ECompanyRoles roles)
+    {
+        var roleNames = new List<string>();
+        
+        if (roles.HasFlag(App.Domain.Entities.ECompanyRoles.Owner))
+            roleNames.Add("Owner");
+        if (roles.HasFlag(App.Domain.Entities.ECompanyRoles.Admin))
+            roleNames.Add("Admin");
+        if (roles.HasFlag(App.Domain.Entities.ECompanyRoles.Manager))
+            roleNames.Add("Manager");
+        if (roles.HasFlag(App.Domain.Entities.ECompanyRoles.Teacher))
+            roleNames.Add("Teacher");
+        if (roles.HasFlag(App.Domain.Entities.ECompanyRoles.Student))
+            roleNames.Add("Student");
+            
+        return string.Join(", ", roleNames);
+    }
+}

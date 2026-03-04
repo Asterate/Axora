@@ -1,3 +1,4 @@
+using App.DAL.EF;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,9 @@ public static class AppDataInit
 {
     public static void SeedAppData(AppDbContext context)
     {
+        // No initial companies are being seeded
+        // Existing companies in the database will retain their CreatedById values
+        // New companies created through the application will have CreatedById set properly
     }
 
 
@@ -49,14 +53,27 @@ public static class AppDataInit
             {
                 user = new AppUser()
                 {
+                    Id = userInfo.id ?? Guid.NewGuid(),
                     Email = userInfo.name,
                     UserName = userInfo.name,
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    FirstName = userInfo.firstName,
+                    LastName = userInfo.lastName
                 };
                 var result = userManager.CreateAsync(user, userInfo.password).Result;
                 if (!result.Succeeded)
                 {
                     throw new ApplicationException("User creation failed!");
+                }
+            }
+            else
+            {
+                // Update existing user with first and last name if not already set
+                if (string.IsNullOrEmpty(user.FirstName) || string.IsNullOrEmpty(user.LastName))
+                {
+                    user.FirstName = userInfo.firstName;
+                    user.LastName = userInfo.lastName;
+                    userManager.UpdateAsync(user).Wait();
                 }
             }
 

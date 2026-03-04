@@ -33,4 +33,8 @@
       <ProjectReference Include="..\App.Resources\App.Resources.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\_ViewImports.cshtml" />
+    </ItemGroup>
+
 </Project>

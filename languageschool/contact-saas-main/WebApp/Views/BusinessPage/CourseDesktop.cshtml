@@ -1,0 +1,162 @@
+@model App.Domain.Entities.Course
+
+@{
+    ViewData["Title"] = "Course Desktop: " + Model.CourseName;
+}
+
+<h1>@Model.CourseName</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <p class="lead">@Model.CourseDescription</p>
+        <p><strong>Language:</strong> @Model.Language.LanguageName | <strong>Level:</strong> @Model.Level.LevelName</p>
+        <p><strong>Teacher:</strong> @Model.Teacher.TeacherFirstName @Model.Teacher.TeacherLastName | <strong>Season:</strong> @Model.CourseSeason</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <a asp-action="CompanyAccount" asp-route-id="@Model.CompanyId" class="btn btn-default mb-3">Back to Company Account</a>
+    </div>
+</div>
+
+<!-- Schedule Section -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h2>Schedule</h2>
+        <hr />
+        
+        @if (ViewBag.Schedules != null && ViewBag.Schedules.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Type</th>
+                            <th>Environment</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var schedule in ViewBag.Schedules)
+                    {
+                        <tr>
+                            <td>@schedule.ScheduleStartAt.ToString("HH:mm")</td>
+                            <td>@schedule.ScheduleEndAt.ToString("HH:mm")</td>
+                            <td>@schedule.EScheduleType</td>
+                            <td>@schedule.ScheduleEnvironment</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p>No schedule available for this course.</p>
+        }
+    </div>
+</div>
+
+<!-- Material List Section -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h2>Material List</h2>
+        <hr />
+        
+        @if (ViewBag.Materials != null && ViewBag.Materials.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Material Name</th>
+                            <th>Description</th>
+                            <th>Version</th>
+                            <th>Environment</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var material in ViewBag.Materials)
+                    {
+                        <tr>
+                            <td>@material.MaterialName</td>
+                            <td>@material.MaterialDescription</td>
+                            <td>@material.MaterialVersion</td>
+                            <td>@material.MaterialEnvironment</td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-primary" target="_blank">
+                                    <i class="fas fa-download"></i> Download
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p>No materials available for this course.</p>
+        }
+    </div>
+</div>
+
+<!-- Homework List Section -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h2>Homework List</h2>
+        <hr />
+        
+        @if (ViewBag.Homework != null && ViewBag.Homework.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Homework Name</th>
+                            <th>Description</th>
+                            <th>Version</th>
+                            <th>Environment</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var homework in ViewBag.Homework)
+                    {
+                        <tr>
+                            <td>@homework.MaterialName</td>
+                            <td>@homework.MaterialDescription</td>
+                            <td>@homework.MaterialVersion</td>
+                            <td>@homework.MaterialEnvironment</td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-primary" target="_blank">
+                                    <i class="fas fa-download"></i> Download
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p>No homework assigned for this course.</p>
+        }
+    </div>
+</div>
+
+<!-- Add Material and Homework Buttons (Owner only) -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <a asp-action="CreateMaterial" asp-route-courseId="@Model.Id" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add Material
+        </a>
+        <a asp-action="CreateHomework" asp-route-courseId="@Model.Id" class="btn btn-primary ml-2">
+            <i class="fas fa-plus"></i> Add Homework
+        </a>
+    </div>
+</div>

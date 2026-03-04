@@ -1,7 +1,12 @@
 using WebApp.Helpers;
 using WebApp.Setup;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using WebApp.Areas.Identity.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("WebAppIdentityDbContextConnection") ?? throw new InvalidOperationException("Connection string 'WebAppIdentityDbContextConnection' not found.");;
+
 
 // Service registration
 builder.Services.AddAppDatabase(builder.Configuration, builder.Environment);

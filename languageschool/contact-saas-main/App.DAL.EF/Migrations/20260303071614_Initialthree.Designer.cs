@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace App.DAL.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260302090116_Initial")]
-    partial class Initial
+    [Migration("20260303071614_Initialthree")]
+    partial class Initialthree
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -164,6 +164,9 @@ namespace App.DAL.EF.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<int>("CompanyStatus")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.ToTable("Companies");
@@ -232,6 +235,9 @@ namespace App.DAL.EF.Migrations
 
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Roles")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -359,6 +365,9 @@ namespace App.DAL.EF.Migrations
 
                     b.Property<DateTime>("EnrollmentModifiedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("EnrollmentPayStatus")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("EnrollmentRepeat")
                         .HasColumnType("boolean");

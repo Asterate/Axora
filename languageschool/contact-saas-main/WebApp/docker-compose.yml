@@ -3,7 +3,7 @@ version: '3.9'
 services:
   db:
     image: postgres:16
-    container_name: webapp_db
+    container_name: languageapp_db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres

@@ -32,6 +32,7 @@ Table company {
   address varchar [not null]
   phone varchar [not null]
   email varchar [not null]
+  user_id integer [null, ref: > user.id]
 }
 
 Table companyconfig - public, private?{

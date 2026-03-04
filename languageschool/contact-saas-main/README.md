@@ -105,3 +105,7 @@ Project general purpose is to create platform for different language schools to 
 | schedule | Different time blocks for scheduling |
 | consultation | Data of special one-on-one meetings with the teacher |
 | session | Data of classes the course has |
+
+## Nice to have
+- email sent to the new owner after creating a company.
+- admin and manager auto create

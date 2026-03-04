@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace WebApp.Areas.SysAdmin.Controllers;
+namespace WebApp.Areas.Root.Controllers;
 
 [Area("Root")]
 [Authorize(Roles = "root")]

@@ -1,7 +1,38 @@
 @model int
 @{
-    ViewData["Title"] = "SysAdmin";
+    ViewData["Title"] = "System Admin Dashboard";
 }
 
-System Admin
+<h1>System Admin Dashboard</h1>
+
+<div class="card-deck">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Pending Companies</h5>
+            <p class="card-text">Review and manage companies awaiting approval.</p>
+            <a href="@Url.Action("Pending", "Companies")" class="btn btn-primary">
+                <span class="oi oi-task"></span> View Pending Companies
+            </a>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Approval/Rejection Log</h5>
+            <p class="card-text">View the log of all approved and rejected companies.</p>
+            <a href="@Url.Action("Log", "Companies")" class="btn btn-secondary">
+                <span class="oi oi-list"></span> View Approval Log
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <h3>Quick Links</h3>
+    <ul class="list-group">
+        <li class="list-group-item">
+            <a href="@Url.Action("Index", "Users")">Manage Users</a>
+        </li>
+    </ul>
+</div>
 

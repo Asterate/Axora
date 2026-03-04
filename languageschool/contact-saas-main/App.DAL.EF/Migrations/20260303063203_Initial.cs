@@ -620,7 +620,8 @@ namespace App.DAL.EF.Migrations
                     EnrollmentModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EnrollmentDeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EnrollmentSeason = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    EnrollmentRepeat = table.Column<bool>(type: "boolean", nullable: false)
+                    EnrollmentRepeat = table.Column<bool>(type: "boolean", nullable: false),
+                    EnrollmentPayStatus = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -1,0 +1,42 @@
+@model List<App.Domain.Entities.Company>
+@{
+    ViewData["Title"] = "My Companies";
+}
+
+<h1>My Companies</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Company</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Company Name</th>
+            <th>Address</th>
+            <th>Phone Number</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var company in Model)
+{
+        <tr>
+            <td>@Html.DisplayFor(modelItem => company.CompanyName)</td>
+            <td>@Html.DisplayFor(modelItem => company.CompanyAddress)</td>
+            <td>@Html.DisplayFor(modelItem => company.CompanyPhoneNumber)</td>
+            <td>@Html.DisplayFor(modelItem => company.CompanyEmail)</td>
+            <td>@Html.DisplayFor(modelItem => company.CompanyStatus)</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@company.Id" class="btn btn-info">Details</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="Index" asp-controller="Home" asp-area="Owner" class="btn btn-default">Back to Home</a>
+</div>

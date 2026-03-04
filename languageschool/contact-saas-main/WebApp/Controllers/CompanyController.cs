@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
 using App.Domain.Entities;
+using WebApp.Helpers;
 
 namespace WebApp.Controllers
 {
@@ -59,7 +60,18 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 company.Id = Guid.NewGuid();
+                company.CreatedById = User.UserId();
                 _context.Add(company);
+                
+                // Associate the current user with the company as owner
+                var companyUser = new CompanyUser
+                {
+                    CompanyId = company.Id,
+                    AppUserId = User.UserId(),
+                    Roles = ECompanyRoles.Owner // Assign owner role immediately
+                };
+                _context.CompanyUsers.Add(companyUser);
+                
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -140,6 +152,14 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
+            // Remove all company user associations first to avoid foreign key constraint violation
+            var companyUsers = await _context.CompanyUsers
+                .Where(cu => cu.CompanyId == id)
+                .ToListAsync();
+                
+            _context.CompanyUsers.RemoveRange(companyUsers);
+            
+            // Then delete the company
             var company = await _context.Companies.FindAsync(id);
             if (company != null)
             {

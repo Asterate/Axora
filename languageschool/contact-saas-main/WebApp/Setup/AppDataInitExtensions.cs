@@ -53,7 +53,6 @@ public static class AppDataInitExtensions
         if (configuration.GetValue<bool>("DataInitialization:SeedData"))
         {
             logger.LogInformation("SeedData");
-            AppDataInit.SeedAppData(context);
         }
     }
 
