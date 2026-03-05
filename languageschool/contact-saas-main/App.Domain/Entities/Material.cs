@@ -5,7 +5,7 @@ namespace App.Domain.Entities;
 public class Material : BaseEntity
 {
     public Guid CourseId { get; set; }
-    public Course Course { get; set; } = default!;
+    public Course? Course { get; set; }
     [StringLength(128, MinimumLength = 3)]
     public string MaterialName { get; set; } = default!;
     [StringLength(128, MinimumLength = 3)]

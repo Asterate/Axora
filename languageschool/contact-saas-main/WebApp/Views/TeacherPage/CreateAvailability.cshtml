@@ -1,0 +1,80 @@
+@model WebApp.ViewModels.CreateAvailabilityViewModel
+
+@{
+    ViewData["Title"] = Model.Id == Guid.Empty ? "Add Availability" : "Edit Availability";
+}
+
+@section HeaderScripts {
+    <link rel="stylesheet" href="~/css/course-desktop.css" asp-append-version="true">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+}
+
+<!-- Hero -->
+<div class="course-hero">
+    <div class="container">
+        <div class="label">Availability Management</div>
+        <h1>@(Model.Id == Guid.Empty ? "Add Availability" : "Edit Availability")</h1>
+        <p class="description">
+            @Model.TeacherName
+        </p>
+        
+    </div>
+</div>
+
+<!-- Content -->
+<div class="content-grid">
+    <div class="section-card full-width">
+        <div class="card-head">
+            <div class="card-head-left">
+                <div class="card-icon blue"><i class="fas fa-calendar-check"></i></div>
+                <h2>@(Model.Id == Guid.Empty ? "Add New Availability" : "Edit Availability")</h2>
+            </div>
+        </div>
+        <div class="card-body-inner">
+            <form asp-action="CreateAvailability" asp-route-teacherId="@Model.TeacherId" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i>
+                            Teacher
+                        </label>
+                        <select asp-for="TeacherId" asp-items="@(new SelectList(Model.Teachers, "Value", "Text"))" class="form-control">
+                            <option value="">-- Select Teacher --</option>
+                        </select>
+                        <span asp-validation-for="TeacherId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="AvailabilityStartDate" class="form-label">
+                            <i class="fas fa-calendar-plus"></i>
+                            Start Date & Time
+                        </label>
+                        <input asp-for="AvailabilityStartDate" type="datetime-local" class="form-control">
+                        <span asp-validation-for="AvailabilityStartDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="AvailabilityEndDate" class="form-label">
+                            <i class="fas fa-calendar-times"></i>
+                            End Date & Time
+                        </label>
+                        <input asp-for="AvailabilityEndDate" type="datetime-local" class="form-control">
+                        <span asp-validation-for="AvailabilityEndDate" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a asp-action="TeacherDesktop" asp-route-id="@Model.TeacherId" class="btn-ghost">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn-gold">
+                        <i class="fas fa-save"></i> Save Availability
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

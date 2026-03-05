@@ -16,8 +16,5 @@ public class Company : BaseEntity
 
     public ECompanyStatus CompanyStatus { get; set; } = ECompanyStatus.Pending;
     
-    public Guid? CreatedById { get; set; }
-    public virtual AppUser? CreatedBy { get; set; }
-
     public virtual ICollection<CompanyUser> CompanyUsers { get; set; } = new List<CompanyUser>();
 }

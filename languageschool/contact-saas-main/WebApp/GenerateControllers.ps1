@@ -1,9 +1,6 @@
 # List of entities to generate controllers for (complete list from AppDbContext)
 $entities = @(
-    "Consultation", "Course", "Enrollment", "Language", 
-    "Level", "Material", "MaterialDistribution", "PlacementTest", "Schedule", 
-    "Session", "Student", "Subs", "Teacher", "TeacherCertificate", 
-    "StudentPlacementTest", "TeacherLanguage"
+    "Language"
 )
 
 foreach ($e in $entities) {
@@ -22,3 +19,9 @@ foreach ($e in $entities) {
 }
 
 Write-Host "All controllers scaffolded successfully!"
+
+#"AttendanceRecord", "Availability", "Certificate", "Company", "CompanyConfig",
+#"Consultation", "Course", "Enrollment", "Language",
+#"Level", "Material", "MaterialDistribution", "PlacementTest", "Schedule",
+#"Session", "Student", "Subs", "Teacher", "TeacherCertificate",
+#"StudentPlacementTest", "TeacherLanguage"

@@ -5,9 +5,9 @@ namespace App.Domain.Entities;
 public class Teacher : BaseEntity
 {
     public Guid CompanyId { get; set; }
-    public Company Company { get; set; } = default!;
+    public Company? Company { get; set; }
     public Guid ComapanyUserId { get; set; }
-    public CompanyUser ComapanyUser { get; set; } = default!;
+    public CompanyUser? ComapanyUser { get; set; }
     [StringLength(128, MinimumLength = 3)]
     public string TeacherFirstName { get; set; } = default!;
     [StringLength(128, MinimumLength = 3)]

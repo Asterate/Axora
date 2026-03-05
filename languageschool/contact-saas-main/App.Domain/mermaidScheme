@@ -20,7 +20,7 @@ Table userrole {
   role_id integer [ref: > role.id]
 }
 
-Table companyuser -roles{
+Table companyuser{
   id integer [primary key]
   company_id integer [null, ref: > company.id]
   user_id integer [not null, ref: > user.id]
@@ -35,7 +35,7 @@ Table company {
   user_id integer [null, ref: > user.id]
 }
 
-Table companyconfig - public, private?{
+Table companyconfig{
   id integer [primary key]
   company_id integer [not null, ref: > company.id]
   active boolean [default: true]
@@ -48,9 +48,10 @@ Table companyconfig - public, private?{
   updated_at datetime [null]
   max_students_per_course integer [not null]
   enable_certificates boolean [not null]
+  visibility enum [not null]
 }
 
-Table subs - add free{
+Table subs {
   id integer [primary key]
   company_id integer [not null, ref: > company.id]
   standard_price integer [not null]
@@ -184,6 +185,7 @@ Table enrollment - course progress? {
   deletedat datetime [null]
   season varchar [not null]
   repeat boolean [not null]
+  plan enum [not null]
 }
 
 Table materialdistribution {

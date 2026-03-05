@@ -1,0 +1,146 @@
+﻿@using App.Domain.Entities
+@model WebApp.ViewModels.CompanySettingsViewModel
+
+
+<h1>Edit Settings</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="EditSettings" asp-route-id="@Model.Company.Id" class="needs-validation" novalidate>
+            
+            <!-- Company Configuration Section -->
+            <h4>Company Configuration</h4>
+            <hr />
+            
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label asp-for="CompanyConfig.CompanyConfigTimeZone" class="control-label"></label>
+                    <input asp-for="CompanyConfig.CompanyConfigTimeZone" class="form-control" />
+                    <span asp-validation-for="CompanyConfig.CompanyConfigTimeZone" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group col-md-6">
+                    <label asp-for="CompanyConfig.CompanyConfigThemeColour" class="control-label"></label>
+                    <input asp-for="CompanyConfig.CompanyConfigThemeColour" class="form-control" />
+                    <span asp-validation-for="CompanyConfig.CompanyConfigThemeColour" class="text-danger"></span>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label asp-for="CompanyConfig.CompanyConfigCompanyLogoPath" class="control-label"></label>
+                    <input asp-for="CompanyConfig.CompanyConfigCompanyLogoPath" class="form-control" />
+                    <span asp-validation-for="CompanyConfig.CompanyConfigCompanyLogoPath" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group col-md-6">
+                    <label asp-for="CompanyConfig.CompanyConfigMaxStudentsPerCourse" class="control-label"></label>
+                    <input asp-for="CompanyConfig.CompanyConfigMaxStudentsPerCourse" class="form-control" />
+                    <span asp-validation-for="CompanyConfig.CompanyConfigMaxStudentsPerCourse" class="text-danger"></span>
+                </div>
+            </div>
+            
+            <div class="form-group form-check">
+                <input class="form-check-input" asp-for="CompanyConfig.CompanyConfigAllowOneOnOneSessions" />
+                <label class="form-check-label" asp-for="CompanyConfig.CompanyConfigAllowOneOnOneSessions">
+                    @Html.DisplayNameFor(model => model.CompanyConfig.CompanyConfigAllowOneOnOneSessions)
+                </label>
+                <span asp-validation-for="CompanyConfig.CompanyConfigAllowOneOnOneSessions" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group form-check">
+                <input class="form-check-input" asp-for="CompanyConfig.CompanyConfigEnableMaterialTracking" />
+                <label class="form-check-label" asp-for="CompanyConfig.CompanyConfigEnableMaterialTracking">
+                    @Html.DisplayNameFor(model => model.CompanyConfig.CompanyConfigEnableMaterialTracking)
+                </label>
+                <span asp-validation-for="CompanyConfig.CompanyConfigEnableMaterialTracking" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group form-check">
+                <input class="form-check-input" asp-for="CompanyConfig.CompanyConfigEnableCertificates" />
+                <label class="form-check-label" asp-for="CompanyConfig.CompanyConfigEnableCertificates">
+                    @Html.DisplayNameFor(model => model.CompanyConfig.CompanyConfigEnableCertificates)
+                </label>
+                <span asp-validation-for="CompanyConfig.CompanyConfigEnableCertificates" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="CompanyConfig.CompanyConfigVisibility" class="control-label"></label>
+                <select asp-for="CompanyConfig.CompanyConfigVisibility" class="form-control"
+                        asp-items="Html.GetEnumSelectList<ECompanyConfigVisibility>()">
+                </select>
+                <span asp-validation-for="CompanyConfig.CompanyConfigVisibility" class="text-danger"></span>
+            </div>
+            <!-- Submit Button -->
+            <div class="form-group mt-5">
+                <button type="submit" class="btn btn-secondary">Submit</button>
+                <a asp-action="CompanySettings" asp-route-id="@Model.Company.Id" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+            <!-- Language and Level Section -->
+            <h4 class="mt-5">Language and Level</h4>
+            <hr />
+            
+            <!-- Existing Languages -->
+            @if (Model.Languages.Any())
+            {
+                <div class="mb-5">
+                    <h5>Existing Languages</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>Language Name</th>
+                                <th>Description</th>
+                                <th>Level</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var language in Model.Languages)
+                            {
+                                <tr>
+                                <form asp-action="EditLanguage" asp-controller="BusinessPage" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="languageId" value="@language.Id" />
+                                    <input type="hidden" name="companyId" value="@Model.Company.Id" />
+
+                                    <td>
+                                        <input type="text" name="LanguageName" value="@language.LanguageName" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="LanguageDescription" value="@language.LanguageDescription" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <select name="LevelId" class="form-control">
+                                            @foreach (var level in Model.Levels)
+                                            {
+                                                <option value="@level.Value" selected="@(level.Value == language.LevelId.ToString() ? "selected" : null)">
+                                                    @level.Text
+                                                </option>
+                                            }
+                                        </select>
+                                    </td>
+                                    <td>
+                                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                                </form>
+                                <form asp-action="DeleteLanguage" asp-controller="BusinessPage" method="post" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="languageId" value="@language.Id" />
+                                    <input type="hidden" name="companyId" value="@Model.Company.Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                                </tr>
+                            }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            }
+            </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

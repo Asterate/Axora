@@ -98,7 +98,6 @@ namespace App.DAL.EF.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("CertificateDescription")
-                        .IsRequired()
                         .HasMaxLength(254)
                         .HasColumnType("character varying(254)");
 
@@ -164,12 +163,7 @@ namespace App.DAL.EF.Migrations
                     b.Property<int>("CompanyStatus")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("CreatedById")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
 
                     b.ToTable("Companies");
                 });
@@ -184,7 +178,6 @@ namespace App.DAL.EF.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("CompanyConfigCompanyLogoPath")
-                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
@@ -197,24 +190,22 @@ namespace App.DAL.EF.Migrations
                     b.Property<bool>("CompanyConfigEnableMaterialTracking")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("CompanyConfigEnabled")
-                        .HasColumnType("boolean");
-
                     b.Property<int>("CompanyConfigMaxStudentsPerCourse")
                         .HasColumnType("integer");
 
                     b.Property<string>("CompanyConfigThemeColour")
-                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
                     b.Property<string>("CompanyConfigTimeZone")
-                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
                     b.Property<DateTime?>("CompanyConfigUpdatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CompanyConfigVisibility")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("CompanyId")
                         .HasColumnType("uuid");
@@ -311,7 +302,6 @@ namespace App.DAL.EF.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("CourseDescription")
-                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
@@ -321,7 +311,6 @@ namespace App.DAL.EF.Migrations
                         .HasColumnType("character varying(128)");
 
                     b.Property<string>("CourseSeason")
-                        .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
@@ -369,6 +358,9 @@ namespace App.DAL.EF.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("EnrollmentPayStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EnrollmentPlan")
                         .HasColumnType("integer");
 
                     b.Property<bool>("EnrollmentRepeat")
@@ -450,6 +442,44 @@ namespace App.DAL.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Levels");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("a1111111-1111-1111-1111-111111111111"),
+                            LevelDescription = "Beginner",
+                            LevelName = "A1"
+                        },
+                        new
+                        {
+                            Id = new Guid("a2222222-2222-2222-2222-222222222222"),
+                            LevelDescription = "PreIntermediate",
+                            LevelName = "A2"
+                        },
+                        new
+                        {
+                            Id = new Guid("b1111111-1111-1111-1111-111111111111"),
+                            LevelDescription = "Intermediate",
+                            LevelName = "B1"
+                        },
+                        new
+                        {
+                            Id = new Guid("b2222222-2222-2222-2222-222222222222"),
+                            LevelDescription = "UpperIntermediate",
+                            LevelName = "B2"
+                        },
+                        new
+                        {
+                            Id = new Guid("c1111111-1111-1111-1111-111111111111"),
+                            LevelDescription = "Advanced",
+                            LevelName = "C1"
+                        },
+                        new
+                        {
+                            Id = new Guid("c2222222-2222-2222-2222-222222222222"),
+                            LevelDescription = "Proficient",
+                            LevelName = "C2"
+                        });
                 });
 
             modelBuilder.Entity("App.Domain.Entities.Material", b =>
@@ -682,11 +712,16 @@ namespace App.DAL.EF.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<Guid?>("SubsId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("CompanyUserId");
+
+                    b.HasIndex("SubsId");
 
                     b.ToTable("Students");
                 });
@@ -1197,16 +1232,6 @@ namespace App.DAL.EF.Migrations
                     b.Navigation("Level");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.Company", b =>
-                {
-                    b.HasOne("App.Domain.Identity.AppUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-                });
-
             modelBuilder.Entity("App.Domain.Entities.CompanyConfig", b =>
                 {
                     b.HasOne("App.Domain.Entities.Company", "Company")
@@ -1438,9 +1463,16 @@ namespace App.DAL.EF.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("App.Domain.Entities.Subs", "Subs")
+                        .WithMany()
+                        .HasForeignKey("SubsId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Company");
 
                     b.Navigation("CompanyUser");
+
+                    b.Navigation("Subs");
                 });
 
             modelBuilder.Entity("App.Domain.Entities.StudentPlacementTest", b =>

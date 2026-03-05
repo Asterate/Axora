@@ -1,4 +1,5 @@
-﻿using App.Domain.Entities;
+﻿using App.DAL.EF.Seeding;
+using App.Domain.Entities;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -62,6 +63,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
         {
             relationship.DeleteBehavior = DeleteBehavior.Restrict;
         }
+        
+        builder.Entity<Level>().HasData(
+            new Level { Id = InitialData.LevelA1Id, LevelName = "A1", LevelDescription = "Beginner" },
+            new Level { Id = InitialData.LevelA2Id, LevelName = "A2", LevelDescription = "PreIntermediate" },
+            new Level { Id = InitialData.LevelB1Id, LevelName = "B1", LevelDescription = "Intermediate" },
+            new Level { Id = InitialData.LevelB2Id, LevelName = "B2", LevelDescription = "UpperIntermediate" },
+            new Level { Id = InitialData.LevelC1Id, LevelName = "C1", LevelDescription = "Advanced" },
+            new Level { Id = InitialData.LevelC2Id, LevelName = "C2", LevelDescription = "Proficient" }
+        );
+        
     }
     
     /// <summary>

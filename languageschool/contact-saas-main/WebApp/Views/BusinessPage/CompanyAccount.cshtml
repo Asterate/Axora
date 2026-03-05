@@ -1,5 +1,4 @@
-﻿@using App.Domain.Entities
-@model App.Domain.Entities.Company
+﻿@model App.Domain.Entities.Company
 
 @{
     ViewData["Title"] = "Company Account";
@@ -31,7 +30,7 @@
             
             <div class="form-group">
                 <label for="Role" class="control-label">Role</label>
-                <select class="form-control" name="role" required>
+                <select class="form-control" name="role" id="role" required onchange="toggleTeacherFields()">
                     <option value="">Select a role</option>
                     <option value="@((int)App.Domain.Entities.ECompanyRoles.Admin)">Admin</option>
                     <option value="@((int)App.Domain.Entities.ECompanyRoles.Manager)">Manager</option>
@@ -39,9 +38,59 @@
                 </select>
             </div>
             
+            <!-- Teacher-specific fields - hidden by default -->
+            <div id="teacherFields" style="display: none;">
+                <hr />
+                <h4>Teacher Information</h4>
+                
+                <div class="form-group">
+                    <label for="TeacherPhone" class="control-label">Phone</label>
+                    <input class="form-control" type="tel" name="teacherPhone" id="teacherPhone" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="TeacherAddress" class="control-label">Address</label>
+                    <input class="form-control" type="text" name="teacherAddress" id="teacherAddress" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="TeacherNativeLanguage" class="control-label">Native Language</label>
+                    <input class="form-control" type="text" name="teacherNativeLanguage" id="teacherNativeLanguage" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="TeacherNationality" class="control-label">Nationality</label>
+                    <input class="form-control" type="text" name="teacherNationality" id="teacherNationality" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="TeacherGender" class="control-label">Gender</label>
+                    <input class="form-control" type="text" name="teacherGender" id="teacherGender" />
+                </div>
+            </div>
+            
             <div class="form-group">
                 <input type="submit" value="Create User" class="btn btn-primary" />
             </div>
+            
+            <script>
+                function toggleTeacherFields() {
+                    var roleSelect = document.getElementById('role');
+                    var teacherFields = document.getElementById('teacherFields');
+                    var isTeacher = roleSelect.value == @((int)App.Domain.Entities.ECompanyRoles.Teacher);
+                    
+                    teacherFields.style.display = isTeacher ? 'block' : 'none';
+                    
+                    // Clear teacher fields when role is changed from teacher
+                    if (!isTeacher) {
+                        document.getElementById('teacherPhone').value = '';
+                        document.getElementById('teacherAddress').value = '';
+                        document.getElementById('teacherNativeLanguage').value = '';
+                        document.getElementById('teacherNationality').value = '';
+                        document.getElementById('teacherGender').value = '';
+                    }
+                }
+            </script>
         </form>
     </div>
     
@@ -65,7 +114,7 @@
                 @foreach (var companyUser in Model.CompanyUsers)
                 {
                     <tr>
-                        <td>@companyUser.AppUser.FirstName @companyUser.AppUser.LastName</td>
+                        <td>@companyUser.AppUser!.FirstName @companyUser.AppUser.LastName</td>
                         <td>@companyUser.AppUser.Email</td>
                         <td>@GetRoleNames(companyUser.Roles)</td>
                         <td>
@@ -107,50 +156,6 @@
     </div>
 </div>
 
-<div class="row mt-4">
-    <div class="col-md-12">
-        <h2>Courses</h2>
-        <hr />
-        <a asp-action="CreateCourse" asp-route-id="@ViewBag.CompanyId" class="btn btn-primary mb-3">Create Course</a>
-        
-        @if (ViewBag.Courses != null && ViewBag.Courses.Any())
-        {
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Course Name</th>
-                        <th>Language</th>
-                        <th>Level</th>
-                        <th>Teacher</th>
-                        <th>Season</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach (var course in ViewBag.Courses)
-                {
-                    <tr>
-                        <td>@course.CourseName</td>
-                        <td>@course.Language.LanguageName</td>
-                        <td>@course.Level.LevelName</td>
-                        <td>@course.Teacher.TeacherFirstName @course.Teacher.TeacherLastName</td>
-                        <td>@course.CourseSeason</td>
-                        <td>
-                            <a asp-action="CourseDesktop" asp-route-id="@course.Id" class="btn btn-sm btn-info">
-                                Course Desktop
-                            </a>
-                        </td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        }
-        else
-        {
-            <p>No courses found for this company. Create your first course above.</p>
-        }
-    </div>
-</div>
 
 <div class="mt-4">
     <a asp-action="CompanyDesktop" asp-route-id="@ViewBag.CompanyId" class="btn btn-default">Back to Company Desktop</a>

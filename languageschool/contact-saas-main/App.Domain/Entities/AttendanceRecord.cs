@@ -3,7 +3,7 @@
 public class AttendanceRecord : BaseEntity
 {
     public Guid EnrollmentId { get; set; }
-    public Enrollment Enrollment { get; set; } = default!;
+    public Enrollment? Enrollment { get; set; }
     public Guid ScheduleId { get; set; }
     public Schedule Schedule { get; set; } = default!;
     public Guid ConfirmedById { get; set; }

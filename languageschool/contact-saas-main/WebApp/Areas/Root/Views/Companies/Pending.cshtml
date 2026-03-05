@@ -26,7 +26,7 @@ else
                             <strong>Address:</strong> @company.CompanyAddress<br>
                             <strong>Phone:</strong> @company.CompanyPhoneNumber<br>
                             <strong>Email:</strong> @company.CompanyEmail<br>
-                            <strong>Created By:</strong> @(company.CompanyUsers.FirstOrDefault()?.AppUser.UserName ?? "Unknown")
+                            <strong>Created By:</strong> @(company.CompanyUsers.FirstOrDefault()?.AppUser?.UserName ?? "Unknown")
                         </p>
                     </div>
                     <div class="card-footer bg-light">

@@ -7,7 +7,7 @@ public class CompanyUser : BaseEntity
     public Guid CompanyId { get; set; }
     public Company? Company { get; set; } 
     public Guid AppUserId { get; set; }
-    public virtual AppUser AppUser { get; set; } = default!;
+    public AppUser? AppUser { get; set; }
 
     public ECompanyRoles Roles { get; set; } = ECompanyRoles.None;
     

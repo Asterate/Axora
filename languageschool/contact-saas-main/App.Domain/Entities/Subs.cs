@@ -3,7 +3,7 @@
 public class Subs : BaseEntity
 {
     public Guid CompanyId { get; set; }
-    public Company Company { get; set; } =  default!;
+    public Company? Company { get; set; }
     public int StandardPrice { get; set; } = 220;
     public int PremiumPrice { get; set; } =  280;
     public DateTime SubsCreatedAt { get; set; } = DateTime.Now;

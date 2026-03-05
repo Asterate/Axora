@@ -103,16 +103,18 @@ public class CompanyAdmin
     public static async Task<List<Company>> GetApprovedCompanies(AppDbContext context)
     {
         return await context.Companies
-            .Include(c => c.CreatedBy)
-            .Where(c => c.CompanyStatus == ECompanyStatus.Approved)
+            .Where(c => ECompanyStatus.Approved == c.CompanyStatus)
+            .Include(c => c.CompanyUsers)
+            .ThenInclude(cu => cu.AppUser)
             .ToListAsync();
     }
     
     public static async Task<List<Company>> GetRejectedCompanies(AppDbContext context)
     {
         return await context.Companies
-            .Include(c => c.CreatedBy)
-            .Where(c => c.CompanyStatus == ECompanyStatus.Rejected)
+            .Where(c => ECompanyStatus.Rejected == c.CompanyStatus)
+            .Include(c => c.CompanyUsers)
+            .ThenInclude(cu => cu.AppUser)
             .ToListAsync();
     }
     
@@ -128,6 +130,10 @@ public class CompanyAdmin
     
     public static async Task DeleteCompany(AppDbContext context, Guid companyId)
     {
+        var companyConfig = await context.CompanyConfigs
+            .Where(c => c.CompanyId == companyId)
+            .FirstOrDefaultAsync();
+        if (companyConfig != null) context.CompanyConfigs.Remove(companyConfig);
         // Remove all company user associations first to avoid foreign key constraint violation
         var companyUsers = await context.CompanyUsers
             .Where(cu => cu.CompanyId == companyId)

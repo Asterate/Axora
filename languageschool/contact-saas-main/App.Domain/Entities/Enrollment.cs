@@ -15,4 +15,5 @@ public class Enrollment : BaseEntity
     public string EnrollmentSeason {get; set;} = default!;
     public bool EnrollmentRepeat {get; set;}
     public int EnrollmentPayStatus {get; set;}
+    public EEnrollmentPlan EnrollmentPlan { get; set; } = EEnrollmentPlan.Free;
 }

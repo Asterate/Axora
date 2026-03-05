@@ -1,0 +1,108 @@
+@model WebApp.ViewModels.CreateScheduleViewModel
+
+@{
+    ViewData["Title"] = Model.ScheduleId.HasValue ? "Edit Schedule" : "Create Schedule";
+}
+
+@section HeaderScripts {
+    <link rel="stylesheet" href="~/css/course-desktop.css" asp-append-version="true">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+}
+
+<!-- Hero -->
+<div class="course-hero">
+    <div class="container">
+        <div class="label">@(Model.ScheduleId.HasValue ? "Edit Schedule" : "Create Schedule")</div>
+        <h1>@Model.CourseName</h1>
+        <p class="description">@(Model.ScheduleId.HasValue ? "Edit the schedule details for this course" : "Create a new schedule for this course")</p>
+
+        <div class="hero-actions">
+            <a asp-action="CourseDesktop" asp-controller="CoursePage" asp-route-id="@Model.CourseId" class="btn-ghost">
+                <i class="fas fa-arrow-left"></i> Back to Course
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Content -->
+<div class="content-grid">
+    <div class="section-card full-width">
+        <div class="card-head">
+            <div class="card-head-left">
+                <div class="card-icon blue"><i class="fas fa-calendar-plus"></i></div>
+                <h2>@(Model.ScheduleId.HasValue ? "Edit Schedule" : "Create Schedule")</h2>
+            </div>
+        </div>
+        <div class="card-body-inner">
+            <form asp-action="CreateSchedule" method="post">
+                @Html.AntiForgeryToken()
+                
+                <input type="hidden" asp-for="ScheduleId" />
+                <input type="hidden" asp-for="CourseId" />
+                <input type="hidden" asp-for="CourseName" />
+                <input type="hidden" asp-for="TeacherId" />
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label asp-for="AvailabilityId" class="form-label">
+                            <i class="fas fa-calendar-check"></i> Availability
+                        </label>
+                        <select asp-for="AvailabilityId" asp-items="Model.Availabilities" class="form-control">
+                            <option value="">Select an availability</option>
+                        </select>
+                        <span asp-validation-for="AvailabilityId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="EScheduleType" class="form-label">
+                            <i class="fas fa-clock"></i> Schedule Type
+                        </label>
+                        <select asp-for="EScheduleType" asp-items="Model.ScheduleTypes" class="form-control">
+                            <option value="">Select a schedule type</option>
+                        </select>
+                        <span asp-validation-for="EScheduleType" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ScheduleStartAt" class="form-label">
+                            <i class="fas fa-calendar-day"></i> Start At
+                        </label>
+                        <input asp-for="ScheduleStartAt" class="form-control" type="datetime-local" />
+                        <span asp-validation-for="ScheduleStartAt" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ScheduleEndAt" class="form-label">
+                            <i class="fas fa-calendar-day"></i> End At
+                        </label>
+                        <input asp-for="ScheduleEndAt" class="form-control" type="datetime-local" />
+                        <span asp-validation-for="ScheduleEndAt" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label asp-for="ScheduleEnvironment" class="form-label">
+                            <i class="fas fa-map-marker-alt"></i> Environment
+                        </label>
+                        <input asp-for="ScheduleEnvironment" class="form-control" placeholder="e.g., Classroom 301, Zoom Meeting, Online" />
+                        <span asp-validation-for="ScheduleEnvironment" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-gold">
+                        <i class="fas fa-save"></i> @(Model.ScheduleId.HasValue ? "Update Schedule" : "Create Schedule")
+                    </button>
+                    <a asp-action="CourseDesktop" asp-controller="CoursePage" asp-route-id="@Model.CourseId" class="btn-ghost">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

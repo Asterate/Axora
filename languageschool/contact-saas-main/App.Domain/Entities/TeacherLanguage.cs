@@ -3,11 +3,11 @@
 public class TeacherLanguage : BaseEntity
 {
     public Guid TeacherId { get; set; }
-    public Teacher Teacher { get; set; } = null!;
+    public Teacher? Teacher { get; set; }
 
     public Guid LanguageId { get; set; }
-    public Language Language { get; set; } = null!;
+    public Language? Language { get; set; }
 
     public Guid LevelId { get; set; }
-    public Level Level { get; set; } = null!;
+    public Level? Level { get; set; }
 }

@@ -55,4 +55,4 @@ API Controllers
 ~~~bash
 dotnet aspnet-codegenerator controller -name GpsLocationsController     -m GpsLocation     -actions -dc AppDbContext -outDir ApiControllers -api --useAsyncActions  -f
 ~~~
-
+docker exec -it languageapp_db psql -U postgres -d webapp2526s 

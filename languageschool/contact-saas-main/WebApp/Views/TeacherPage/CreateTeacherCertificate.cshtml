@@ -1,0 +1,110 @@
+@model WebApp.ViewModels.CreateTeacherCertificateViewModel
+
+@{
+    ViewData["Title"] = Model.Id == Guid.Empty ? "Add Teacher Certificate" : "Edit Teacher Certificate";
+}
+
+@section HeaderScripts {
+    <link rel="stylesheet" href="~/css/course-desktop.css" asp-append-version="true">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+}
+
+<!-- Hero -->
+<div class="course-hero">
+    <div class="container">
+        <div class="label">Teacher Certificate Management</div>
+        <h1>@(Model.Id == Guid.Empty ? "Add Teacher Certificate" : "Edit Teacher Certificate")</h1>
+        <p class="description">
+            @Model.TeacherName
+        </p>
+    </div>
+</div>
+
+<!-- Content -->
+<div class="content-grid">
+    <div class="section-card full-width">
+        <div class="card-head">
+            <div class="card-head-left">
+                <div class="card-icon gold"><i class="fas fa-certificate"></i></div>
+                <h2>@(Model.Id == Guid.Empty ? "Add New Certificate" : "Edit Certificate")</h2>
+            </div>
+        </div>
+        <div class="card-body-inner">
+            <form asp-action="CreateTeacherCertificate" asp-route-teacherId="@Model.TeacherId" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Id" />
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i>
+                            Teacher
+                        </label>
+                        <select asp-for="TeacherId" asp-items="@(new SelectList(Model.Teachers, "Value", "Text"))" class="form-control">
+                            <option value="">-- Select Teacher --</option>
+                        </select>
+                        <span asp-validation-for="TeacherId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="LanguageId" class="form-label">
+                            <i class="fas fa-language"></i>
+                            Language
+                        </label>
+                        <select asp-for="LanguageId" asp-items="@(new SelectList(Model.Languages, "Value", "Text"))" class="form-control">
+                            <option value="">-- Select Language --</option>
+                        </select>
+                        <span asp-validation-for="LanguageId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="LevelId" class="form-label">
+                            <i class="fas fa-signal"></i>
+                            Level
+                        </label>
+                        <select asp-for="LevelId" asp-items="@(new SelectList(Model.Levels, "Value", "Text"))" class="form-control">
+                            <option value="">-- Select Level --</option>
+                        </select>
+                        <span asp-validation-for="LevelId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="TeacherCertificateName" class="form-label">
+                            <i class="fas fa-certificate"></i>
+                            Certificate Name
+                        </label>
+                        <input asp-for="TeacherCertificateName" class="form-control" placeholder="e.g., TEFL Certificate">
+                        <span asp-validation-for="TeacherCertificateName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label asp-for="TeacherCertificateDescription" class="form-label">
+                            <i class="fas fa-align-left"></i>
+                            Certificate Description
+                        </label>
+                        <textarea asp-for="TeacherCertificateDescription" class="form-control" rows="3" placeholder="Describe the certificate..."></textarea>
+                        <span asp-validation-for="TeacherCertificateDescription" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="TeacherCertificateGivenOut" class="form-label">
+                            <i class="fas fa-calendar-check"></i>
+                            Issue Date
+                        </label>
+                        <input asp-for="TeacherCertificateGivenOut" type="date" class="form-control">
+                        <span asp-validation-for="TeacherCertificateGivenOut" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a asp-action="TeacherDesktop" asp-route-id="@Model.TeacherId" class="btn-ghost">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn-gold">
+                        <i class="fas fa-save"></i> Save Certificate
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

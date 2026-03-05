@@ -5,11 +5,11 @@ namespace App.Domain.Entities;
 public class Consultation : BaseEntity
 {
     public Guid ScheduleId { get; set; }
-    public Schedule Schedule { get; set; } = default!;
+    public Schedule? Schedule { get; set; } = default!;
     public Guid TeacherId { get; set; }
-    public Teacher Teacher { get; set; } = default!;
+    public Teacher? Teacher { get; set; } = default!;
     public Guid StudentId { get; set; }
-    public Student Student { get; set; } = default!;
+    public Student? Student { get; set; } = default!;
     [StringLength(128, MinimumLength = 3)]
     public string ConsultationName { get; set; } = default!;
     [StringLength(128, MinimumLength = 10)]

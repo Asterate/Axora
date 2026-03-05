@@ -1,0 +1,231 @@
+@using App.Domain.Entities
+@model WebApp.ViewModels.EnrollmentViewModel
+
+@{
+    ViewData["Title"] = "Enroll in: " + Model.Course?.CourseName;
+}
+
+@section HeaderScripts {
+    <link rel="stylesheet" href="~/css/course-desktop.css" asp-append-version="true">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+}
+
+<!-- Hero -->
+<div class="course-hero">
+    <div class="container">
+        <div class="label">Enrollment</div>
+        <h1>@Model.Course?.CourseName</h1>
+        <p class="description">@Model.Course?.CourseDescription</p>
+
+        <div class="meta-chips">
+            <span class="meta-chip">
+                <i class="fas fa-language"></i>
+                @Model.Course?.Language!.LanguageName
+            </span>
+            <span class="meta-chip">
+                <i class="fas fa-signal"></i>
+                @(Model.Course?.Level != null ? Model.Course.Level.LevelName : "TBD")
+            </span>
+            <span class="meta-chip">
+                <i class="fas fa-chalkboard-teacher"></i>
+                @(Model.Course?.Teacher != null ? $"{Model.Course.Teacher.TeacherFirstName} {Model.Course.Teacher.TeacherLastName}" : "TBD")
+            </span>
+            <span class="meta-chip">
+                <i class="fas fa-calendar"></i>
+                @Model.Course?.CourseSeason
+            </span>
+        </div>
+
+        <div class="hero-actions">
+            <a asp-action="CourseDesktop" asp-controller="CoursePage" asp-route-id="@Model.CourseId" class="btn-ghost">
+                <i class="fas fa-arrow-left"></i> Back to Course
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Enrollment Form -->
+<div class="content-grid">
+    <div class="section-card full-width">
+        <div class="card-head">
+            <div class="card-head-left">
+                <div class="card-icon blue"><i class="fas fa-edit"></i></div>
+                <h2>Enrollment Form</h2>
+            </div>
+        </div>
+        <div class="card-body-inner">
+            <form asp-action="Enroll" asp-route-id="@Model.CourseId" method="post" class="enrollment-form">
+                @Html.AntiForgeryToken()
+
+                <!-- Student Information -->
+                <div class="form-section">
+                    <h3>Student Information</h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label asp-for="StudentFirstName" class="form-label">First Name</label>
+                            <input asp-for="StudentFirstName" class="form-control" required>
+                            <span asp-validation-for="StudentFirstName" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="StudentLastName" class="form-label">Last Name</label>
+                            <input asp-for="StudentLastName" class="form-control" required>
+                            <span asp-validation-for="StudentLastName" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label asp-for="StudentEmail" class="form-label">Email</label>
+                            <input asp-for="StudentEmail" type="email" class="form-control" required>
+                            <span asp-validation-for="StudentEmail" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="StudentPhone" class="form-label">Phone</label>
+                            <input asp-for="StudentPhone" class="form-control" required>
+                            <span asp-validation-for="StudentPhone" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="StudentAddress" class="form-label">Address</label>
+                        <input asp-for="StudentAddress" class="form-control" required>
+                        <span asp-validation-for="StudentAddress" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label asp-for="StudentNativeLanguage" class="form-label">Native Language</label>
+                            <input asp-for="StudentNativeLanguage" class="form-control" required>
+                            <span asp-validation-for="StudentNativeLanguage" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="StudentNationality" class="form-label">Nationality</label>
+                            <input asp-for="StudentNationality" class="form-control" required>
+                            <span asp-validation-for="StudentNationality" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="StudentGender" class="form-label">Gender</label>
+                        <select asp-for="StudentGender" class="form-control" required>
+                            <option value="">Select gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <span asp-validation-for="StudentGender" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!-- Subscription Plan -->
+                <div class="form-section">
+                    <h3>Subscription Plan</h3>
+
+                    <div class="subscription-plans">
+                        <div class="plan-card @(Model.EnrollmentPlan == EEnrollmentPlan.Free ? "selected" : "")">
+                            <div class="plan-header">
+                                <h4>Free</h4>
+                                <div class="plan-price">
+                                    <span class="price">$0</span>
+                                    <span class="period">/month</span>
+                                </div>
+                            </div>
+                            <div class="plan-features">
+                                <ul>
+                                    <li>Basic course materials</li>
+                                    <li>Email support</li>
+                                    <li>Community forums</li>
+                                </ul>
+                            </div>
+                            <div class="plan-action">
+                                <input type="radio" asp-for="EnrollmentPlan" value="@EEnrollmentPlan.Free" id="plan-free" class="plan-radio">
+                                <label for="plan-free" class="btn-gold">Select Free</label>
+                            </div>
+                        </div>
+
+                        <div class="plan-card @(Model.EnrollmentPlan == EEnrollmentPlan.Standard ? "selected" : "")">
+                            <div class="plan-header">
+                                <h4>Standard</h4>
+                                <div class="plan-price">
+                                    <span class="price">@(Model.Subs != null ? $"${Model.Subs.StandardPrice}" : "$0")</span>
+                                    <span class="period">/month</span>
+                                </div>
+                            </div>
+                            <div class="plan-features">
+                                <ul>
+                                    <li>All Free features</li>
+                                    <li>Video lessons</li>
+                                    <li>Live Q&A sessions</li>
+                                    <li>Certificate of completion</li>
+                                </ul>
+                            </div>
+                            <div class="plan-action">
+                                <input type="radio" asp-for="EnrollmentPlan" value="@EEnrollmentPlan.Standard" id="plan-standard" class="plan-radio">
+                                <label for="plan-standard" class="btn-gold">Select Standard</label>
+                            </div>
+                        </div>
+
+                        <div class="plan-card @(Model.EnrollmentPlan == EEnrollmentPlan.Premium ? "selected" : "")">
+                            <div class="plan-header">
+                                <h4>Premium</h4>
+                                <div class="plan-price">
+                                    <span class="price">@(Model.Subs != null ? $"${Model.Subs.PremiumPrice}" : "$0")</span>
+                                    <span class="period">/month</span>
+                                </div>
+                            </div>
+                            <div class="plan-features">
+                                <ul>
+                                    <li>All Standard features</li>
+                                    <li>1-on-1 tutoring sessions</li>
+                                    <li>Personalized study plan</li>
+                                    <li>Priority support</li>
+                                    <li>Advanced certification</li>
+                                </ul>
+                            </div>
+                            <div class="plan-action">
+                                <input type="radio" asp-for="EnrollmentPlan" value="@EEnrollmentPlan.Premium" id="plan-premium" class="plan-radio">
+                                <label for="plan-premium" class="btn-gold">Select Premium</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <span asp-validation-for="EnrollmentPlan" class="text-danger"></span>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-gold btn-large">
+                        <i class="fas fa-check"></i> Enroll Now
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Plan selection functionality
+        document.querySelectorAll('.plan-card').forEach(card => {
+            const radio = card.querySelector('.plan-radio');
+            const label = card.querySelector('label');
+
+            label.addEventListener('click', () => {
+                document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                radio.checked = true;
+            });
+
+            radio.addEventListener('change', () => {
+                if (radio.checked) {
+                    document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+                    card.classList.add('selected');
+                }
+            });
+        });
+    </script>
+}

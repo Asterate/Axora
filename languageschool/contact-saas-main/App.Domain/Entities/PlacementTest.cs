@@ -5,9 +5,9 @@ namespace App.Domain.Entities;
 public class PlacementTest : BaseEntity
 {
     public Guid LanguageId { get; set; }
-    public Language Language { get; set; } = default!;
+    public Language? Language { get; set; }
     public Guid LevelId { get; set; }
-    public Level Level { get; set; } = default!;
+    public Level? Level { get; set; }
     [StringLength(128, MinimumLength = 3)]
     public string PlacementTestName { get; set; } = default!;
     [StringLength(128, MinimumLength = 3)]

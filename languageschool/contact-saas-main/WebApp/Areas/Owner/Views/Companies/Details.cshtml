@@ -1,4 +1,4 @@
-@model App.Domain.Entities.Company
+﻿@model App.Domain.Entities.Company
 
 @{
     ViewData["Title"] = "Company Details";
@@ -31,7 +31,7 @@
              <ul>
              @foreach (var user in Model.CompanyUsers.Where(cu => cu.Roles.HasFlag(App.Domain.Entities.ECompanyRoles.Admin)))
              {
-                 <li>@user.AppUser.FirstName @user.AppUser.LastName (@user.AppUser.Email)
+                 <li>@user.AppUser?.FirstName @user.AppUser?.LastName (@user.AppUser?.Email)
                      @if (TempData["AdminUserId"]?.ToString() == user.AppUserId.ToString())
                      {
                          <br /><strong>Initial Password: @TempData["AdminPassword"]</strong>
@@ -45,7 +45,7 @@
              <ul>
              @foreach (var user in Model.CompanyUsers.Where(cu => cu.Roles.HasFlag(App.Domain.Entities.ECompanyRoles.Manager)))
              {
-                 <li>@user.AppUser.FirstName @user.AppUser.LastName (@user.AppUser.Email)
+                 <li>@user.AppUser?.FirstName @user.AppUser?.LastName (@user.AppUser?.Email)
                      @if (TempData["ManagerUserId"]?.ToString() == user.AppUserId.ToString())
                      {
                          <br /><strong>Initial Password: @TempData["ManagerPassword"]</strong>
@@ -59,7 +59,7 @@
             <ul>
             @foreach (var user in Model.CompanyUsers.Where(cu => cu.Roles.HasFlag(App.Domain.Entities.ECompanyRoles.Teacher)))
             {
-                <li>@user.AppUser.FirstName @user.AppUser.LastName (@user.AppUser.Email)</li>
+                <li>@user.AppUser?.FirstName @user.AppUser?.LastName (@user.AppUser?.Email)</li>
             }
             </ul>
         </div>

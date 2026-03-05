@@ -1,0 +1,278 @@
+@model WebApp.ViewModels.TeacherDesktopViewModel
+
+@section HeaderScripts {
+    <link rel="stylesheet" href="~/css/course-desktop.css" asp-append-version="true">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+}
+
+<!-- Hero -->
+<div class="course-hero">
+    <div class="container">
+        <div class="label">Teacher Overview</div>
+        
+        <!-- Teacher Selector -->
+        <div class="teacher-selector">
+            <label for="teacherSelect">Select Teacher:</label>
+            <select id="teacherSelect" onchange="changeTeacher(this.value)">
+                @foreach (var teacher in Model.AllTeachers)
+                {
+                    if (teacher.Id == Model.SelectedTeacherId)
+                    {
+                        <option value="@teacher.Id" selected>
+                            @teacher.TeacherFirstName @teacher.TeacherLastName
+                        </option>
+                    }
+                    else
+                    {
+                        <option value="@teacher.Id">
+                            @teacher.TeacherFirstName @teacher.TeacherLastName
+                        </option>
+                    }
+                }
+            </select>
+        </div>
+
+        <h1>@Model.SelectedTeacher?.TeacherFirstName @Model.SelectedTeacher?.TeacherLastName</h1>
+        <p class="description">
+            @Model.SelectedTeacher?.TeacherEmail | @Model.SelectedTeacher?.TeacherPhone
+        </p>
+
+        <div class="meta-chips">
+            <span class="meta-chip">
+                <i class="fas fa-building"></i>
+                @Model.SelectedTeacher?.Company?.CompanyName
+            </span>
+            <span class="meta-chip">
+                <i class="fas fa-language"></i>
+                @Model.SelectedTeacher?.TeacherNativeLanguage
+            </span>
+            <span class="meta-chip">
+                <i class="fas fa-flag"></i>
+                @Model.SelectedTeacher?.TeacherNationality
+            </span>
+            <span class="meta-chip">
+                <i class="fas fa-venus-mars"></i>
+                @Model.SelectedTeacher?.TeacherGender
+            </span>
+        </div>
+
+        <div class="hero-actions">
+            <a asp-action="CourseDesktop" asp-controller="CoursePage" asp-route-id="@Model.CourseId" class="btn-ghost">
+                <i class="fas fa-arrow-left"></i> Back to Main
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Teacher Details -->
+<div class="content-grid">
+    <div class="section-card full-width">
+        <div class="card-head">
+            <div class="card-head-left">
+                <div class="card-icon blue"><i class="fas fa-user"></i></div>
+                <h2>Teacher Details</h2>
+            </div>
+        </div>
+        <div class="card-body-inner">
+            <div class="teacher-details-grid">
+                <div class="detail-item">
+                    <strong>Full Name:</strong>
+                    <span>@Model.SelectedTeacher?.TeacherFirstName @Model.SelectedTeacher?.TeacherLastName</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Email:</strong>
+                    <span>@Model.SelectedTeacher?.TeacherEmail</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Phone:</strong>
+                    <span>@Model.SelectedTeacher?.TeacherPhone</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Address:</strong>
+                    <span>@Model.SelectedTeacher?.TeacherAddress</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Native Language:</strong>
+                    <span>@Model.SelectedTeacher?.TeacherNativeLanguage</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Nationality:</strong>
+                    <span>@Model.SelectedTeacher?.TeacherNationality</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Gender:</strong>
+                    <span>@Model.SelectedTeacher?.TeacherGender</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Availability -->
+    <div class="section-card full-width">
+        <div class="card-head">
+            <div class="card-head-left">
+                <div class="card-icon blue"><i class="fas fa-calendar-check"></i></div>
+                <h2>Availability</h2>
+            </div>
+            <div class="card-head-right">
+                <a asp-action="CreateAvailability" asp-route-teacherId="@Model.SelectedTeacher?.Id" class="btn-gold">
+                    <i class="fas fa-plus"></i> Add Availability
+                </a>
+            </div>
+        </div>
+        <div class="card-body-inner">
+            @if (Model.Availabilities != null && Model.Availabilities.Any())
+            {
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Start Date</th>
+                            <th>Start Time</th>
+                            <th>End Date</th>
+                            <th>End Time</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var availability in Model.Availabilities)
+                    {
+                        <tr>
+                            <td>@availability.AvailabilityStartDate.ToString("MMM dd, yyyy")</td>
+                            <td>@availability.AvailabilityStartDate.ToString("HH:mm")</td>
+                            <td>@availability.AvailabilityEndDate.ToString("MMM dd, yyyy")</td>
+                            <td>@availability.AvailabilityEndDate.ToString("HH:mm")</td>
+                            <td>
+                                <div class="schedule-actions">
+                                    <a asp-action="EditAvailability" asp-route-id="@availability.Id" class="btn-edit">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <form asp-action="DeleteAvailability" asp-route-id="@availability.Id" asp-route-teacherId="@Model.SelectedTeacher?.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this availability?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-delete">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <i class="fas fa-calendar-times"></i>
+                    <p>@(Model.NoAvailabilitiesMessage ?? "No availability slots defined yet. Add your first availability to get started!")</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Teacher Certificates -->
+    <div class="section-card full-width">
+        <div class="card-head">
+            <div class="card-head-left">
+                <div class="card-icon gold"><i class="fas fa-certificate"></i></div>
+                <h2>Teacher Certificates</h2>
+            </div>
+            <div class="card-head-right">
+                <a asp-action="CreateTeacherCertificate" asp-route-teacherId="@Model.SelectedTeacher?.Id" class="btn-gold">
+                    <i class="fas fa-plus"></i> Add Certificate
+                </a>
+            </div>
+        </div>
+        <div class="card-body-inner">
+            @if (Model.TeacherCertificates != null && Model.TeacherCertificates.Any())
+            {
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Certificate Name</th>
+                            <th>Language</th>
+                            <th>Level</th>
+                            <th>Issue Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var certificate in Model.TeacherCertificates)
+                    {
+                        <tr>
+                            <td>@certificate.TeacherCertificateName</td>
+                            <td>@certificate.Language?.LanguageName</td>
+                            <td>@certificate.Level?.LevelName</td>
+                            <td>@certificate.TeacherCertificateGivenOut.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                <div class="schedule-actions">
+                                    <a asp-action="EditTeacherCertificate" asp-route-id="@certificate.Id" class="btn-edit">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <form asp-action="DeleteTeacherCertificate" asp-route-id="@certificate.Id" asp-route-teacherId="@Model.SelectedTeacher?.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this certificate?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-delete">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <i class="fas fa-certificate"></i>
+                    <p>@(Model.NoCertificatesMessage ?? "No teacher certificates added yet. Add your first certificate to get started!")</p>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function changeTeacher(teacherId) {
+        const courseId = '@Model.CourseId';
+        window.location.href = `/TeacherPage/TeacherDesktop?id=${courseId}&selectedTeacherId=${teacherId}`;
+    }
+</script>
+
+<style>
+    .teacher-selector {
+        margin-bottom: 20px;
+    }
+
+    .teacher-selector label {
+        font-weight: 500;
+        margin-right: 10px;
+    }
+
+    .teacher-selector select {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        min-width: 250px;
+    }
+
+    .teacher-details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .detail-item strong {
+        font-weight: 600;
+        color: #333;
+    }
+</style>

@@ -1,9 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using App.DAL.EF;
+using App.Domain.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Moq;
 using WebApp.Controllers;
 using Xunit;
 using Xunit.Abstractions;
@@ -35,9 +38,13 @@ public class UnitTestHomeController
         using var logFactory = LoggerFactory.Create(builder => builder.AddConsole());
         var logger = logFactory.CreateLogger<HomeController>();
 
+        // Create mock UserManager
+        var store = new Mock<IUserStore<AppUser>>();
+        var userManager = new Mock<UserManager<AppUser>>(
+            store.Object, default!, default!, default!, default!, default!, default!, default!, default!);
 
-        //set up controller - ILogger<HomeController> logger, AppDbContext ctx
-        _homeController = new HomeController(_ctx, logger);
+        //set up controller
+        _homeController = new HomeController(_ctx, logger, userManager.Object);
     }
     
     [Fact]

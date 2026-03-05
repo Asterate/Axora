@@ -76,6 +76,7 @@ else
                         <th>Phone Number</th>
                         <th>Email</th>
                         <th>Created By</th>
+                        <th>Role</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -88,8 +89,8 @@ else
                             <td>@company.CompanyAddress</td>
                             <td>@company.CompanyPhoneNumber</td>
                             <td>@company.CompanyEmail</td>
-                            <td>@(company.CreatedBy != null ? $"{company.CreatedBy.FirstName} {company.CreatedBy.LastName}" : "Unknown")</td>
-                            <td><span class="badge badge-danger">Rejected</span></td>
+                            <td>@(company.CompanyUsers.FirstOrDefault()?.AppUser?.UserName ?? "Unknown")</td>
+                            <td>@(company.CompanyUsers.FirstOrDefault()?.Roles.ToString() ?? "None")</td>
                             <td>
                                 <a asp-action="Edit" asp-route-id="@company.Id" class="btn btn-sm btn-primary">
                                     <span class="oi oi-pencil"></span> Edit

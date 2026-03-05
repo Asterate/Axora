@@ -1,0 +1,147 @@
+@model WebApp.ViewModels.CreateCertificateViewModel
+
+@{
+    ViewData["Title"] = "Issue Certificate";
+}
+
+@section HeaderScripts {
+    <link rel="stylesheet" href="~/css/course-desktop.css" asp-append-version="true">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+}
+
+<!-- Hero -->
+<div class="course-hero">
+    <div class="container">
+        <div class="label">Certificate Management</div>
+        <h1>@(Model.TeacherId == Guid.Empty ? "Issue Certificate" : "Edit Certificate")</h1>
+        <p class="description">
+            @Model.TeacherName
+        </p>
+
+        <div class="hero-actions">
+            <a asp-action="TeacherDesktop" asp-route-id="@Model.TeacherId" class="btn-ghost">
+                <i class="fas fa-arrow-left"></i> Back to Teacher Desktop
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Content -->
+<div class="content-grid">
+    <div class="section-card full-width">
+        <div class="card-head">
+            <div class="card-head-left">
+                <div class="card-icon gold"><i class="fas fa-certificate"></i></div>
+                <h2>@(Model.TeacherId == Guid.Empty ? "Issue New Certificate" : "Edit Certificate")</h2>
+            </div>
+        </div>
+        <div class="card-body-inner">
+            <form asp-action="CreateCertificate" asp-route-teacherId="@Model.TeacherId" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-user"></i>
+                            Teacher
+                        </label>
+                        <input type="text" value="@Model.TeacherName" class="form-control" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="CourseId" class="form-label">
+                            <i class="fas fa-book"></i>
+                            Course
+                        </label>
+                        <select asp-for="CourseId" asp-items="@(new SelectList(Model.Courses, "Value", "Text"))" class="form-control" onchange="getEnrollments(this.value)">
+                            <option value="">-- Select Course --</option>
+                        </select>
+                        <span asp-validation-for="CourseId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="EnrollmentId" class="form-label">
+                            <i class="fas fa-user-graduate"></i>
+                            Student
+                        </label>
+                        <select asp-for="EnrollmentId" asp-items="@(new SelectList(Model.Enrollments, "Value", "Text"))" class="form-control">
+                            <option value="">-- Select Student --</option>
+                        </select>
+                        <span asp-validation-for="EnrollmentId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="CertificateName" class="form-label">
+                            <i class="fas fa-certificate"></i>
+                            Certificate Name
+                        </label>
+                        <input asp-for="CertificateName" class="form-control" placeholder="e.g., Advanced English Certificate">
+                        <span asp-validation-for="CertificateName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label asp-for="CertificateDescription" class="form-label">
+                            <i class="fas fa-align-left"></i>
+                            Certificate Description
+                        </label>
+                        <textarea asp-for="CertificateDescription" class="form-control" rows="3" placeholder="Describe the certificate achievements..."></textarea>
+                        <span asp-validation-for="CertificateDescription" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="CertificateGivenOutAt" class="form-label">
+                            <i class="fas fa-calendar-check"></i>
+                            Issue Date
+                        </label>
+                        <input asp-for="CertificateGivenOutAt" type="date" class="form-control">
+                        <span asp-validation-for="CertificateGivenOutAt" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a asp-action="TeacherDesktop" asp-route-id="@Model.TeacherId" class="btn-ghost">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn-gold">
+                        <i class="fas fa-save"></i> Save Certificate
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function getEnrollments(courseId) {
+            if (!courseId) {
+                $('#EnrollmentId').html('<option value="">-- Select Student --</option>');
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("GetEnrollments", "TeacherPage")',
+                type: 'GET',
+                data: { courseId: courseId },
+                success: function (data) {
+                    var options = '<option value="">-- Select Student --</option>';
+                    $.each(data, function (index, item) {
+                        options += '<option value="' + item.value + '">' + item.text + '</option>';
+                    });
+                    $('#EnrollmentId').html(options);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error loading enrollments:', error);
+                }
+            });
+        }
+
+        // Initialize enrollments if course is already selected
+        $(document).ready(function () {
+            var courseId = $('#CourseId').val();
+            if (courseId) {
+                getEnrollments(courseId);
+            }
+        });
+    </script>
+}

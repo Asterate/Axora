@@ -29,7 +29,8 @@ public class CompanyOwnerService
     }
 
     // Create a new user and assign them a company role (admin, manager, or teacher)
-    public static async Task<(AppUser User, string InitialPassword)> CreateCompanyUser(AppDbContext context, string email, string firstName, string lastName, ECompanyRoles role, Guid companyId, UserManager<AppUser> userManager)
+    public static async Task<(AppUser User, string InitialPassword)> CreateCompanyUser(AppDbContext context, string email, string firstName, string lastName, ECompanyRoles role, Guid companyId, UserManager<AppUser> userManager, 
+        string? teacherPhone = null, string? teacherAddress = null, string? teacherNativeLanguage = null, string? teacherNationality = null, string? teacherGender = null)
     {
         var newUser = new AppUser
         {
@@ -57,6 +58,28 @@ public class CompanyOwnerService
         };
 
         context.CompanyUsers.Add(companyUser);
+        
+        // Create Teacher entity if role is Teacher and all required fields are provided
+        if (role == ECompanyRoles.Teacher && !string.IsNullOrEmpty(teacherPhone) && !string.IsNullOrEmpty(teacherAddress) && 
+            !string.IsNullOrEmpty(teacherNativeLanguage) && !string.IsNullOrEmpty(teacherNationality) && !string.IsNullOrEmpty(teacherGender))
+        {
+            var teacher = new Teacher
+            {
+                CompanyId = companyId,
+                ComapanyUserId = companyUser.Id,
+                TeacherFirstName = firstName,
+                TeacherLastName = lastName,
+                TeacherEmail = email,
+                TeacherPhone = teacherPhone,
+                TeacherAddress = teacherAddress,
+                TeacherNativeLanguage = teacherNativeLanguage,
+                TeacherNationality = teacherNationality,
+                TeacherGender = teacherGender
+            };
+            
+            context.Teachers.Add(teacher);
+        }
+        
         await context.SaveChangesAsync();
 
         return (newUser, initialPassword);

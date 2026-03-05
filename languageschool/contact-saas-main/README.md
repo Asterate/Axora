@@ -109,3 +109,5 @@ Project general purpose is to create platform for different language schools to 
 ## Nice to have
 - email sent to the new owner after creating a company.
 - admin and manager auto create
+- Links to material place to order or to read
+- teacher have edit button to change their information
