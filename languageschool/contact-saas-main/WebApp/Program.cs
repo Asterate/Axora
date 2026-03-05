@@ -27,6 +27,7 @@ app.SetupAppData();
 app.UseAppMiddleware();
 app.UseAppSwagger();
 app.MapAppEndpoints();
+builder.Services.AddHttpContextAccessor();
 
 app.Run();
 

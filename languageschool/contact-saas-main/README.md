@@ -111,3 +111,18 @@ Project general purpose is to create platform for different language schools to 
 - admin and manager auto create
 - Links to material place to order or to read
 - teacher have edit button to change their information
+
+## Won't make it in time to implement
+- Whole project authorization, works only on CourseDesktop view.
+- Path based routing semi works, it still passes id around
+- Subscription tiers idea is there, but it is just not functional
+- Audit trail semi works, but it does not show currently everything in real time
+- Currently, no soft delete
+- Functions that are in progress or not implemented like student view.
+
+## What works from requirements
+- Data isolation, I would say it is well enough isolated and I use mostly eager load.
+- Authentication works and can even request password resend from company owner.
+- Users can belong to multiple companies
+- Most views are somewhat implemented and ERD entities are fully in program
+- Using POSTGRESSQL

@@ -2,6 +2,7 @@
 using App.DAL.EF;
 using App.Domain.Entities;
 using App.Domain.Identity;
+using App.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,15 +10,6 @@ namespace App.BLL;
 
 public class CompanyAdmin
 {
-    public static void AddCompanyUser(){}
-    public static void DeleteCompanyUser(){}
-    public static void UpdateCompanyUser(){}
-    public static void LoadCompanyUser(){}
-    public static void UpdateCompanyConfigTimeZone(){}
-    public static void UpdateCompanyConfigAllowOneOnOneSessions(){}
-    public static void UpdateCompanyConfigEnableMaterialTracking(){}
-    public static void UpdateCompanyConfigMaxStudentsPerCourse(){}
-    public static void UpdateCompanyConfigEnableCertificates(){}
     
     public static async Task ApproveCompany(AppDbContext context, UserManager<AppUser> userManager, Guid companyId)
     {
@@ -33,44 +25,15 @@ public class CompanyAdmin
         newOwner.Roles = ECompanyRoles.Owner;
         context.Update(company);
         context.Update(newOwner);
-        
+        await context.SaveChangesAsync(); // save before syncing roles
+        var appUser = await userManager.FindByIdAsync(newOwner.AppUserId.ToString());
+        if (appUser != null)
+        {
+            await UserRoleHelper.SyncCompanyUserRolesToIdentityAsync(userManager, appUser, newOwner.Roles);
+        }
+
+
         await context.SaveChangesAsync();
-    }
-
-    
-
-    // Sanitize string for email generation - replace special characters
-    private static string SanitizeForEmail(string input)
-    {
-        if (string.IsNullOrEmpty(input))
-            return string.Empty;
-            
-        // Replace special characters with their ASCII equivalents
-        var sanitized = input
-            .Replace("ä", "a")
-            .Replace("ö", "o")
-            .Replace("ü", "u")
-            .Replace("õ", "o")
-            .Replace("å", "a")
-            .Replace("ø", "o")
-            .Replace("é", "e")
-            .Replace("è", "e")
-            .Replace("ê", "e")
-            .Replace("á", "a")
-            .Replace("à", "a")
-            .Replace("â", "a")
-            .Replace("í", "i")
-            .Replace("ì", "i")
-            .Replace("î", "i")
-            .Replace("ó", "o")
-            .Replace("ò", "o")
-            .Replace("ô", "o")
-            .Replace("ú", "u")
-            .Replace("ù", "u")
-            .Replace("û", "u");
-            
-        // Remove any remaining non-alphanumeric characters (except spaces and underscores)
-        return System.Text.RegularExpressions.Regex.Replace(sanitized, "[^a-zA-Z0-9_ ]", "");
     }
     
     public static async Task RejectCompany(AppDbContext context, Guid companyId)
@@ -100,24 +63,6 @@ public class CompanyAdmin
             .ToListAsync();
     }
     
-    public static async Task<List<Company>> GetApprovedCompanies(AppDbContext context)
-    {
-        return await context.Companies
-            .Where(c => ECompanyStatus.Approved == c.CompanyStatus)
-            .Include(c => c.CompanyUsers)
-            .ThenInclude(cu => cu.AppUser)
-            .ToListAsync();
-    }
-    
-    public static async Task<List<Company>> GetRejectedCompanies(AppDbContext context)
-    {
-        return await context.Companies
-            .Where(c => ECompanyStatus.Rejected == c.CompanyStatus)
-            .Include(c => c.CompanyUsers)
-            .ThenInclude(cu => cu.AppUser)
-            .ToListAsync();
-    }
-    
     public static async Task<List<Company>> GetAllProcessedCompanies(AppDbContext context)
     {
         return await context.Companies
@@ -134,6 +79,14 @@ public class CompanyAdmin
             .Where(c => c.CompanyId == companyId)
             .FirstOrDefaultAsync();
         if (companyConfig != null) context.CompanyConfigs.Remove(companyConfig);
+        
+        var companySubs = await context.Subs
+            .Where(c => c.CompanyId == companyId)
+            .FirstOrDefaultAsync();
+        if (companyConfig != null)
+            if (companySubs != null)
+                context.Subs.Remove(companySubs);
+        
         // Remove all company user associations first to avoid foreign key constraint violation
         var companyUsers = await context.CompanyUsers
             .Where(cu => cu.CompanyId == companyId)

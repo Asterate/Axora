@@ -2,6 +2,7 @@
 using App.DAL.EF;
 using App.Domain.Entities;
 using App.Domain.Identity;
+using App.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -58,6 +59,8 @@ public class CompanyOwnerService
         };
 
         context.CompanyUsers.Add(companyUser);
+        await UserRoleHelper.SyncCompanyUserRolesToIdentityAsync(userManager, newUser, role);
+
         
         // Create Teacher entity if role is Teacher and all required fields are provided
         if (role == ECompanyRoles.Teacher && !string.IsNullOrEmpty(teacherPhone) && !string.IsNullOrEmpty(teacherAddress) && 
@@ -78,6 +81,7 @@ public class CompanyOwnerService
             };
             
             context.Teachers.Add(teacher);
+            await UserRoleHelper.SyncCompanyUserRolesToIdentityAsync(userManager, newUser, ECompanyRoles.Teacher);
         }
         
         await context.SaveChangesAsync();

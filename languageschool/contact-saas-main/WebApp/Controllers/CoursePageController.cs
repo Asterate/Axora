@@ -2,11 +2,12 @@
 using App.DAL.EF;
 using App.Domain.Entities;
 using App.Domain.Identity;
+using App.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-
 using WebApp.ViewModels;
 using WebApp.Views.BusinessPage;
 
@@ -23,6 +24,7 @@ public class CoursePageController : Controller
     }
     
     // Enrollment action
+    [Authorize(Roles = "STUDENT,COMPANYMANAGER,COMPANYADMIN,COMPANYOWNER")]
     public async Task<IActionResult> Enroll(Guid id)
     {
         var course = await _context.Courses
@@ -58,6 +60,7 @@ public class CoursePageController : Controller
     
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "STUDENT,COMPANYMANAGER,COMPANYADMIN,COMPANYOWNER,admin")]
     public async Task<IActionResult> Enroll(Guid id, EnrollmentViewModel vm)
     {
         if (!ModelState.IsValid)
@@ -103,7 +106,8 @@ public class CoursePageController : Controller
             companyUser = new CompanyUser
             {
                 AppUserId = currentUser.Id,
-                CompanyId = courseToEnroll.CompanyId
+                CompanyId = courseToEnroll.CompanyId,
+                Roles = ECompanyRoles.Student
             };
             _context.CompanyUsers.Add(companyUser);
             await _context.SaveChangesAsync();
@@ -126,6 +130,7 @@ public class CoursePageController : Controller
         };
         _context.Students.Add(student);
         await _context.SaveChangesAsync();
+        await UserRoleHelper.SyncCompanyUserRolesToIdentityAsync(_userManager, currentUser, companyUser.Roles);
 
         // Create enrollment
         var enrollment = new Enrollment
@@ -168,6 +173,7 @@ public class CoursePageController : Controller
     
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "COMPANYMANAGER,COMPANYOWNER,admin")]
     public async Task<IActionResult> CreateCourse(Guid id, CreateCourseViewModel vm)
     {
         
@@ -250,45 +256,7 @@ public class CoursePageController : Controller
                 .Include(e => e.Student)
                 .ToListAsync();
             
-            var attendanceRecordsVm = new EntityLogViewModel
-            {
-                EntityName = "Attendance Records",
-                EntityIcon = "fas fa-clipboard-list",
-                LogPageAction = "StudentAttendance",
-                LogPageController = "AttendanceRecord",
-                NoItemsMessage = "No students enrolled in this course yet. Students will appear here once they enroll."
-            };
-            
-            foreach (var enrollment in enrolledStudents)
-            {
-                var student = enrollment.Student;
-                var attendanceCount = await _context.AttendanceRecords
-                    .CountAsync(ar => ar.EnrollmentId == enrollment.Id);
-                
-                var item = new EntityLogItemViewModel
-                {
-                    Id = student.Id,
-                    Title = $"{student.StudentFirstName} {student.StudentLastName}",
-                    Subtitle = student.StudentEmail,
-                    Icon = "fas fa-user-graduate",
-                    BadgeText = $"{attendanceCount} sessions",
-                    BadgeClass = "badge-attendance",
-                    LogActionText = "View Attendance",
-                    LogActionIcon = "fas fa-list",
-                    RouteValues = new Dictionary<string, string>
-                    {
-                        { "enrollmentId", enrollment.Id.ToString() },
-                        { "courseId", id.ToString() }
-                    },
-                    AdditionalData = new Dictionary<string, string>
-                    {
-                        { "Enrollment Date", enrollment.EnrollmentCreatedAt.ToString("MMM dd, yyyy") },
-                        { "Plan", enrollment.EnrollmentPlan.ToString() }
-                    }
-                };
-                
-                attendanceRecordsVm.Items.Add(item);
-            }
+           
             
             // For demo purposes, if no materials or schedules, create some dummy data
             var vm = new CourseDesktopViewModel
@@ -296,7 +264,6 @@ public class CoursePageController : Controller
                 Course = course,
                 Materials = materials,
                 Schedules = schedules,
-                AttendanceRecords = attendanceRecordsVm,
                 IsEnrolled = isEnrolled
             };
             
@@ -315,6 +282,7 @@ public class CoursePageController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "COMPANYMANAGER,COMPANYOWNER,admin")]
     public IActionResult CourseDelete(Guid id, Guid companyId)
     {
         var course = _context.Courses.FirstOrDefault(x => x.Id == id);
@@ -333,6 +301,7 @@ public class CoursePageController : Controller
         return RedirectToAction("CreateMaterial", "MaterialPage", new { courseId });
     }
 
+    [Authorize(Roles = "COMPANYMANAGER,COMPANYOWNER,admin")]
      public async Task<IActionResult> EditCourse(Guid id, Guid? languageId = null)
     {
         var course = await _context.Courses
@@ -367,6 +336,7 @@ public class CoursePageController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "COMPANYMANAGER,COMPANYOWNER,admin")]
     public async Task<IActionResult> EditCourse(Guid id, CreateCourseViewModel vm)
     {
         ModelState.Remove("Languages");

@@ -1,6 +1,9 @@
 using App.BLL;
 using App.DAL.EF;
 using App.Domain.Entities;
+using App.Domain.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +14,12 @@ namespace WebApp.Controllers;
 public class SchedulePageController : Controller
 {
     private readonly AppDbContext _context;
+    private readonly UserManager<AppUser> _userManager;
 
-    public SchedulePageController(AppDbContext context)
+    public SchedulePageController(AppDbContext context, UserManager<AppUser> usermanager)
     {
         _context = context;
+        _userManager = usermanager;
     }
 
     public async Task<IActionResult> CreateSchedule(Guid courseId)
@@ -104,8 +109,21 @@ public class SchedulePageController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteSchedule(Guid id, Guid courseId)
-    {
+    [Authorize(Roles = "COMPANYMANAGER,COMPANYOWNER,admin,TEACHER")]
+    public async Task<IActionResult> DeleteSchedule(Guid id, Guid courseId, Guid companyId)
+    {    
+        var currentUser = await _userManager.GetUserAsync(User);
+        if (currentUser == null) 
+            return RedirectToAction("CourseDesktop", "CoursePage", new { id = courseId });
+
+        var userGuid = currentUser.Id;
+        var companyUser = await _context.CompanyUsers
+            .FirstOrDefaultAsync(cu => cu.AppUserId == userGuid && cu.CompanyId == companyId);
+        if (companyUser == null)
+        {
+            return Forbid();
+        }
+        
         await ScheduleService.DeleteSchedule(_context, id);
         return RedirectToAction("CourseDesktop", "CoursePage", new { id = courseId });
     }

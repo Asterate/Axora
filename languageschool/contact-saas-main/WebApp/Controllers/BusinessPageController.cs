@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using App.Domain.Identity;
 using System.Text;
 using System.Text.Encodings.Web;
+using App.Helpers;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using WebApp.Areas.Root.ViewModels;
@@ -49,13 +50,18 @@ public class BusinessPageController(AppDbContext context, UserManager<AppUser> u
             context.Add(company);
 
             // Associate the current user with the company
+            var userId = userManager.GetUserId(User);
+            var appUser = await userManager.FindByIdAsync(userId ?? throw new InvalidOperationException());
+            if (appUser == null) throw new InvalidOperationException();
+            var appUserId = appUser.Id;
             var companyUser = new CompanyUser
             {
                 CompanyId = company.Id,
-                AppUserId = User.UserId(),
+                AppUserId = appUserId,
                 Roles = ECompanyRoles.None // Start with no roles, will get owner role when approved
             };
             context.CompanyUsers.Add(companyUser);
+            await UserRoleHelper.SyncCompanyUserRolesToIdentityAsync(userManager, appUser, companyUser.Roles);
 
             var companyConfig = new CompanyConfig
             {
