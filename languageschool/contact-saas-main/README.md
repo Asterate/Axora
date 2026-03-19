@@ -17,15 +17,15 @@ Project general purpose is to create platform for different language schools to 
     - Role-based authorization via `[Authorize(Roles = "...")]`
     - Login, registration, password reset
   
-      | Role | Description |
-      | ---------- | ----------- |
-      | SystemAdmin | Full access. Manage companies, subscriptions, billing, system config, feature flags. View cross-tenant analytics. Impersonate company users for support. |
-      | SystemSupport | View-only access to company data for troubleshooting. Create support tickets. Cannot modify billing or system config. |
-      | SystemBilling | Manage subscription plans, pricing tiers, invoices, payment status. Cannot access company operational data. |
-      | CompanyOwner | Full control within tenant. Manage company settings, users, roles, subscription tier. Transfer ownership. Cannot access other tenants. |
-      | CompanyAdmin | Manage users, roles, and all operational data within tenant. Cannot change subscription or billing. |
-      | CompanyManager | Full CRUD on operational entities (business-specific data). Can view reports. Cannot manage users or company settings. |
-      | CompanyEmployee | Limited CRUD — create and view own work, edit assigned records. Read-only on shared reference data. |
+      | Role            | Description                                                                                                                                              |
+      |-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+      | SystemAdmin     | Full access. Manage companies, subscriptions, billing, system config, feature flags. View cross-tenant analytics. Impersonate company users for support. |
+      | SystemSupport   | View-only access to company data for troubleshooting. Create support tickets. Cannot modify billing or system config.                                    |
+      | SystemBilling   | Manage subscription plans, pricing tiers, invoices, payment status. Cannot access company operational data.                                              |
+      | CompanyOwner    | Full control within tenant. Manage company settings, users, roles, subscription tier. Transfer ownership. Cannot access other tenants.                   |
+      | CompanyAdmin    | Manage users, roles, and all operational data within tenant. Cannot change subscription or billing.                                                      |
+      | CompanyManager  | Full CRUD on operational entities (business-specific data). Can view reports. Cannot manage users or company settings.                                   |
+      | CompanyEmployee | Limited CRUD — create and view own work, edit assigned records. Read-only on shared reference data.                                                      |
   
     #### Webapp basic implementation (only main access)
 - **SystemAdmin**
@@ -80,31 +80,31 @@ Project general purpose is to create platform for different language schools to 
 
 ![alt text](LanguageSaaSReal.svg)
 
-| Table name | Description |
-| ---------- | ----------- |
-| user       | users represent all the individuals who are on the platform |
-| role | Data of roles user can take which will give the user access and rights in the webapp |
-| userrole | Many to many which shows which user has what role in system wise |
-| companyuser | Many to many specifically to company. This table will show which users are with which company and give them roles inside the table |
-| company    | All the companies represented on the platform |
-| companyconfig | Special settings or configurations for companies to set their environment |
-| subs | Data of subscription plans |
-| teacher | Data of existing teachers within the company |
-| availability | Time slots of teacher available times |
-| teachercertificate | Data of teacher language and level proficency |
-| student | Learners under company |
-| placementtest | Test to determine student level in specific language |
-| language | Data of available languages |
-| level | Language proficency mark like A1, B2 |
-| certificate | Course own certificate that is given out after finishing |
-| course    | Courses of different languages and levels under companies |
-| enrollment | Data of students who are enrolled to which courses |
-| materialdistribution | Which materials enrolled students need and have |
-| material   | Material needed or related to the courses |
-| attendancerecord | Data of course time slots and attendance of them by students |
-| schedule | Different time blocks for scheduling |
-| consultation | Data of special one-on-one meetings with the teacher |
-| session | Data of classes the course has |
+| Table name           | Description                                                                                                                        |
+|----------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| user                 | users represent all the individuals who are on the platform                                                                        |
+| role                 | Data of roles user can take which will give the user access and rights in the webapp                                               |
+| userrole             | Many to many which shows which user has what role in system wise                                                                   |
+| companyuser          | Many to many specifically to company. This table will show which users are with which company and give them roles inside the table |
+| company              | All the companies represented on the platform                                                                                      |
+| companyconfig        | Special settings or configurations for companies to set their environment                                                          |
+| subs                 | Data of subscription plans                                                                                                         |
+| teacher              | Data of existing teachers within the company                                                                                       |
+| availability         | Time slots of teacher available times                                                                                              |
+| teachercertificate   | Data of teacher language and level proficency                                                                                      |
+| student              | Learners under company                                                                                                             |
+| placementtest        | Test to determine student level in specific language                                                                               |
+| language             | Data of available languages                                                                                                        |
+| level                | Language proficency mark like A1, B2                                                                                               |
+| certificate          | Course own certificate that is given out after finishing                                                                           |
+| course               | Courses of different languages and levels under companies                                                                          |
+| enrollment           | Data of students who are enrolled to which courses                                                                                 |
+| materialdistribution | Which materials enrolled students need and have                                                                                    |
+| material             | Material needed or related to the courses                                                                                          |
+| attendancerecord     | Data of course time slots and attendance of them by students                                                                       |
+| schedule             | Different time blocks for scheduling                                                                                               |
+| consultation         | Data of special one-on-one meetings with the teacher                                                                               |
+| session              | Data of classes the course has                                                                                                     |
 
 ## Nice to have
 - email sent to the new owner after creating a company.

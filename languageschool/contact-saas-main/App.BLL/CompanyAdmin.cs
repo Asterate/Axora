@@ -1,5 +1,4 @@
-﻿using System.Text;
-using App.DAL.EF;
+﻿using App.DAL.EF;
 using App.Domain.Entities;
 using App.Domain.Identity;
 using App.Helpers;
@@ -25,7 +24,7 @@ public class CompanyAdmin
         newOwner.Roles = ECompanyRoles.Owner;
         context.Update(company);
         context.Update(newOwner);
-        await context.SaveChangesAsync(); // save before syncing roles
+        await context.SaveChangesAsync();
         var appUser = await userManager.FindByIdAsync(newOwner.AppUserId.ToString());
         if (appUser != null)
         {
@@ -84,8 +83,9 @@ public class CompanyAdmin
             .Where(c => c.CompanyId == companyId)
             .FirstOrDefaultAsync();
         if (companyConfig != null)
-            if (companySubs != null)
-                context.Subs.Remove(companySubs);
+            context.CompanyConfigs.Remove(companyConfig);
+        if (companySubs != null)
+            context.Subs.Remove(companySubs);
         
         // Remove all company user associations first to avoid foreign key constraint violation
         var companyUsers = await context.CompanyUsers
