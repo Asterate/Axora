@@ -6,6 +6,19 @@ Backend and admin ui is implemented in AspNet Core MVC,
 using standard libraries (EF Core, Identity, Postgres DB).  
 Design patterns - N-Tier, Solid. Domain, DAL, BLL and UI layers.
 
+# Plan
+| Step | Description                                                                                                         | Status      |
+|------|---------------------------------------------------------------------------------------------------------------------|-------------|
+|Requirements | Write down initial project requirements that the project needs to be complete                                       | In progress |
+|UX | Design the UX flow in Figma and define all the buttons and the definitions and needs have to work with requirements | Done           |
+| Basic requirements implementation | Make all the systems that needs to be applied everywhere. Like repositories, authentication etc | not started |
+|Views buttons | Put all the buttons that are needed to the views and implement them one by one so when one works effectevly others can as well | not started |
+|Create logs from scaffolded views| To be able to see what is in the database and delete and add as needed to make implementation easier | not started |
+| Add BLL | Buttons to do more than CRUD | not started |
+| Add UI | For it to have eye pleasing but professional design | not started |
+
+After each step would be needed to check if I am following the best practices with AI and manually.
+
 # Requirements
 Here are requirements for the entire project. It answers questions like:
 - What this project does?
@@ -58,6 +71,68 @@ Here are requirements for the entire project. It answers questions like:
   - Don't create your dependencies — demand them through the constructor. Let someone else figure out what concrete implementation to hand you.
 ### Architectural patterns
 - MVC Model-View-Controller
+  - Controller should be thin
+    - receive input
+    - call a service
+    - pick a view
+  - Views should be dumb
+    - No business logic in .cshtml. No if (user.Role == "Admin" && user.Subscription.Tier > 2) in Razor. Compute that in the service, put a bool ShowAdminPanel on the ViewModel.
+  - ViewModels are NOT entities
+    - This is the DTO concept applied to the View layer. The View gets exactly what it needs to render — nothing more. Entity goes in, ViewModel comes out, the controller/service does the mapping.
+- N-Tier
+  - Split your application into horizontal layers, each with a single responsibility. Each layer only talks to the one directly below it.
+  - Web -> BLL -> DAL
+- Clean / Onion Architecture
+  -  flip the dependency direction. Instead of everything depending on DAL, everything depends on a shared abstractions project (or multiple). Infrastructure (EF, DB) becomes a plugin — it depends inward, not the other way around.
+  - Domain references nothing. It's the center. Everything else depends on it. Infrastructure is a leaf — remove EF Core, swap to Dapper, nobody else notices.
+- Modular Monolith
+  - Clean boundaries like microservices, deployment simplicity of a monolith. Split later if you actually need to
+  - Modules never reference each other's internals
+    - Module A doesn't touch Module B's entities, repositories, or DbContext.
+    - Separate DbContexts per module
+  - Coupling vs Cohesion — the two metrics that matter
+    - Coupling = how many modules depend on each other's internals.
+    - Cohesion = how related the stuff inside a module is.
+    - The goal: low coupling between modules, high cohesion within modules.
+  - The migration path
+
+## Each view requirements
+### Log in/index
+- Needs to have log in field
+- Registration
+- forgot password
+- general news and updates
+### Home
+- Different projects
+- Updates within associated organisation
+### Project view
+- Project schedule and timeline
+- Project experiments
+- Project data
+- Project Schedule
+### Experiment planning view
+- Tools
+- Mind map of experiments and their subtasks
+### Experiment view
+- Tools
+- Task at hand and interactive molecule tools
+- Short descriptions of data
+- Predictions of experiments
+### Documentation view
+- CRUD documentation
+- well and easy to read list of documents
+- Update panel of recent adds
+- Change to write and commit changes
+### Analysis view
+- Charts
+- Tables
+- Comparisons of different results, experiments
+### Equipment, materials view
+- List of available equipment, material
+- Can schedule usage
+## Upload legacy work like Excel
+- upload button
+- edit and assign location
 
 #Ideas for this document
 - Break down requirements to smaller tasks in table
