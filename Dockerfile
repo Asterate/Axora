@@ -10,6 +10,7 @@ COPY Proposal/contact-saas-main1/contact-saas-main/App.DTO/App.DTO.csproj App.DT
 COPY Proposal/contact-saas-main1/contact-saas-main/App.Resources/App.Resources.csproj App.Resources/
 COPY Proposal/contact-saas-main1/contact-saas-main/App.Helpers/App.Helpers.csproj App.Helpers/
 COPY Proposal/contact-saas-main1/contact-saas-main/Base.Resources/Base.Resources.csproj Base.Resources/
+COPY Proposal/contact-saas-main1/contact-saas-main/WebApp.Tests/WebApp.Tests.csproj WebApp.Tests/
 RUN dotnet restore
 
 COPY Proposal/contact-saas-main1/contact-saas-main/ .
