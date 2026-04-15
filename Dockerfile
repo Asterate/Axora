@@ -9,7 +9,6 @@ COPY App.BLL/App.BLL.csproj App.BLL/
 COPY App.DTO/App.DTO.csproj App.DTO/
 COPY App.Resources/App.Resources.csproj App.Resources/
 COPY App.Helpers/App.Helpers.csproj App.Helpers/
-COPY Base.Resources/Base.Resources.csproj Base.Resources/
 RUN dotnet restore
 
 COPY . .
