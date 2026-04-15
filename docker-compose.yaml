@@ -1,6 +1,27 @@
+version: '3.9'
+
 services:
   web:
     build: .
     container_name: nginx-demo4
     ports:
       - "8084:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=webapp2526s;Username=postgres;Password=postgres
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16
+    container_name: axora_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: webapp2526s
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
