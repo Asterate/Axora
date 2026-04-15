@@ -71,6 +71,7 @@ public class AccountController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(typeof(JWTResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(App.Dto.v1.Message), StatusCodes.Status404NotFound)]
+    [AllowAnonymous]
     [HttpPost]
     public async Task<ActionResult<JWTResponse>> Login(
         [FromBody]
@@ -152,6 +153,7 @@ public class AccountController : ControllerBase
     [Consumes("application/json")]
     [ProducesResponseType(typeof(JWTResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(App.Dto.v1.Message), StatusCodes.Status400BadRequest)]
+    [AllowAnonymous]
     [HttpPost]
     public async Task<ActionResult<JWTResponse>> Register(
         [FromBody]
@@ -190,6 +192,22 @@ public class AccountController : ControllerBase
         {
             _logger.LogInformation("User {Email} created a new account with password", appUser.Email);
 
+            // Auto-create InstituteUser for the new user (link to default Institute)
+            var defaultInstitute = _context.Institutes.FirstOrDefault();
+            if (defaultInstitute != null)
+            {
+                var instituteUser = new App.Domain.Entities.InstituteUser
+                {
+                    Id = Guid.NewGuid(),
+                    InstituteId = defaultInstitute.Id,
+                    User = appUser,
+                    Role = App.Domain.Entities.EInstituteUserRole.Employee
+                };
+                _context.InstituteUsers.Add(instituteUser);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("InstituteUser created for {Email}", appUser.Email);
+            }
+
             var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
             var jwt = IdentityExtensions.GenerateJwt(
                 claimsPrincipal.Claims,
@@ -222,6 +240,7 @@ public class AccountController : ControllerBase
     [ProducesResponseType(typeof(JWTResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(App.Dto.v1.Message), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    [AllowAnonymous]
     [HttpPost]
     public async Task<ActionResult<JWTResponse>> RenewRefreshToken(
         [FromBody]
@@ -338,7 +357,7 @@ public class AccountController : ControllerBase
     [Produces("application/json")]
     [Consumes("application/json")]
     [ProducesResponseType(typeof(App.Dto.v1.Message), StatusCodes.Status404NotFound)]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpPost]
     public async Task<ActionResult> Logout([FromBody] LogoutInfo logout)
     {

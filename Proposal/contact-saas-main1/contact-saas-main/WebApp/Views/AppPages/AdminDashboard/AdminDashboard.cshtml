@@ -1,23 +1,90 @@
-﻿@page "/AdminDashboard"
+﻿@model WebApp.ViewModels.AdminDashboardViewModel
 
 @{
-    Layout = "_Layout";
+    ViewData["Title"] = "Admin Dashboard";
 }
 
-<!DOCTYPE html>
+<h1>@ViewData["Title"]</h1>
 
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-<div>
-    <h1>Admin dashboard</h1>
-    <h3>Overall stats</h3>
-    
-    <div class="mt-4">
-        <a asp-area="Root" asp-controller="Users" asp-action="Index" class="btn btn-primary">Manage Users</a>
+<h3>Overall Stats</h3>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Users</h5>
+                <p class="card-text display-4">@Model.TotalUsers</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Institutes</h5>
+                <p class="card-text display-4">@Model.TotalInstitutes</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Labs</h5>
+                <p class="card-text display-4">@Model.TotalLabs</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Projects</h5>
+                <p class="card-text display-4">@Model.TotalProjects</p>
+            </div>
+        </div>
     </div>
 </div>
-</body>
-</html>
+
+@if (Model.RecentInstitutes.Any())
+{
+    <div class="mt-5">
+        <h4>Recent Institutes</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var institute in Model.RecentInstitutes)
+                {
+                    <tr>
+                        <td>@institute.InstituteName</td>
+                        <td>@institute.CreatedAt.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (Model.RecentProjects.Any())
+{
+    <div class="mt-5">
+        <h4>Recent Projects</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var project in Model.RecentProjects)
+                {
+                    <tr>
+                        <td>@project.ProjectName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

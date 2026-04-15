@@ -23,8 +23,7 @@ namespace WebApp.Controllers
         // GET: Project
         public async Task<IActionResult> Index()
         {
-            
-            var projects = _context.Projects.ToList();
+            var projects = _context.Projects.Include(p => p.ProjectType).ToList();
             return View(projects);
         }
 

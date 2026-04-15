@@ -11,15 +11,8 @@ public class ExperimentTask : BaseEntity
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
-    public TaskStatus Status { get; set; } = TaskStatus.Pending;
+    public EExperimentTaskStatus Status { get; set; } = EExperimentTaskStatus.Pending;
     public int? Priority { get; set; }
-    public enum TaskStatus
-    {
-        Pending,
-        InProgress,
-        Completed,
-        Cancelled
-    }
     
     public Guid ExperimentId { get; set; }
     public Experiment Experiment { get; set; } = default!;

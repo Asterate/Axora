@@ -20,22 +20,22 @@ public static class InitialData
         Roles =
         [
             ("admin", null),
-            ("user", null),
-            ("root", null),
             ("support", null),
             ("billing", null),
-            ("COMPANYOWNER", null),
-            ("COMPANYADMIN", null),
-            ("COMPANYMANAGER", null),
-            ("TEACHER", null),
-            ("STUDENT", null),
-            ("None", null),
+            ("owner", null),
+            ("instituteadmin", null),
+            ("institutemanager", null),
+            ("employee", null),
+            ("guest", null),
         ];
 
+    // Test user ID (already exists in DB, don't re-create)
+    public static readonly Guid TestUserId = new("019d925c-e034-7125-9a72-dfef0d0a037f");
+    
     public static readonly (string name, string password, Guid? id, string[] roles, string firstName, string lastName)[]
         Users =
         [
-            ("systemadmin@languagesaas.com", "SystemAdmin.2025!", SystemAdminId, ["admin", "root", "user"], "System", "Admin"),
+            ("systemadmin@languagesaas.com", "SystemAdmin.2025!", SystemAdminId, ["admin"], "System", "Admin"),
             ("systemsupport@languagesaas.com", "SystemSupport.2025!", SystemSupportId, ["support"], "System", "Support"),
             ("systemBillingt@languagesaas.com", "SystemBilling.2025!", SystemBillingId, ["billing"], "System", "Billing"),
         ];

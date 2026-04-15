@@ -11,7 +11,7 @@ namespace WebApp.ApiControllers;
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
-[Authorize]
+[Authorize(AuthenticationSchemes = "Bearer")]
 public class ProjectsController : ControllerBase
 {
     private readonly AppDbContext _context;
@@ -34,7 +34,7 @@ public class ProjectsController : ControllerBase
                 Funding = e.Funding,
                 Requirements = e.Requirements,
                 RequirementsFilePath = e.RequirementsFilePath,
-                PublicTypeId = e.PublicTypeId
+                PublicTypeId = e.ProjectTypeId
             })
             .ToListAsync();
     }
@@ -55,7 +55,7 @@ public class ProjectsController : ControllerBase
             Funding = project.Funding,
             Requirements = project.Requirements,
             RequirementsFilePath = project.RequirementsFilePath,
-            PublicTypeId = project.PublicTypeId
+            PublicTypeId = project.ProjectTypeId
         };
     }
 
@@ -72,7 +72,7 @@ public class ProjectsController : ControllerBase
             Funding = dto.Funding,
             Requirements = dto.Requirements,
             RequirementsFilePath = dto.RequirementsFilePath,
-            PublicTypeId = dto.PublicTypeId
+            ProjectTypeId = dto.PublicTypeId
         };
         
         _context.Projects.Add(project);  // FIXED: Use Projects, not Experiments
@@ -85,7 +85,7 @@ public class ProjectsController : ControllerBase
             Funding = project.Funding,
             Requirements = project.Requirements,
             RequirementsFilePath = project.RequirementsFilePath,
-            PublicTypeId = project.PublicTypeId
+            PublicTypeId = project.ProjectTypeId
         };
 
         return CreatedAtAction(nameof(GetProject), new { id = result.Id }, result);
@@ -105,7 +105,7 @@ public class ProjectsController : ControllerBase
         project.Funding = dto.Funding;
         project.Requirements = dto.Requirements;
         project.RequirementsFilePath = dto.RequirementsFilePath;
-        project.PublicTypeId = dto.PublicTypeId;
+        project.ProjectTypeId = dto.PublicTypeId;
 
         await _context.SaveChangesAsync();
         return NoContent();

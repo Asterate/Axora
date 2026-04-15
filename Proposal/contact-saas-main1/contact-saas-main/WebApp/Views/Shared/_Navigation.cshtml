@@ -5,18 +5,18 @@
     var navItems = isAdminPage
         ? new[] // Admin items
         {
-            new { Name = "Home", Route = "/HomeDashboard", DisplayName = "Home", Roles = new[] { "CompanyOwner", "CompanyAdmin", "CompanyManager", "Guest", "Technician", "admin" } },
+            new { Name = "Home", Route = "/HomeDashboard", DisplayName = "Home", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest" } },
             new { Name = "Admin", Route = "/AdminDashboard", DisplayName = "Admin", Roles = new[] { "admin" } },
             new { Name = "User management", Route = "/Root/Users", DisplayName = "User management", Roles = new[] { "admin" } },
             new { Name = "Establishments", Route = "/AdminDashboard/Establishments", DisplayName = "Establishments", Roles = new[] { "admin" } },
-            new { Name = "Lookup data", Route = "/AdminDashboard/LookupData", DisplayName = "Lookup data", Roles = new[] { "admin" } },
+            new { Name = "Lookup data", Route = "/AdminDashboard/LookupData", DisplayName = "Lookup data", Roles = new[] { "admin" } }
         }: new[]
     {
-        new { Name = "Home", Route = "/HomeDashboard", DisplayName = "Home", Roles = new[] { "CompanyOwner", "CompanyAdmin", "CompanyManager", "Guest", "Technician", "admin", "support" } },
-        new { Name = "Projects", Route = "/ProjectDashboard", DisplayName = "Projects", Roles = new[] { "CompanyOwner", "CompanyAdmin", "CompanyManager", "Guest", "Technician", "admin", "support" } },
-        new { Name = "Schedule", Route = "/Schedule", DisplayName = "Schedule", Roles = new[] { "CompanyOwner", "CompanyAdmin", "CompanyManager", "Guest", "Technician", "admin",  "support" } },
-        new { Name = "Documents", Route = "/DocumentationDashboard", DisplayName = "Documents", Roles = new[] { "CompanyOwner", "CompanyAdmin", "CompanyManager", "Guest", "Technician",  "admin",  "support" } },
-        new { Name = "Analysis", Route = "/AnalysisDashboard", DisplayName = "Analysis", Roles = new[] { "CompanyOwner", "CompanyAdmin", "CompanyManager", "Guest", "Technician",  "admin",  "support" } },
+        new { Name = "Home", Route = "/HomeDashboard", DisplayName = "Home", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest"  } },
+        new { Name = "Experiments", Route = "/ProjectDashboard", DisplayName = "Projects", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest"  } },
+        new { Name = "Schedule", Route = "/Schedule", DisplayName = "Schedule", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest" } },
+        new { Name = "Documents", Route = "/DocumentationDashboard", DisplayName = "Documents", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest"  } },
+        new { Name = "Analysis", Route = "/AnalysisDashboard", DisplayName = "Analysis", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest"  } },
         new { Name = "Admin", Route = "/AdminDashboard", DisplayName = "Admin", Roles = new[] { "admin" } }
     };
 }

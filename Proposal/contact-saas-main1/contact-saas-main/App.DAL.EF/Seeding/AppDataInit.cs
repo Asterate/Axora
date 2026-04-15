@@ -1,3 +1,4 @@
+using App.Domain.Entities;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -8,8 +9,223 @@ public static class AppDataInit
 {
     public static void SeedAppData(AppDbContext context)
     {
-    }
+        // Seed ProjectTypes
+        if (!context.ProjectTypes.Any())
+        {
+            context.ProjectTypes.AddRange(
+                new ProjectType { Id = Guid.NewGuid(), Name = "Research" },
+                new ProjectType { Id = Guid.NewGuid(), Name = "Commercial" },
+                new ProjectType { Id = Guid.NewGuid(), Name = "Academic" }
+            );
+        }
 
+        // Seed ExperimentTypes
+        if (!context.ExperimentTypes.Any())
+        {
+            context.ExperimentTypes.AddRange(
+                new ExperimentType { Id = Guid.NewGuid(), ExperimentTypeName = "Chemistry" },
+                new ExperimentType { Id = Guid.NewGuid(), ExperimentTypeName = "Biology" },
+                new ExperimentType { Id = Guid.NewGuid(), ExperimentTypeName = "Physics" }
+            );
+        }
+
+        // Seed LabTypes
+        if (!context.LabTypes.Any())
+        {
+            context.LabTypes.AddRange(
+                new LabType { Id = Guid.NewGuid(), Name = "Chemistry Lab" },
+                new LabType { Id = Guid.NewGuid(), Name = "Biology Lab" },
+                new LabType { Id = Guid.NewGuid(), Name = "Physics Lab" }
+            );
+        }
+
+        // Seed EquipmentTypes
+        if (!context.EquipmentTypes.Any())
+        {
+            context.EquipmentTypes.AddRange(
+                new EquipmentType { Id = Guid.NewGuid(), EquipmentTypeName = "Measurement" },
+                new EquipmentType { Id = Guid.NewGuid(), EquipmentTypeName = "Analysis" },
+                new EquipmentType { Id = Guid.NewGuid(), EquipmentTypeName = "Production" }
+            );
+        }
+
+        // Seed TaskTypes
+        if (!context.TaskTypes.Any())
+        {
+            context.TaskTypes.AddRange(
+                new TaskType { Id = Guid.NewGuid(), TaskTypeName = "Preparation" },
+                new TaskType { Id = Guid.NewGuid(), TaskTypeName = "Execution" },
+                new TaskType { Id = Guid.NewGuid(), TaskTypeName = "Analysis" }
+            );
+        }
+
+        // Seed InstituteTypes
+        if (!context.InstituteTypes.Any())
+        {
+            context.InstituteTypes.AddRange(
+                new InstituteType { Id = Guid.NewGuid(), Name = "University" },
+                new InstituteType { Id = Guid.NewGuid(), Name = "Research Institute" },
+                new InstituteType { Id = Guid.NewGuid(), Name = "Company" }
+            );
+        }
+
+        // Seed DocumentTypes
+        if (!context.DocumentTypes.Any())
+        {
+            context.DocumentTypes.AddRange(
+                new DocumentType { Id = Guid.NewGuid(), Name = "Report" },
+                new DocumentType { Id = Guid.NewGuid(), Name = "Manual" },
+                new DocumentType { Id = Guid.NewGuid(), Name = "Certificate" }
+            );
+        }
+
+        // Seed ReagentTypes
+        if (!context.ReagentTypes.Any())
+        {
+            context.ReagentTypes.AddRange(
+                new ReagentType { Id = Guid.NewGuid(), ReagentName = "Chemical" },
+                new ReagentType { Id = Guid.NewGuid(), ReagentName = "Biological" },
+                new ReagentType { Id = Guid.NewGuid(), ReagentName = "Solution" }
+            );
+        }
+
+        // Seed CertificationTypes
+        if (!context.CertificationTypes.Any())
+        {
+            context.CertificationTypes.AddRange(
+                new CertificationType { Id = Guid.NewGuid(), Name = "ISO 9001" },
+                new CertificationType { Id = Guid.NewGuid(), Name = "ISO 14001" },
+                new CertificationType { Id = Guid.NewGuid(), Name = "Safety" }
+            );
+        }
+
+        // Seed Institutes
+        if (!context.Institutes.Any())
+        {
+            var instituteTypeId = context.InstituteTypes.First().Id;
+            context.Institutes.Add(new Institute
+            {
+                Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                InstituteName = "Default Institute",
+                InstituteCountry = "Estonia",
+                InstituteAddress = "Tartu, Estonia",
+                InstitutePhoneNumber = "+372 1234567",
+                InstituteTypeId = instituteTypeId
+            });
+        }
+
+        // Note: Test user seeding is handled separately via identity - for reference only
+        // Use Register endpoint to create users with passwords
+
+        // Seed Labs
+        if (!context.Labs.Any())
+        {
+            var labTypeId = context.LabTypes.First().Id;
+            context.Labs.Add(new Lab
+            {
+                Id = Guid.NewGuid(),
+                LabName = "Main Lab",
+                LabAddress = "Building A, Room 101",
+                LabCapacity = 10,
+                LabTypeId = labTypeId
+            });
+        }
+
+        // Seed InstituteUsers (for FK constraints) - always add if not exists
+        var instituteId = context.Institutes.First().Id;
+        var appUser = context.Users.FirstOrDefault();
+        if (appUser != null && !context.InstituteUsers.Any(u => u.User.Id == appUser.Id))
+        {
+            context.InstituteUsers.Add(new InstituteUser
+            {
+                Id = Guid.NewGuid(),
+                InstituteId = instituteId,
+                User = appUser
+            });
+        }
+        // Add the test user as InstituteUser if not already exists
+        var testUser = context.Users.FirstOrDefault(u => u.Id == InitialData.TestUserId);
+        if (testUser != null && !context.InstituteUsers.Any(u => u.User.Id == testUser.Id))
+        {
+            context.InstituteUsers.Add(new InstituteUser
+            {
+                Id = Guid.NewGuid(),
+                InstituteId = instituteId,
+                User = testUser
+            });
+        }
+
+        // Seed Projects
+        if (!context.Projects.Any())
+        {
+            var projectTypes = context.ProjectTypes.ToList();
+            if (projectTypes.Any())
+            {
+                // Add multiple sample projects
+                context.Projects.AddRange(
+                    new Project
+                    {
+                        Id = Guid.NewGuid(),
+                        ProjectName = "Climate Change Research",
+                        ProjectTypeId = projectTypes.First().Id,
+                        Funding = 50000.00f,
+                        Requirements = "Research on environmental impact and sustainability solutions."
+                    },
+                    new Project
+                    {
+                        Id = Guid.NewGuid(),
+                        ProjectName = "AI in Healthcare",
+                        ProjectTypeId = projectTypes.First().Id,
+                        Funding = 75000.00f,
+                        Requirements = "Developing machine learning models for medical diagnosis."
+                    },
+                    new Project
+                    {
+                        Id = Guid.NewGuid(),
+                        ProjectName = "Renewable Energy Study",
+                        ProjectTypeId = projectTypes.First().Id,
+                        Funding = 60000.00f,
+                        Requirements = "Investigating solar and wind energy efficiency."
+                    },
+                    new Project
+                    {
+                        Id = Guid.NewGuid(),
+                        ProjectName = "Molecular Biology Project",
+                        ProjectTypeId = projectTypes.Last().Id,
+                        Funding = 80000.00f,
+                        Requirements = "Study of cellular processes and genetic engineering."
+                    },
+                    new Project
+                    {
+                        Id = Guid.NewGuid(),
+                        ProjectName = "Quantum Computing Initiative",
+                        ProjectTypeId = projectTypes.Skip(1).First().Id,
+                        Funding = 100000.00f,
+                        Requirements = "Research on quantum algorithms and computation."
+                    }
+                );
+            }
+        }
+
+        // Seed Experiments
+        if (!context.Experiments.Any())
+        {
+            var projectId = context.Projects.First().Id;
+            var experimentTypeId = context.ExperimentTypes.First().Id;
+            var instituteUserId = context.InstituteUsers.First().Id;
+            context.Experiments.Add(new Experiment
+            {
+                Id = Guid.NewGuid(),
+                ExperimentName = "Sample Experiment",
+                ExperimentNotes = "Initial test experiment",
+                ProjectId = projectId,
+                ExperimentTypeId = experimentTypeId,
+                InstituteUserId = instituteUserId
+            });
+        }
+
+        context.SaveChanges();
+    }
 
     public static void MigrateDatabase(AppDbContext context)
     {

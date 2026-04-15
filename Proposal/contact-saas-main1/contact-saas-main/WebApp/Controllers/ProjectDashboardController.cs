@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
+using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels;
 
 namespace WebApp.Controllers
 {
     [Route("ProjectDashboard")]
     [ApiExplorerSettings(IgnoreApi = true)]
+    [Authorize(Roles = "admin, employee, owner, instituteadmin")]
     public class ProjectDashboardController : Controller
     {
         private readonly AppDbContext _context;

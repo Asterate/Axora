@@ -7,15 +7,19 @@ using standard libraries (EF Core, Identity, Postgres DB).
 Design patterns - N-Tier, Solid. Domain, DAL, BLL and UI layers.
 
 # Plan
-| Step | Description                                                                                                         | Status      |
-|------|---------------------------------------------------------------------------------------------------------------------|-------------|
-|Requirements | Write down initial project requirements that the project needs to be complete                                       | In progress |
-|UX | Design the UX flow in Figma and define all the buttons and the definitions and needs have to work with requirements | Done           |
-| Basic requirements implementation | Make all the systems that needs to be applied everywhere. Like repositories, authentication etc | not started |
-|Views buttons | Put all the buttons that are needed to the views and implement them one by one so when one works effectevly others can as well | not started |
-|Create logs from scaffolded views| To be able to see what is in the database and delete and add as needed to make implementation easier | not started |
-| Add BLL | Buttons to do more than CRUD | not started |
-| Add UI | For it to have eye pleasing but professional design | not started |
+| Step                              | Description                                                                                                                    | Status                            |
+|-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------|-----------------------------------|
+| Requirements                      | Write down initial project requirements that the project needs to be complete                                                  | Done                              |
+| UX                                | Design the UX flow in Figma and define all the buttons and the definitions and needs have to work with requirements            | Done                              |
+| Basic requirements implementation | Make all the systems that needs to be applied everywhere. Like repositories, authentication etc                                | In progress                       |
+| Views buttons                     | Put all the buttons that are needed to the views and implement them one by one so when one works effectevly others can as well | In progress                       |
+| Create logs from scaffolded views | To be able to see what is in the database and delete and add as needed to make implementation easier                           | Done                              |
+| Add BLL                           | Buttons to do more than CRUD                                                                                                   | Not needed yet                    |
+| Add UI                            | For it to have eye pleasing but professional design                                                                            | not needed yet                    |
+| Translations                      | Automatic tranlation between eng and et                                                                                        | Initial setup done                |
+| idor                              | Seperate data from users                                                                                                       | not started                       |
+| swagger                           | api web endpoints                                                                                                              | up and running                    |
+| rest api                          | in backend defined rest api for swagger                                                                                        | need to add more and fix problems |
 
 After each step would be needed to check if I am following the best practices with AI and manually.
 
@@ -25,7 +29,7 @@ Here are requirements for the entire project. It answers questions like:
 - What technical needs it has to fulfill?
 - What practices are going to be implemented?
 
-## General project requirements for successful homework
+## General project requirements for inspiration
 - Clean/Onion Architecture
 - REST API layer
 - JWT authentication
@@ -36,7 +40,7 @@ Here are requirements for the entire project. It answers questions like:
   - API documentation (Swagger)
   - key diagrams (DB/architecture/auth flow)
   - short AI usage log
-- Should be done end of week 8 but is fine if gets it done by 09.04
+- Should be done end of week 8 but is fine if gets it done by 16.04
 
 ## Practices to keep an eye on
 ### General truths
@@ -134,7 +138,12 @@ Here are requirements for the entire project. It answers questions like:
 - upload button
 - edit and assign location
 
-#Ideas for this document
+# Swagger
+Under api button in footer there is swagger part where can currently do in client:
+- authentication
+- crud experiment, project
+
+### Ideas for this document
 - Break down requirements to smaller tasks in table
 - Map UX/Views to backend endponts - “Button X → Calls Endpoint Y → Affects Entity Z”
 - Write down things idk ask AI and document so later ik what I learned and to refer it for defence

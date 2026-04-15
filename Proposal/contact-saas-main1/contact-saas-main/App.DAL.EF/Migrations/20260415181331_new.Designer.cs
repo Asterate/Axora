@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace App.DAL.EF.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260413130802_PendingChanges2")]
-    partial class PendingChanges2
+    [Migration("20260415181331_new")]
+    partial class @new
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -646,9 +646,6 @@ namespace App.DAL.EF.Migrations
                         .HasColumnType("character varying(128)");
 
                     b.Property<Guid>("ProjectTypeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("PublicTypeId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Requirements")

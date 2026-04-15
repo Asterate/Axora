@@ -5,13 +5,14 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace WebApp.ApiControllers;
 
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
-[Authorize]
+[Authorize(AuthenticationSchemes = "Bearer")]
 public class ExperimentsController : ControllerBase
 {
     private readonly AppDbContext _context;
@@ -69,6 +70,36 @@ public class ExperimentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ExperimentDto>> CreateExperiment([FromBody] CreateExperimentDto dto)
     {
+        // Get user ID from JWT token (secure approach)
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            return BadRequest("Invalid user token");
+        }
+        
+        // Find InstituteUser by AppUser ID
+        var instituteUser = await _context.InstituteUsers
+            .Include(u => u.User)
+            .FirstOrDefaultAsync(u => u.User.Id == userId);
+        if (instituteUser == null)
+        {
+            return BadRequest($"User not found in InstituteUser for ID {userId}. Contact admin to add you to institute.");
+        }
+        
+        // Validate that the project exists
+        var projectExists = await _context.Projects.AnyAsync(p => p.Id == dto.ProjectId);
+        if (!projectExists)
+        {
+            return BadRequest($"Project with ID {dto.ProjectId} not found");
+        }
+        
+        // Validate that the experiment type exists
+        var experimentTypeExists = await _context.ExperimentTypes.AnyAsync(e => e.Id == dto.ExperimentTypeId);
+        if (!experimentTypeExists)
+        {
+            return BadRequest($"ExperimentType with ID {dto.ExperimentTypeId} not found");
+        }
+        
         var experiment = new Experiment
         {
             Id = Guid.NewGuid(),
@@ -76,6 +107,7 @@ public class ExperimentsController : ControllerBase
             ExperimentNotes = dto.ExperimentNotes,
             ExperimentTypeId = dto.ExperimentTypeId,
             ProjectId = dto.ProjectId,
+            InstituteUserId = instituteUser.Id,
             CreatedAt = DateTime.UtcNow
         };
         

@@ -13,6 +13,8 @@ public static class MiddlewareExtensions
     public static WebApplication UseAppMiddleware(this WebApplication app)
     {
         app.UseForwardedHeaders();
+        
+        app.UseCors("CorsAllowAll");
 
         app.UseRequestLocalization(
             options: app.Services.GetService<IOptions<RequestLocalizationOptions>>()?.Value!);
@@ -30,6 +32,7 @@ public static class MiddlewareExtensions
         }
 
         app.UseHttpsRedirection();
+        app.UseAuthentication();
         app.UseRouting();
 
         app.UseAuthorization();

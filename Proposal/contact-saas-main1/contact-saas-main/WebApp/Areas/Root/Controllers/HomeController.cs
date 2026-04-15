@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 namespace WebApp.Areas.SysAdmin.Controllers;
 
 [Area("Root")]
-[Authorize(Roles = "root")]
+[Authorize(Roles = "admin")]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;

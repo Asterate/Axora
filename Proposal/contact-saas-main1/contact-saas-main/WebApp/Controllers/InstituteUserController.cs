@@ -50,24 +50,33 @@ namespace WebApp.Controllers
         public IActionResult Create()
         {
             ViewData["InstituteId"] = new SelectList(_context.Institutes, "Id", "InstituteAddress");
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
+            ViewData["Role"] = new SelectList(Enum.GetValues<EInstituteUserRole>());
             return View();
         }
 
         // POST: InstituteUser/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("InstituteId,Role,Id")] InstituteUser instituteUser)
+        public async Task<IActionResult> Create(IFormCollection formData)
         {
+            var instituteUser = new InstituteUser
+            {
+                Id = Guid.NewGuid(),
+                InstituteId = Guid.Parse(formData["InstituteId"]!),
+                UserId = Guid.Parse(formData["UserId"]!),
+                Role = Enum.Parse<EInstituteUserRole>(formData["Role"]!)
+            };
+
             if (ModelState.IsValid)
             {
-                instituteUser.Id = Guid.NewGuid();
                 _context.Add(instituteUser);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             ViewData["InstituteId"] = new SelectList(_context.Institutes, "Id", "InstituteAddress", instituteUser.InstituteId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", instituteUser.UserId);
+            ViewData["Role"] = new SelectList(Enum.GetValues<EInstituteUserRole>());
             return View(instituteUser);
         }
 

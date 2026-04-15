@@ -69,15 +69,17 @@ public static class WebApiExtensions
         var apiVersioningBuilder = services.AddApiVersioning(options =>
         {
             options.ReportApiVersions = true;
-            // in case of no explicit version
+            // in case of no explicit version - defaults to 1.0
             options.DefaultApiVersion = new ApiVersion(1, 0);
+            // Assume version 1.0 when version "v1" is specified (backwards compatibility)
+            options.AssumeDefaultVersionWhenUnspecified = true;
         });
 
         apiVersioningBuilder.AddApiExplorer(options =>
         {
             // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
-            // note: the specified format code will format the version as "'v'major[.minor][-status]"
-            options.GroupNameFormat = "'v'VVV";
+            // "v" + major version only, so "v1" maps to 1.0
+            options.GroupNameFormat = "'v'V";
 
             // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
             // can also be used to control the format of the API version in route templates

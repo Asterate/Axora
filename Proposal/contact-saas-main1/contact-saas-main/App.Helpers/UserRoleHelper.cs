@@ -30,10 +30,10 @@ public static class UserRoleHelper
     {
         return role switch
         {
-            EInstituteUserRole.Owner => "CompanyOwner",
-            EInstituteUserRole.Administrator => "CompanyAdmin",
-            EInstituteUserRole.Manager => "CompanyManager",
-            EInstituteUserRole.Guest => "Guest",
+            EInstituteUserRole.Owner => "owner",
+            EInstituteUserRole.Administrator => "instituteadmin",
+            EInstituteUserRole.Manager => "institutemanager",
+            EInstituteUserRole.Guest => "guest",
             EInstituteUserRole.Technician => "Technician",
             _ => "None"
         };

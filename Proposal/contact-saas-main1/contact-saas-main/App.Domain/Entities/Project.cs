@@ -19,6 +19,7 @@ public class Project : BaseEntity
     [Display(Name = "FilePath", ResourceType = typeof(Base.Resources.Common))]
     public string? RequirementsFilePath { get; set; }
     
-    public Guid PublicTypeId {get; set;}
+    public Guid ProjectTypeId {get; set;}
     public ProjectType ProjectType {get; set;}  = default!;
+    public ICollection<Experiment> Experiments { get; set; } = new List<Experiment>();
 }

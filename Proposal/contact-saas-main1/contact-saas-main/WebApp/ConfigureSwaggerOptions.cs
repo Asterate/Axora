@@ -61,7 +61,7 @@ public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
             securityRequirement[schemeReference] = new List<string>();
             return securityRequirement;
         });
-
+        
         
     }
 }

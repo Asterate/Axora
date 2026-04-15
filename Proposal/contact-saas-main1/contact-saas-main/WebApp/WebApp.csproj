@@ -7,6 +7,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>aspnet-WebApp-2aae5906-b85c-401f-a203-9e492ba579b1</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <!-- Suppress NuGet vulnerability warnings for known issues -->
+        <NoWarn>NU1901</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

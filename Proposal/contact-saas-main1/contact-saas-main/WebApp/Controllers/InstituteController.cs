@@ -54,21 +54,62 @@ namespace WebApp.Controllers
         }
 
         // POST: Institute/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("InstituteName,InstituteCountry,InstituteAddress,InstitutePhoneNumber,CreatedAt,UpdatedAt,DeletedAt,Active,InstituteTypeId,Id")] Institute institute)
+        public async Task<IActionResult> Create(IFormCollection form)
         {
-            if (ModelState.IsValid)
+            // Get InstituteTypeId from the form
+            var typeIdStr = form["InstituteTypeId"].ToString();
+            var typeId = Guid.Empty;
+            
+            // Try parsing the GUID
+            if (!string.IsNullOrEmpty(typeIdStr))
             {
-                institute.Id = Guid.NewGuid();
-                _context.Add(institute);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                Guid.TryParse(typeIdStr, out typeId);
             }
-            ViewData["InstituteTypeId"] = new SelectList(_context.InstituteTypes, "Id", "Name", institute.InstituteTypeId);
-            return View(institute);
+            
+            // Simple validation: get values from form
+            var name = form["InstituteName"].ToString();
+            var country = form["InstituteCountry"].ToString();
+            var address = form["InstituteAddress"].ToString();
+            var phone = form["InstitutePhoneNumber"].ToString();
+            var active = form["Active"].ToString().Contains("true");
+            
+            // Check required fields
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(country) || string.IsNullOrWhiteSpace(address) || string.IsNullOrWhiteSpace(phone))
+            {
+                ViewBag.ErrorMessage = "All fields are required. Please fill all fields.";
+            }
+            else if (typeId == Guid.Empty)
+            {
+                ViewBag.ErrorMessage = $"Please select an Institute Type. Received: [{typeIdStr}]";
+            }
+            else
+            {
+                try
+                {
+                    var institute = new Institute
+                    {
+                        Id = Guid.NewGuid(),
+                        InstituteName = name,
+                        InstituteCountry = country,
+                        InstituteAddress = address,
+                        InstitutePhoneNumber = phone,
+                        Active = active,
+                        InstituteTypeId = typeId,
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    _context.Add(institute);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.ErrorMessage = "Error saving: " + ex.Message;
+                }
+            }
+            
+            ViewData["InstituteTypeId"] = new SelectList(_context.InstituteTypes, "Id", "Name");
+            return View();
         }
 
         // GET: Institute/Edit/5
@@ -89,8 +130,6 @@ namespace WebApp.Controllers
         }
 
         // POST: Institute/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("InstituteName,InstituteCountry,InstituteAddress,InstitutePhoneNumber,CreatedAt,UpdatedAt,DeletedAt,Active,InstituteTypeId,Id")] Institute institute)

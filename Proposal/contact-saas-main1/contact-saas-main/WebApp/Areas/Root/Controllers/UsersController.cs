@@ -12,7 +12,7 @@ using WebApp.Areas.Root.ViewModels;
 namespace WebApp.Areas.Root.Controllers;
 
 [Area("Root")]
-[Authorize(Roles = "root")]
+[Authorize(Roles = "admin")]
 public class UsersController : Controller
 {
     private readonly ILogger<UsersController> _logger;

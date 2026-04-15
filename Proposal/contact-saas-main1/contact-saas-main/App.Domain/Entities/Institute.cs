@@ -8,19 +8,19 @@ namespace App.Domain.Entities;
 public class Institute : BaseEntity
 {
     [Display(Name = "Name", ResourceType = typeof(Base.Resources.Common))]
-    [StringLength(128, MinimumLength = 3)]
+    [StringLength(128, MinimumLength = 2)]
     public string InstituteName { get; set; }  = default!;
     
     [Display(Name = "Country", ResourceType = typeof(Base.Resources.Common))]
-    [StringLength(128, MinimumLength = 3)]
+    [StringLength(128, MinimumLength = 2)]
     public string InstituteCountry {get; set;}  = default!;
     
     [Display(Name = "Address", ResourceType = typeof(Base.Resources.Common))]
-    [StringLength(128, MinimumLength = 10)]
+    [StringLength(128, MinimumLength = 5)]
     public string InstituteAddress { get; set; }  = default!;
     
     [Display(Name = "PhoneNumber", ResourceType = typeof(Base.Resources.Common))]
-    [StringLength(128, MinimumLength = 10)]
+    [StringLength(128, MinimumLength = 5)]
     public string InstitutePhoneNumber { get; set; }   = default!;
     
     [Display(Name = "CreatedAt", ResourceType = typeof(Base.Resources.Common))]

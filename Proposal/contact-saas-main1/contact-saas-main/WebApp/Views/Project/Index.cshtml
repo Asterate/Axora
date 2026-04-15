@@ -1,52 +1,65 @@
+@using App.Domain.Entities
 @model IEnumerable<App.Domain.Entities.Project>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Projects";
+    var items = Model == null ? new List<Project>() : Model.ToList();
 }
 
-<h1>Index</h1>
+<!-- Recent News Section -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Recent News</h5>
+    </div>
+    <div class="card-body">
+        <ul class="list-unstyled mb-0">
+            <li class="mb-2">
+                <strong>April 15, 2026</strong> - New research grant approved for Climate Change Analysis project
+            </li>
+            <li class="mb-2">
+                <strong>April 10, 2026</strong> - Team Alpha completes Milestone 1 ahead of schedule
+            </li>
+            <li class="mb-2">
+                <strong>April 5, 2026</strong> - Annual project review meeting scheduled for April 20th
+            </li>
+            <li class="mb-0">
+                <strong>March 28, 2026</strong> - Bioinformatics Initiative project receives additional funding
+            </li>
+        </ul>
+    </div>
+</div>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-success">Create New Project</a>
 </p>
+
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ProjectName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Funding)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Requirements)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RequirementsFilePath)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PublicTypeId)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>@Html.DisplayNameFor(m => m.ProjectName)</th>
+        <th>@Html.DisplayNameFor(m => m.Requirements)</th>
+        <th>@Html.DisplayNameFor(m => m.ProjectType)</th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in items) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.ProjectName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Funding)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Requirements)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.RequirementsFilePath)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PublicTypeId)
+                @if (item.ProjectType != null)
+                {
+                    @item.ProjectType.Name
+                }
+                else
+                {
+                    @item.ProjectTypeId
+                }
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
@@ -54,6 +67,6 @@
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

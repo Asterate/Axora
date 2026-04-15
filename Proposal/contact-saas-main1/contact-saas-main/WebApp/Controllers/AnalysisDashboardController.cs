@@ -1,4 +1,5 @@
 ﻿using App.DAL.EF;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.ViewModels;
 
@@ -6,6 +7,7 @@ namespace WebApp.Controllers;
 
     [Route("AnalysisDashboard")]
     [ApiExplorerSettings(IgnoreApi = true)]
+    [Authorize(Roles = "admin, employee, owner, instituteadmin, guest")]
     public class AnalysisDashboardController : Controller
     {
         private readonly AppDbContext _context;

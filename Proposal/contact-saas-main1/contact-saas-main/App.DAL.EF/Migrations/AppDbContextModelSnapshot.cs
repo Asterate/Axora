@@ -645,9 +645,6 @@ namespace App.DAL.EF.Migrations
                     b.Property<Guid>("ProjectTypeId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("PublicTypeId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Requirements")
                         .HasColumnType("text");
 
