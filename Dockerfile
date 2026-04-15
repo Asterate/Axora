@@ -8,7 +8,6 @@ COPY App.DAL.EF/App.DAL.EF.csproj App.DAL.EF/
 COPY App.BLL/App.BLL.csproj App.BLL/
 COPY App.DTO/App.DTO.csproj App.DTO/
 COPY App.Resources/App.Resources.csproj App.Resources/
-COPY App.Helpers/App.Helpers.csproj App.Helpers/
 RUN dotnet restore
 
 COPY . .
