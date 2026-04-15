@@ -23,7 +23,9 @@ app.UseAppMiddleware();
 app.UseAppSwagger();
 app.MapAppEndpoints();
 
+
 app.Run();
+
 
 // this is needed for unit testing
 // ReSharper disable once ClassNeverInstantiated.Global

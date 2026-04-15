@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Text.Json;
+using App.Domain;
 
 namespace App.DAL.EF;
 public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
@@ -61,6 +63,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
         // Configure all DateTime properties to use UTC
         ConfigureDateTimeAsUtc(builder);
 
+        // Configure LangStr properties to use JSON conversion
+        ConfigureLangStrAsJson(builder);
+
         // disable cascade delete
         foreach (var relationship in builder.Model
                      .GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
@@ -104,6 +109,30 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
                 else if (property.ClrType == typeof(DateTime?))
                 {
                     property.SetValueConverter(nullableDateTimeConverter);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Configures all LangStr properties to convert to/from JSON for database storage.
+    /// LangStr is serialized as a JSON object with culture keys (e.g., {"en": "Name", "et": "Nimi"}).
+    /// </summary>
+    private static void ConfigureLangStrAsJson(ModelBuilder builder)
+    {
+        var langStrConverter = new ValueConverter<LangStr, string>(
+            v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+            v => string.IsNullOrEmpty(v) 
+                ? new LangStr() 
+                : JsonSerializer.Deserialize<LangStr>(v, (JsonSerializerOptions?)null) ?? new LangStr());
+
+        foreach (var entityType in builder.Model.GetEntityTypes())
+        {
+            foreach (var property in entityType.GetProperties())
+            {
+                if (property.ClrType == typeof(LangStr))
+                {
+                    property.SetValueConverter(langStrConverter);
                 }
             }
         }

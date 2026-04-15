@@ -1,8 +1,5 @@
-using System;
-using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using App.DAL.EF;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +7,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using WebApp.Areas.Root.ViewModels;
 
 namespace WebApp.Areas.Root.Controllers;

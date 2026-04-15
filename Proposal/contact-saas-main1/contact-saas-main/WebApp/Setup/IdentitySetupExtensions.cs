@@ -10,7 +10,10 @@ public static class IdentitySetupExtensions
     public static IServiceCollection AddAppIdentity(this IServiceCollection services)
     {
         services
-            .AddIdentity<AppUser, AppRole>(options => options.SignIn.RequireConfirmedAccount = false)
+            .AddIdentity<AppUser, AppRole>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+            })
             .AddDefaultUI()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();

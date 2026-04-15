@@ -168,10 +168,8 @@ namespace App.DAL.EF.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("EquipmentName")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                    b.Property<Guid>("EquipmentNameId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("EquipmentSerialCode")
                         .HasMaxLength(128)
@@ -187,6 +185,8 @@ namespace App.DAL.EF.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EquipmentNameId");
 
                     b.HasIndex("EquipmentTypeId");
 
@@ -1028,6 +1028,12 @@ namespace App.DAL.EF.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("FirstName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("text");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
 
@@ -1071,6 +1077,17 @@ namespace App.DAL.EF.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("App.Domain.LangStr", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LangStr");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
@@ -1246,11 +1263,19 @@ namespace App.DAL.EF.Migrations
 
             modelBuilder.Entity("App.Domain.Entities.Equipment", b =>
                 {
+                    b.HasOne("App.Domain.LangStr", "EquipmentName")
+                        .WithMany()
+                        .HasForeignKey("EquipmentNameId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("App.Domain.Entities.EquipmentType", "EquipmentType")
                         .WithMany()
                         .HasForeignKey("EquipmentTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("EquipmentName");
 
                     b.Navigation("EquipmentType");
                 });

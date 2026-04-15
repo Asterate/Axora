@@ -1,0 +1,78 @@
+﻿@model WebApp.ViewModels.EstablishmentsViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Project Dashboard</title>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left Column - Experiments Table -->
+            <div class="col-md-6">
+                <h3>Experiments</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var experiment in Model.Institutes)
+                        {
+                            <tr>
+                                <td>@experiment.InstituteName</td>
+                                <td>@experiment.InstituteAddress</td>
+                                <td>@experiment.InstituteCountry</td>
+                                <td>@experiment.InstitutePhoneNumber</td>
+                                <td>@experiment.CreatedAt.ToShortDateString()</td>
+                                <td>@experiment.UpdatedAt</td>
+                                <td>@experiment.DeletedAt</td>
+                                <td>@experiment.Active</td>
+                                <td>
+                                    <a asp-controller="Experiment" asp-action="Details" asp-route-id="@experiment.Id">Details</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h3>Schedule</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var lab in Model.Labs)
+                        {
+                            <tr>
+                                <td>@lab.LabName</td>
+                                <td>@lab.LabType</td>
+                                <td>@lab.CreatedAt</td>
+                                <td>@lab.UpdatedAt</td>
+                                <td>@lab.DeletedAt</td>
+                                <td>@lab.LabAddress</td>
+                                <td>@lab.LabCapacity</td>
+                                <td>@lab.LabIsActive</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

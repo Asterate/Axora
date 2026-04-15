@@ -1,0 +1,74 @@
+﻿@{
+    var currentUrl = Context.Request.Path.Value?.ToLower() ?? "";
+    var isAdminPage = currentUrl.Contains("admindashboard") || currentUrl.Contains("root");
+
+    var navItems = isAdminPage
+        ? new[] // Admin items
+        {
+            new { Name = "Home", Route = "/HomeDashboard", DisplayName = "Home", Roles = new[] { "CompanyOwner", "CompanyAdmin", "CompanyManager", "Guest", "Technician", "admin" } },
+            new { Name = "Admin", Route = "/AdminDashboard", DisplayName = "Admin", Roles = new[] { "admin" } },
+            new { Name = "User management", Route = "/Root/Users", DisplayName = "User management", Roles = new[] { "admin" } },
+            new { Name = "Establishments", Route = "/AdminDashboard/Establishments", DisplayName = "Establishments", Roles = new[] { "admin" } },
+            new { Name = "Lookup data", Route = "/AdminDashboard/LookupData", DisplayName = "Lookup data", Roles = new[] { "admin" } },
+        }: new[]
+    {
+        new { Name = "Home", Route = "/HomeDashboard", DisplayName = "Home", Roles = new[] { "CompanyOwner", "CompanyAdmin", "CompanyManager", "Guest", "Technician", "admin", "support" } },
+        new { Name = "Projects", Route = "/ProjectDashboard", DisplayName = "Projects", Roles = new[] { "CompanyOwner", "CompanyAdmin", "CompanyManager", "Guest", "Technician", "admin", "support" } },
+        new { Name = "Schedule", Route = "/Schedule", DisplayName = "Schedule", Roles = new[] { "CompanyOwner", "CompanyAdmin", "CompanyManager", "Guest", "Technician", "admin",  "support" } },
+        new { Name = "Documents", Route = "/DocumentationDashboard", DisplayName = "Documents", Roles = new[] { "CompanyOwner", "CompanyAdmin", "CompanyManager", "Guest", "Technician",  "admin",  "support" } },
+        new { Name = "Analysis", Route = "/AnalysisDashboard", DisplayName = "Analysis", Roles = new[] { "CompanyOwner", "CompanyAdmin", "CompanyManager", "Guest", "Technician",  "admin",  "support" } },
+        new { Name = "Admin", Route = "/AdminDashboard", DisplayName = "Admin", Roles = new[] { "admin" } }
+    };
+}
+
+<nav>
+    <ul>
+        @foreach (var item in navItems)
+        {
+            var isActive = currentUrl.Contains(item.Route.ToLower());
+            var hasAccess = item.Roles.Any(role => User.IsInRole(role));
+            
+            @if (hasAccess)
+            {
+                <li>
+                    <a href="@item.Route" class="@(isActive ? "active" : "")">
+                        @item.DisplayName
+                    </a>
+                </li>
+            }
+        }
+    </ul>
+</nav>
+
+<style>
+    nav {
+        display: flex;
+        gap: 10px;
+    }
+    
+    nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        gap: 10px;
+    }
+    
+    nav a {
+        padding: 8px 16px;
+        background-color: #f0f0f0;
+        text-decoration: none;
+        color: #333;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+    }
+    
+    nav a:hover {
+        background-color: #e0e0e0;
+    }
+    
+    nav a.active {
+        background-color: #007bff;
+        color: white;
+    }
+</style>

@@ -1,0 +1,19 @@
+﻿@model IEnumerable<App.Domain.Entities.Project>
+
+@{
+    Layout = "_Layout";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Institute name</title>
+</head>
+<body>
+<h1>Projects</h1>
+<div class="container-fluid" style="display: flex; gap: 400px;">
+    <partial name="_ProjectList" model="Model"/>
+    <h1 style="flex: 1;">Recent updates</h1>
+</div>
+</body>
+</html>

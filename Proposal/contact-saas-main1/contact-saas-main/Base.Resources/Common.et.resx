@@ -101,4 +101,119 @@
     <data name="test" xml:space="preserve">
         <value>fff</value>
     </data>
+    <!-- Common field names for entities -->
+    <data name="Name" xml:space="preserve">
+        <value>Nimi</value>
+    </data>
+    <data name="Description" xml:space="preserve">
+        <value>Kirjeldus</value>
+    </data>
+    <data name="CreatedAt" xml:space="preserve">
+        <value>Loodud</value>
+    </data>
+    <data name="UpdatedAt" xml:space="preserve">
+        <value>Uuendatud</value>
+    </data>
+    <data name="DeletedAt" xml:space="preserve">
+        <value>Kustutatud</value>
+    </data>
+    <data name="Notes" xml:space="preserve">
+        <value>Märkmed</value>
+    </data>
+    <data name="Active" xml:space="preserve">
+        <value>Aktiivne</value>
+    </data>
+    <data name="IsActive" xml:space="preserve">
+        <value>On aktiivne</value>
+    </data>
+    <data name="Status" xml:space="preserve">
+        <value>Staatus</value>
+    </data>
+    <data name="Priority" xml:space="preserve">
+        <value>Prioriteet</value>
+    </data>
+    <data name="StartTime" xml:space="preserve">
+        <value>Algus aeg</value>
+    </data>
+    <data name="EndTime" xml:space="preserve">
+        <value>Lõpp aeg</value>
+    </data>
+    <data name="Quantity" xml:space="preserve">
+        <value>Kogus</value>
+    </data>
+    <data name="Unit" xml:space="preserve">
+        <value>Ühik</value>
+    </data>
+    <data name="FilePath" xml:space="preserve">
+        <value>Faili asukoht</value>
+    </data>
+    <data name="Address" xml:space="preserve">
+        <value>Aadress</value>
+    </data>
+    <data name="PhoneNumber" xml:space="preserve">
+        <value>Telefoni number</value>
+    </data>
+    <data name="Country" xml:space="preserve">
+        <value>Riik</value>
+    </data>
+    <data name="Funding" xml:space="preserve">
+        <value>Finantseerimine</value>
+    </data>
+    <data name="Requirements" xml:space="preserve">
+        <value>Nõuded</value>
+    </data>
+    <data name="Capacity" xml:space="preserve">
+        <value>Mahutavus</value>
+    </data>
+    <data name="ColorCode" xml:space="preserve">
+        <value>Värvi kood</value>
+    </data>
+    <data name="SerialCode" xml:space="preserve">
+        <value>Seerianumber</value>
+    </data>
+    <data name="Manual" xml:space="preserve">
+        <value>Manuaal</value>
+    </data>
+    <data name="Hazardous" xml:space="preserve">
+        <value>Ohtlik</value>
+    </data>
+    <data name="IsHazardous" xml:space="preserve">
+        <value>On ohtlik</value>
+    </data>
+    <data name="Category" xml:space="preserve">
+        <value>Kategooria</value>
+    </data>
+    <data name="StorageConditions" xml:space="preserve">
+        <value>Hoidmise tingimused</value>
+    </data>
+    <data name="SafetyNotes" xml:space="preserve">
+        <value>Ohutusmärkmed</value>
+    </data>
+    <data name="CASNumber" xml:space="preserve">
+        <value>CAS number</value>
+    </data>
+    <data name="ChemicalFormula" xml:space="preserve">
+        <value>Keemiline valem</value>
+    </data>
+    <data name="MolecularWeight" xml:space="preserve">
+        <value>Molekulaar kaal</value>
+    </data>
+    <data name="Concentration" xml:space="preserve">
+        <value>Kontsentratsioon</value>
+    </data>
+    <data name="HandedOver" xml:space="preserve">
+        <value>Üle antud</value>
+    </data>
+    <data name="Expired" xml:space="preserve">
+        <value>Aegunud</value>
+    </data>
+    <data name="MeasurementName" xml:space="preserve">
+        <value>Mõõtmise nimi</value>
+    </data>
+    <data name="MeasurementValue" xml:space="preserve">
+        <value>Mõõtmise väärtus</value>
+    </data>
+    <data name="Role" xml:space="preserve">
+        <value>Roll</value>
+    </data>
 </root>

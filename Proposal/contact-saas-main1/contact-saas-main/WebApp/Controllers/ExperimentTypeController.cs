@@ -10,6 +10,7 @@ using App.Domain.Entities;
 
 namespace WebApp.Controllers
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ExperimentTypeController : Controller
     {
         private readonly AppDbContext _context;

@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Configuration;
-
 namespace WebApp.Helpers;
 
 public class AppNameService

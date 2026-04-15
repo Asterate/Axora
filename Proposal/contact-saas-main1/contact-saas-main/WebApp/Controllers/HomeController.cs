@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using App.DAL.EF;
+using App.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,12 +10,11 @@ using Microsoft.Extensions.Logging;
 using WebApp.ViewModels;
 
 namespace WebApp.Controllers;
-
+[ApiExplorerSettings(IgnoreApi = true)]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly AppDbContext _context;
-    private static int _counter = 0;
 
     public HomeController(AppDbContext context, ILogger<HomeController> logger)
     {
@@ -22,17 +22,20 @@ public class HomeController : Controller
         _context = context;
     }
 
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
-        return View();
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            return RedirectToAction("Index", "HomeDashboard");
+        }
+        return Redirect("/Identity/Account/Login?ReturnUrl=%2F");
     }
 
-    public async Task<string> HtmxClicked()
+    public IActionResult HomeDashboard()
     {
-        _counter++;
-        return "Htmx Click Me - " + _counter;
+        var projects = _context.Projects.ToList() ?? new List<Project>(); // never null
+        return View("Views/AppPages/HomeDashboard/HomeDashboard.cshtml", projects);
     }
-
 
     public IActionResult Privacy()
     {

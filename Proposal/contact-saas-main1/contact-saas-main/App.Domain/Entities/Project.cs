@@ -1,14 +1,22 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Base.Resources;
 
 namespace App.Domain.Entities;
 
 public class Project : BaseEntity
 {
+    [Display(Name = "Name", ResourceType = typeof(Base.Resources.Common))]
     [StringLength(128, MinimumLength = 3)]
     public string ProjectName { get; set; } = default!;
+    
+    [Display(Name = "Funding", ResourceType = typeof(Base.Resources.Common))]
     public float? Funding { get; set; }
+    
+    [Display(Name = "Requirements", ResourceType = typeof(Base.Resources.Common))]
     public string? Requirements { get; set; } 
+    
+    [Display(Name = "FilePath", ResourceType = typeof(Base.Resources.Common))]
     public string? RequirementsFilePath { get; set; }
     
     public Guid PublicTypeId {get; set;}

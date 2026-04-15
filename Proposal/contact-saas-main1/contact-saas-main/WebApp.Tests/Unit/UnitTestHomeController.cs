@@ -43,7 +43,7 @@ public class UnitTestHomeController
     [Fact]
     public async Task IndexAction_ReturnsNullVm()
     {
-        var result = (await _homeController.Index()) as ViewResult;
+        var result = ( _homeController.Index()) as ViewResult;
         _testOutputHelper.WriteLine(result?.ToString());
         var vm = result?.Model; // as HomeIndexViewModel;
         Assert.Null(vm);

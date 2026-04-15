@@ -10,6 +10,7 @@ using App.Domain.Entities;
 
 namespace WebApp.Controllers
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ProjectController : Controller
     {
         private readonly AppDbContext _context;
@@ -22,7 +23,9 @@ namespace WebApp.Controllers
         // GET: Project
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Projects.ToListAsync());
+            
+            var projects = _context.Projects.ToList();
+            return View(projects);
         }
 
         // GET: Project/Details/5

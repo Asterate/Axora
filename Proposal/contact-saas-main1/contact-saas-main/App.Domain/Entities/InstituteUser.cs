@@ -12,16 +12,6 @@ public class InstituteUser : BaseEntity
     public ICollection<Experiment> Experiments { get; set; } = new List<Experiment>();
     public ICollection<ExperimentTask> ExperimentTasks { get; set; } = new List<ExperimentTask>();
     public ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
-    public InstituteUserRoles Role { get; set; } = InstituteUserRoles.Employee;
-    public enum InstituteUserRoles
-    {
-        Employee,
-        Manager,
-        Administrator,
-        Guest,
-        Technician,
-        Owner,
-        None
-    }
+    public EInstituteUserRole Role { get; set; } = EInstituteUserRole.Employee;
 
 }

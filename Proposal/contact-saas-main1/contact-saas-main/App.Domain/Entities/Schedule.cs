@@ -9,15 +9,9 @@ public class Schedule : BaseEntity
     public string ScheduleName { get; set; } = default!;
     [StringLength(128, MinimumLength = 3)]
     public string ScheduleDescription { get; set; } = default!;
-    public enum ScheduleStatus
-    {
-        Scheduled,
-        Completed,
-        Cancelled,
-        Pending
-    }
+    
     public string? ColorCode { get; set; }
-    public ScheduleStatus Status { get; set; } = ScheduleStatus.Scheduled;
+    public EScheduleStatus Status { get; set; } = EScheduleStatus.Scheduled;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }

@@ -49,14 +49,27 @@ public static class AppDataInit
             {
                 user = new AppUser()
                 {
+                    Id = userInfo.id ?? Guid.NewGuid(),
                     Email = userInfo.name,
                     UserName = userInfo.name,
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    FirstName = userInfo.firstName,
+                    LastName = userInfo.lastName
                 };
                 var result = userManager.CreateAsync(user, userInfo.password).Result;
                 if (!result.Succeeded)
                 {
                     throw new ApplicationException("User creation failed!");
+                }
+            }
+            else
+            {
+                // Update existing user with first and last name if not already set
+                if (string.IsNullOrEmpty(user.FirstName) || string.IsNullOrEmpty(user.LastName))
+                {
+                    user.FirstName = userInfo.firstName;
+                    user.LastName = userInfo.lastName;
+                    userManager.UpdateAsync(user).Wait();
                 }
             }
 

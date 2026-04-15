@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
 using App.Domain.Entities;
+using WebApp.ViewModels;
 
 namespace WebApp.Controllers
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class EquipmentController : Controller
     {
         private readonly AppDbContext _context;
@@ -23,7 +25,8 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Index()
         {
             var appDbContext = _context.Equipments.Include(e => e.EquipmentType);
-            return View(await appDbContext.ToListAsync());
+            var items = await appDbContext.ToListAsync();
+            return View(items.Select(EquipmentViewModel.FromEntity).ToList());
         }
 
         // GET: Equipment/Details/5
@@ -42,7 +45,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            return View(equipment);
+            return View(EquipmentViewModel.FromEntity(equipment));
         }
 
         // GET: Equipment/Create
@@ -57,17 +60,18 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EquipmentName,EquipmentSerialCode,ManualFilePath,CreatedAt,UpdatedAt,DeletedAt,EquipmentTypeId,Id")] Equipment equipment)
+        public async Task<IActionResult> Create(EquipmentViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
+                var equipment = viewModel.ToEntity();
                 equipment.Id = Guid.NewGuid();
                 _context.Add(equipment);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EquipmentTypeId"] = new SelectList(_context.EquipmentTypes, "Id", "EquipmentTypeName", equipment.EquipmentTypeId);
-            return View(equipment);
+            ViewData["EquipmentTypeId"] = new SelectList(_context.EquipmentTypes, "Id", "EquipmentTypeName", viewModel.EquipmentTypeId);
+            return View(viewModel);
         }
 
         // GET: Equipment/Edit/5
@@ -84,7 +88,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
             ViewData["EquipmentTypeId"] = new SelectList(_context.EquipmentTypes, "Id", "EquipmentTypeName", equipment.EquipmentTypeId);
-            return View(equipment);
+            return View(EquipmentViewModel.FromEntity(equipment));
         }
 
         // POST: Equipment/Edit/5
@@ -92,9 +96,9 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("EquipmentName,EquipmentSerialCode,ManualFilePath,CreatedAt,UpdatedAt,DeletedAt,EquipmentTypeId,Id")] Equipment equipment)
+        public async Task<IActionResult> Edit(Guid id, EquipmentViewModel viewModel)
         {
-            if (id != equipment.Id)
+            if (id != viewModel.Id)
             {
                 return NotFound();
             }
@@ -103,12 +107,13 @@ namespace WebApp.Controllers
             {
                 try
                 {
+                    var equipment = viewModel.ToEntity();
                     _context.Update(equipment);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EquipmentExists(equipment.Id))
+                    if (!EquipmentExists(viewModel.Id))
                     {
                         return NotFound();
                     }
@@ -119,8 +124,8 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EquipmentTypeId"] = new SelectList(_context.EquipmentTypes, "Id", "EquipmentTypeName", equipment.EquipmentTypeId);
-            return View(equipment);
+            ViewData["EquipmentTypeId"] = new SelectList(_context.EquipmentTypes, "Id", "EquipmentTypeName", viewModel.EquipmentTypeId);
+            return View(viewModel);
         }
 
         // GET: Equipment/Delete/5
@@ -139,7 +144,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            return View(equipment);
+            return View(EquipmentViewModel.FromEntity(equipment));
         }
 
         // POST: Equipment/Delete/5

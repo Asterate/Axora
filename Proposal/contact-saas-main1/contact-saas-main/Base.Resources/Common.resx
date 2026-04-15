@@ -108,4 +108,119 @@
     <data name="test" xml:space="preserve">
         <value>test</value>
     </data>
+    <!-- Common field names for entities -->
+    <data name="Name" xml:space="preserve">
+        <value>Name</value>
+    </data>
+    <data name="Description" xml:space="preserve">
+        <value>Description</value>
+    </data>
+    <data name="CreatedAt" xml:space="preserve">
+        <value>Created At</value>
+    </data>
+    <data name="UpdatedAt" xml:space="preserve">
+        <value>Updated At</value>
+    </data>
+    <data name="DeletedAt" xml:space="preserve">
+        <value>Deleted At</value>
+    </data>
+    <data name="Notes" xml:space="preserve">
+        <value>Notes</value>
+    </data>
+    <data name="Active" xml:space="preserve">
+        <value>Active</value>
+    </data>
+    <data name="IsActive" xml:space="preserve">
+        <value>Is Active</value>
+    </data>
+    <data name="Status" xml:space="preserve">
+        <value>Status</value>
+    </data>
+    <data name="Priority" xml:space="preserve">
+        <value>Priority</value>
+    </data>
+    <data name="StartTime" xml:space="preserve">
+        <value>Start Time</value>
+    </data>
+    <data name="EndTime" xml:space="preserve">
+        <value>End Time</value>
+    </data>
+    <data name="Quantity" xml:space="preserve">
+        <value>Quantity</value>
+    </data>
+    <data name="Unit" xml:space="preserve">
+        <value>Unit</value>
+    </data>
+    <data name="FilePath" xml:space="preserve">
+        <value>File Path</value>
+    </data>
+    <data name="Address" xml:space="preserve">
+        <value>Address</value>
+    </data>
+    <data name="PhoneNumber" xml:space="preserve">
+        <value>Phone Number</value>
+    </data>
+    <data name="Country" xml:space="preserve">
+        <value>Country</value>
+    </data>
+    <data name="Funding" xml:space="preserve">
+        <value>Funding</value>
+    </data>
+    <data name="Requirements" xml:space="preserve">
+        <value>Requirements</value>
+    </data>
+    <data name="Capacity" xml:space="preserve">
+        <value>Capacity</value>
+    </data>
+    <data name="ColorCode" xml:space="preserve">
+        <value>Color Code</value>
+    </data>
+    <data name="SerialCode" xml:space="preserve">
+        <value>Serial Code</value>
+    </data>
+    <data name="Manual" xml:space="preserve">
+        <value>Manual</value>
+    </data>
+    <data name="Hazardous" xml:space="preserve">
+        <value>Hazardous</value>
+    </data>
+    <data name="IsHazardous" xml:space="preserve">
+        <value>Is Hazardous</value>
+    </data>
+    <data name="Category" xml:space="preserve">
+        <value>Category</value>
+    </data>
+    <data name="StorageConditions" xml:space="preserve">
+        <value>Storage Conditions</value>
+    </data>
+    <data name="SafetyNotes" xml:space="preserve">
+        <value>Safety Notes</value>
+    </data>
+    <data name="CASNumber" xml:space="preserve">
+        <value>CAS Number</value>
+    </data>
+    <data name="ChemicalFormula" xml:space="preserve">
+        <value>Chemical Formula</value>
+    </data>
+    <data name="MolecularWeight" xml:space="preserve">
+        <value>Molecular Weight</value>
+    </data>
+    <data name="Concentration" xml:space="preserve">
+        <value>Concentration</value>
+    </data>
+    <data name="HandedOver" xml:space="preserve">
+        <value>Handed Over</value>
+    </data>
+    <data name="Expired" xml:space="preserve">
+        <value>Expired</value>
+    </data>
+    <data name="MeasurementName" xml:space="preserve">
+        <value>Measurement Name</value>
+    </data>
+    <data name="MeasurementValue" xml:space="preserve">
+        <value>Measurement Value</value>
+    </data>
+    <data name="Role" xml:space="preserve">
+        <value>Role</value>
+    </data>
 </root>
