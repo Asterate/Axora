@@ -27,10 +27,10 @@
                     @foreach (var institute in Model.Institutes)
                     {
                         <tr>
-                            <td>@institute.InstituteName</td>
-                            <td>@institute.InstituteAddress</td>
-                            <td>@institute.InstituteCountry</td>
-                            <td>@institute.InstitutePhoneNumber</td>
+                            <td>@Html.DisplayFor(modelItem => institute.InstituteName)</td>
+                            <td>@Html.DisplayFor(modelItem => institute.InstituteAddress)</td>
+                            <td>@Html.DisplayFor(modelItem => institute.InstituteCountry)</td>
+                            <td>@Html.DisplayFor(modelItem => institute.InstitutePhoneNumber)</td>
                             <td>
                                 @(institute.Active ? "Yes" : "No")
                             </td>

@@ -35,7 +35,7 @@ namespace WebApp.Controllers
                 return Challenge();
             }
 
-            // Get projects filtered by user's institute (IDOR protected)
+            // Get projects filtered by user's institute
             var projects = await _projectService.GetAllAsync(userId.Value);
             return View(projects);
         }
@@ -54,7 +54,7 @@ namespace WebApp.Controllers
                 return Challenge();
             }
 
-            // IDOR protected - only returns project if it belongs to user's institute
+            // only returns project if it belongs to user's institute
             var project = await _projectService.GetByIdAsync(id.Value, userId.Value);
             if (project == null)
             {
