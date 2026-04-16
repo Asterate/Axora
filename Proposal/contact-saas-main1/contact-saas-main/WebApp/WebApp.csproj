@@ -49,9 +49,6 @@
       <Folder Include="ApiControllers\action\" />
     </ItemGroup>
 
-    <ItemGroup>
-      <AdditionalFiles Include="Views\AppPages\ProjectDashboard\ProjectDashboard.cshtml" />
-    </ItemGroup>
 
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\AccessDenied.cshtml" />
