@@ -1,9 +1,9 @@
-@using App.Domain.Entities
-@model IEnumerable<App.Domain.Entities.Project>
+@using App.DTO.v1
+@model IEnumerable<App.DTO.v1.ProjectDto>
 
 @{
     ViewData["Title"] = "Projects";
-    var items = Model == null ? new List<Project>() : Model.ToList();
+    var items = Model == null ? new List<ProjectDto>() : Model.ToList();
 }
 
 <!-- Recent News Section -->
@@ -38,7 +38,7 @@
     <tr>
         <th>@Html.DisplayNameFor(m => m.ProjectName)</th>
         <th>@Html.DisplayNameFor(m => m.Requirements)</th>
-        <th>@Html.DisplayNameFor(m => m.ProjectType)</th>
+        <th>@Html.DisplayNameFor(m => m.Funding)</th>
         <th></th>
     </tr>
     </thead>
@@ -52,13 +52,13 @@
                 @Html.DisplayFor(modelItem => item.Requirements)
             </td>
             <td>
-                @if (item.ProjectType != null)
+                @if (item.Funding.HasValue)
                 {
-                    @item.ProjectType.Name
+                    @item.Funding
                 }
                 else
                 {
-                    @item.ProjectTypeId
+                    <span>-</span>
                 }
             </td>
             <td>

@@ -3,6 +3,7 @@ using App.Domain.Identity;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Text.Json;
@@ -126,6 +127,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
                 ? new LangStr() 
                 : JsonSerializer.Deserialize<LangStr>(v, (JsonSerializerOptions?)null) ?? new LangStr());
 
+        // ValueComparer for LangStr (Dictionary-based type) to properly compare collection elements
+        var langStrComparer = new ValueComparer<LangStr>(
+            (left, right) => LangStrComparerEquals(left, right),
+            obj => LangStrComparerHash(obj),
+            obj => LangStrComparerClone(obj));
+
         foreach (var entityType in builder.Model.GetEntityTypes())
         {
             foreach (var property in entityType.GetProperties())
@@ -133,9 +140,38 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
                 if (property.ClrType == typeof(LangStr))
                 {
                     property.SetValueConverter(langStrConverter);
+                    property.SetValueComparer(langStrComparer);
                 }
             }
         }
+    }
+
+    // Helper methods for LangStr ValueComparer
+    private static bool LangStrComparerEquals(LangStr? left, LangStr? right)
+    {
+        if (left == null && right == null) return true;
+        if (left == null || right == null) return false;
+        return left.SequenceEqual(right);
+    }
+
+    private static int LangStrComparerHash(LangStr obj)
+    {
+        var hash = 0;
+        foreach (var item in obj)
+        {
+            hash = HashCode.Combine(hash, item.Key.GetHashCode(), item.Value.GetHashCode());
+        }
+        return hash;
+    }
+
+    private static LangStr LangStrComparerClone(LangStr obj)
+    {
+        var copy = new LangStr();
+        foreach (var item in obj)
+        {
+            copy[item.Key] = item.Value;
+        }
+        return copy;
     }
 
 }

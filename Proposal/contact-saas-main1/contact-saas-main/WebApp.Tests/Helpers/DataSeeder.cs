@@ -7,6 +7,6 @@ public static class DataSeeder
 {
     public static void SeedData(AppDbContext ctx)
     {
-        AppDataInit.SeedAppData(ctx);
+       
     }
 }

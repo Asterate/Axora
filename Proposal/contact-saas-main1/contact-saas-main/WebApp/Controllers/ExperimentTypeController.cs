@@ -6,11 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
+using App.Domain;
 using App.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
+using WebApp.ViewModels;
 
 namespace WebApp.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
+    [Authorize(Roles = "admin")]
     public class ExperimentTypeController : Controller
     {
         private readonly AppDbContext _context;
@@ -50,21 +54,34 @@ namespace WebApp.Controllers
             return View();
         }
 
-        // POST: ExperimentType/Create
+        // POST: InstituteType/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ExperimentTypeName,Description,Id")] ExperimentType experimentType)
+        public async Task<IActionResult> Create(ExperimentTypeViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                experimentType.Id = Guid.NewGuid();
+                var name = new LangStr();
+                name.SetTranslation(viewModel.NameEn, "en");
+                name.SetTranslation(viewModel.NameEt, "et");
+                
+                var description = new LangStr();
+                description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
+                description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
+                
+                var experimentType = new ExperimentType()
+                {
+                    Name = name,
+                    Description = description
+                };
+                
                 _context.Add(experimentType);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "LookupData");
             }
-            return View(experimentType);
+            return View(viewModel);
         }
 
         // GET: ExperimentType/Edit/5
@@ -88,7 +105,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("ExperimentTypeName,Description,Id")] ExperimentType experimentType)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name")] ExperimentType experimentType)
         {
             if (id != experimentType.Id)
             {
@@ -113,7 +130,7 @@ namespace WebApp.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "LookupData");
             }
             return View(experimentType);
         }
@@ -148,7 +165,7 @@ namespace WebApp.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "LookupData");
         }
 
         private bool ExperimentTypeExists(Guid id)

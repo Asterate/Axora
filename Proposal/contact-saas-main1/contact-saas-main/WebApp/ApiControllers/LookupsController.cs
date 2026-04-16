@@ -31,7 +31,7 @@ public class LookupsController : ControllerBase
     {
         var cultureName = culture ?? Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
         var items = await _context.ExperimentTypes.ToListAsync();
-        return items.Select(e => new LookupDto { Id = e.Id, Name = e.ExperimentTypeName.Translate(cultureName)?? string.Empty }).ToList();
+        return items.Select(e => new LookupDto { Id = e.Id, Name = e.Name.Translate(cultureName)?? string.Empty }).ToList();
     }
 
     // GET: api/v1.0/lookups/project-types
@@ -51,7 +51,7 @@ public class LookupsController : ControllerBase
     {
         var cultureName = culture ?? Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
         var items = await _context.TaskTypes.ToListAsync();
-        return items.Select(e => new LookupDto { Id = e.Id, Name = e.TaskTypeName.Translate(cultureName) ?? string.Empty}).ToList();
+        return items.Select(e => new LookupDto { Id = e.Id, Name = e.Name.Translate(cultureName) ?? string.Empty}).ToList();
     }
 
     // GET: api/v1.0/lookups/lab-types
@@ -81,7 +81,7 @@ public class LookupsController : ControllerBase
     {
         var cultureName = culture ?? Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
         var items = await _context.EquipmentTypes.ToListAsync();
-        return items.Select(e => new LookupDto { Id = e.Id, Name = e.EquipmentTypeName.Translate(cultureName) ?? string.Empty}).ToList();
+        return items.Select(e => new LookupDto { Id = e.Id, Name = e.Name.Translate(cultureName) ?? string.Empty}).ToList();
     }
 
     // GET: api/v1.0/lookups/reagent-types
@@ -91,7 +91,7 @@ public class LookupsController : ControllerBase
     {
         var cultureName = culture ?? Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
         var items = await _context.ReagentTypes.ToListAsync();
-        return items.Select(e => new LookupDto { Id = e.Id, Name = e.ReagentName.Translate(cultureName) ?? string.Empty }).ToList();
+        return items.Select(e => new LookupDto { Id = e.Id, Name = e.Name.Translate(cultureName) ?? string.Empty }).ToList();
     }
 
     // GET: api/v1.0/lookups/document-types

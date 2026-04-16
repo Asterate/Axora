@@ -10,6 +10,7 @@ public class Institute : BaseEntity
 {
     [Display(Name = "Name", ResourceType = typeof(Base.Resources.Common))]
     [StringLength(128, MinimumLength = 2)]
+    [Column(TypeName = "jsonb")]
     public LangStr InstituteName { get; set; } = new();
     
     [Display(Name = "Country", ResourceType = typeof(Base.Resources.Common))]
@@ -18,6 +19,7 @@ public class Institute : BaseEntity
     
     [Display(Name = "Address", ResourceType = typeof(Base.Resources.Common))]
     [StringLength(128, MinimumLength = 5)]
+    [Column(TypeName = "jsonb")]
     public LangStr InstituteAddress { get; set; } = new();
     
     [Display(Name = "PhoneNumber", ResourceType = typeof(Base.Resources.Common))]

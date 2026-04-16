@@ -60,15 +60,14 @@ namespace App.DAL.EF.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
-                    b.Property<Guid>("NameId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("NameId");
 
                     b.ToTable("CertificationTypes");
                 });
@@ -142,17 +141,14 @@ namespace App.DAL.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("DescriptionId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Description")
+                        .HasColumnType("jsonb");
 
-                    b.Property<Guid>("NameId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DescriptionId");
-
-                    b.HasIndex("NameId");
 
                     b.ToTable("DocumentTypes");
                 });
@@ -169,8 +165,10 @@ namespace App.DAL.EF.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("EquipmentNameId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("EquipmentName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("jsonb");
 
                     b.Property<string>("EquipmentSerialCode")
                         .HasMaxLength(128)
@@ -186,8 +184,6 @@ namespace App.DAL.EF.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EquipmentNameId");
 
                     b.HasIndex("EquipmentTypeId");
 
@@ -255,17 +251,14 @@ namespace App.DAL.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("EquipmentTypeDescriptionId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Description")
+                        .HasColumnType("jsonb");
 
-                    b.Property<Guid>("EquipmentTypeNameId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EquipmentTypeDescriptionId");
-
-                    b.HasIndex("EquipmentTypeNameId");
 
                     b.ToTable("EquipmentTypes");
                 });
@@ -371,11 +364,14 @@ namespace App.DAL.EF.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("TaskDescriptionId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("TaskDescription")
+                        .HasMaxLength(128)
+                        .HasColumnType("jsonb");
 
-                    b.Property<Guid>("TaskNameId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("TaskName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("jsonb");
 
                     b.Property<Guid>("TaskTypeId")
                         .HasColumnType("uuid");
@@ -389,10 +385,6 @@ namespace App.DAL.EF.Migrations
 
                     b.HasIndex("ExperimentId");
 
-                    b.HasIndex("TaskDescriptionId");
-
-                    b.HasIndex("TaskNameId");
-
                     b.HasIndex("TaskTypeId");
 
                     b.ToTable("ExperimentTasks");
@@ -404,17 +396,14 @@ namespace App.DAL.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("DescriptionId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Description")
+                        .HasColumnType("jsonb");
 
-                    b.Property<Guid>("ExperimentTypeNameId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DescriptionId");
-
-                    b.HasIndex("ExperimentTypeNameId");
 
                     b.ToTable("ExperimentTypes");
                 });
@@ -434,16 +423,20 @@ namespace App.DAL.EF.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("InstituteAddressId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("InstituteAddress")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("jsonb");
 
                     b.Property<string>("InstituteCountry")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
-                    b.Property<Guid>("InstituteNameId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("InstituteName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("jsonb");
 
                     b.Property<string>("InstitutePhoneNumber")
                         .IsRequired()
@@ -457,10 +450,6 @@ namespace App.DAL.EF.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("InstituteAddressId");
-
-                    b.HasIndex("InstituteNameId");
 
                     b.HasIndex("InstituteTypeId");
 
@@ -533,17 +522,14 @@ namespace App.DAL.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("DescriptionId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Description")
+                        .HasColumnType("jsonb");
 
-                    b.Property<Guid>("NameId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DescriptionId");
-
-                    b.HasIndex("NameId");
 
                     b.ToTable("InstituteTypes");
                 });
@@ -619,17 +605,14 @@ namespace App.DAL.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("DescriptionId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Description")
+                        .HasColumnType("jsonb");
 
-                    b.Property<Guid>("NameId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DescriptionId");
-
-                    b.HasIndex("NameId");
 
                     b.ToTable("LabTypes");
                 });
@@ -643,25 +626,23 @@ namespace App.DAL.EF.Migrations
                     b.Property<float?>("Funding")
                         .HasColumnType("real");
 
-                    b.Property<Guid>("ProjectNameId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("jsonb");
 
                     b.Property<Guid>("ProjectTypeId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Requirements")
+                        .HasColumnType("jsonb");
+
                     b.Property<string>("RequirementsFilePath")
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("RequirementsId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectNameId");
-
                     b.HasIndex("ProjectTypeId");
-
-                    b.HasIndex("RequirementsId");
 
                     b.ToTable("Projects");
                 });
@@ -672,17 +653,14 @@ namespace App.DAL.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("DescriptionId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Description")
+                        .HasColumnType("jsonb");
 
-                    b.Property<Guid>("NameId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DescriptionId");
-
-                    b.HasIndex("NameId");
 
                     b.ToTable("ProjectTypes");
                 });
@@ -792,6 +770,9 @@ namespace App.DAL.EF.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("jsonb");
+
                     b.Property<string>("HazardLevel")
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
@@ -803,21 +784,15 @@ namespace App.DAL.EF.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
-                    b.Property<Guid?>("ReagentDescriptionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ReagentNameId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
 
                     b.Property<string>("StandardConcentration")
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ReagentDescriptionId");
-
-                    b.HasIndex("ReagentNameId");
 
                     b.ToTable("ReagentTypes");
                 });
@@ -945,17 +920,14 @@ namespace App.DAL.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("TaskTypeDescriptionId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Description")
+                        .HasColumnType("jsonb");
 
-                    b.Property<Guid>("TaskTypeNameId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TaskTypeDescriptionId");
-
-                    b.HasIndex("TaskTypeNameId");
 
                     b.ToTable("TaskTypes");
                 });
@@ -1085,17 +1057,6 @@ namespace App.DAL.EF.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("App.Domain.LangStr", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LangStr");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
@@ -1239,17 +1200,6 @@ namespace App.DAL.EF.Migrations
                     b.Navigation("InstituteUser");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.CertificationType", b =>
-                {
-                    b.HasOne("App.Domain.LangStr", "Name")
-                        .WithMany()
-                        .HasForeignKey("NameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Name");
-                });
-
             modelBuilder.Entity("App.Domain.Entities.Document", b =>
                 {
                     b.HasOne("App.Domain.Entities.DocumentType", "DocumentType")
@@ -1280,39 +1230,13 @@ namespace App.DAL.EF.Migrations
                     b.Navigation("Result");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.DocumentType", b =>
-                {
-                    b.HasOne("App.Domain.LangStr", "Description")
-                        .WithMany()
-                        .HasForeignKey("DescriptionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("App.Domain.LangStr", "Name")
-                        .WithMany()
-                        .HasForeignKey("NameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Description");
-
-                    b.Navigation("Name");
-                });
-
             modelBuilder.Entity("App.Domain.Entities.Equipment", b =>
                 {
-                    b.HasOne("App.Domain.LangStr", "EquipmentName")
-                        .WithMany()
-                        .HasForeignKey("EquipmentNameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("App.Domain.Entities.EquipmentType", "EquipmentType")
                         .WithMany()
                         .HasForeignKey("EquipmentTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("EquipmentName");
 
                     b.Navigation("EquipmentType");
                 });
@@ -1353,24 +1277,6 @@ namespace App.DAL.EF.Migrations
                     b.Navigation("Equipment");
 
                     b.Navigation("Lab");
-                });
-
-            modelBuilder.Entity("App.Domain.Entities.EquipmentType", b =>
-                {
-                    b.HasOne("App.Domain.LangStr", "EquipmentTypeDescription")
-                        .WithMany()
-                        .HasForeignKey("EquipmentTypeDescriptionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("App.Domain.LangStr", "EquipmentTypeName")
-                        .WithMany()
-                        .HasForeignKey("EquipmentTypeNameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("EquipmentTypeDescription");
-
-                    b.Navigation("EquipmentTypeName");
                 });
 
             modelBuilder.Entity("App.Domain.Entities.Experiment", b =>
@@ -1432,17 +1338,6 @@ namespace App.DAL.EF.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("App.Domain.LangStr", "TaskDescription")
-                        .WithMany()
-                        .HasForeignKey("TaskDescriptionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("App.Domain.LangStr", "TaskName")
-                        .WithMany()
-                        .HasForeignKey("TaskNameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("App.Domain.Entities.TaskType", "TaskType")
                         .WithMany()
                         .HasForeignKey("TaskTypeId")
@@ -1453,54 +1348,16 @@ namespace App.DAL.EF.Migrations
 
                     b.Navigation("Experiment");
 
-                    b.Navigation("TaskDescription");
-
-                    b.Navigation("TaskName");
-
                     b.Navigation("TaskType");
-                });
-
-            modelBuilder.Entity("App.Domain.Entities.ExperimentType", b =>
-                {
-                    b.HasOne("App.Domain.LangStr", "Description")
-                        .WithMany()
-                        .HasForeignKey("DescriptionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("App.Domain.LangStr", "ExperimentTypeName")
-                        .WithMany()
-                        .HasForeignKey("ExperimentTypeNameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Description");
-
-                    b.Navigation("ExperimentTypeName");
                 });
 
             modelBuilder.Entity("App.Domain.Entities.Institute", b =>
                 {
-                    b.HasOne("App.Domain.LangStr", "InstituteAddress")
-                        .WithMany()
-                        .HasForeignKey("InstituteAddressId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("App.Domain.LangStr", "InstituteName")
-                        .WithMany()
-                        .HasForeignKey("InstituteNameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("App.Domain.Entities.InstituteType", "InstituteType")
                         .WithMany()
                         .HasForeignKey("InstituteTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("InstituteAddress");
-
-                    b.Navigation("InstituteName");
 
                     b.Navigation("InstituteType");
                 });
@@ -1543,24 +1400,6 @@ namespace App.DAL.EF.Migrations
                     b.Navigation("Project");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.InstituteType", b =>
-                {
-                    b.HasOne("App.Domain.LangStr", "Description")
-                        .WithMany()
-                        .HasForeignKey("DescriptionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("App.Domain.LangStr", "Name")
-                        .WithMany()
-                        .HasForeignKey("NameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Description");
-
-                    b.Navigation("Name");
-                });
-
             modelBuilder.Entity("App.Domain.Entities.InstituteUser", b =>
                 {
                     b.HasOne("App.Domain.Entities.Institute", "Institute")
@@ -1591,66 +1430,15 @@ namespace App.DAL.EF.Migrations
                     b.Navigation("LabType");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.LabType", b =>
-                {
-                    b.HasOne("App.Domain.LangStr", "Description")
-                        .WithMany()
-                        .HasForeignKey("DescriptionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("App.Domain.LangStr", "Name")
-                        .WithMany()
-                        .HasForeignKey("NameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Description");
-
-                    b.Navigation("Name");
-                });
-
             modelBuilder.Entity("App.Domain.Entities.Project", b =>
                 {
-                    b.HasOne("App.Domain.LangStr", "ProjectName")
-                        .WithMany()
-                        .HasForeignKey("ProjectNameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("App.Domain.Entities.ProjectType", "ProjectType")
                         .WithMany()
                         .HasForeignKey("ProjectTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("App.Domain.LangStr", "Requirements")
-                        .WithMany()
-                        .HasForeignKey("RequirementsId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("ProjectName");
-
                     b.Navigation("ProjectType");
-
-                    b.Navigation("Requirements");
-                });
-
-            modelBuilder.Entity("App.Domain.Entities.ProjectType", b =>
-                {
-                    b.HasOne("App.Domain.LangStr", "Description")
-                        .WithMany()
-                        .HasForeignKey("DescriptionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("App.Domain.LangStr", "Name")
-                        .WithMany()
-                        .HasForeignKey("NameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Description");
-
-                    b.Navigation("Name");
                 });
 
             modelBuilder.Entity("App.Domain.Entities.Reagent", b =>
@@ -1681,24 +1469,6 @@ namespace App.DAL.EF.Migrations
                     b.Navigation("Lab");
 
                     b.Navigation("Reagant");
-                });
-
-            modelBuilder.Entity("App.Domain.Entities.ReagentType", b =>
-                {
-                    b.HasOne("App.Domain.LangStr", "ReagentDescription")
-                        .WithMany()
-                        .HasForeignKey("ReagentDescriptionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("App.Domain.LangStr", "ReagentName")
-                        .WithMany()
-                        .HasForeignKey("ReagentNameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ReagentDescription");
-
-                    b.Navigation("ReagentName");
                 });
 
             modelBuilder.Entity("App.Domain.Entities.Result", b =>
@@ -1753,24 +1523,6 @@ namespace App.DAL.EF.Migrations
                     b.Navigation("InstituteUser");
 
                     b.Navigation("Lab");
-                });
-
-            modelBuilder.Entity("App.Domain.Entities.TaskType", b =>
-                {
-                    b.HasOne("App.Domain.LangStr", "TaskTypeDescription")
-                        .WithMany()
-                        .HasForeignKey("TaskTypeDescriptionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("App.Domain.LangStr", "TaskTypeName")
-                        .WithMany()
-                        .HasForeignKey("TaskTypeNameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("TaskTypeDescription");
-
-                    b.Navigation("TaskTypeName");
                 });
 
             modelBuilder.Entity("App.Domain.Identity.AppRefreshToken", b =>

@@ -5,12 +5,19 @@ using Microsoft.IdentityModel.Tokens;
 using WebApp.Helpers;
 using WebApp.Setup;
 using App.BLL.Services;
+using App.Domain;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Service registration
 builder.Services.AddAppDatabase(builder.Configuration, builder.Environment);
 builder.Services.AddAppIdentity();
+
+#pragma warning disable CS0618
+NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
+#pragma warning restore CS0618
+LangStr.DefaultCulture = builder.Configuration.GetValue<string>("LangStrDefaultCulture") ?? "en";
 
 // Add authentication: Cookie for MVC, JWT for API
 builder.Services.AddAuthentication(options =>

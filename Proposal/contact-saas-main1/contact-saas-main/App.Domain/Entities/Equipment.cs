@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Base.Resources;
 using App.Domain;
 
@@ -8,6 +9,7 @@ public class Equipment : BaseEntity
 {
     [Display(Name = "Name", ResourceType = typeof(Base.Resources.Common))]
     [StringLength(128, MinimumLength = 3)]
+    [Column(TypeName = "jsonb")]
     public LangStr EquipmentName {get; set;} = new LangStr();
     
     [Display(Name = "SerialCode", ResourceType = typeof(Base.Resources.Common))]

@@ -99,7 +99,7 @@
         <value>Tegevused</value>
     </data>
     <data name="test" xml:space="preserve">
-        <value>fff</value>
+        <value>test</value>
     </data>
     <!-- Common field names for entities -->
     <data name="Name" xml:space="preserve">

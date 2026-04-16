@@ -17,7 +17,7 @@ using App.Helpers;
 namespace WebApp.Controllers;
 
 [ApiExplorerSettings(IgnoreApi = true)]
-[Route("InstituteChoice")]
+
 public class InstituteChoiceController : Controller
 {
     private readonly AppDbContext _context;
@@ -49,10 +49,12 @@ public class InstituteChoiceController : Controller
 
         // Load institute types directly from database
         var types = await _context.InstituteTypes
-            .OrderBy(t => t.Name)
-            .Select(t => new LookupItem { Id = t.Id, Name = t.Name })
             .ToListAsync();
-        model.InstituteTypes = types;
+        model.InstituteTypes = types.Select(t => new LookupItem 
+        { 
+            Id = t.Id, 
+            Name = t.Name?.Translate() ?? "???" 
+        }).ToList();
 
         return View(model);
     }
@@ -195,9 +197,11 @@ public class InstituteChoiceController : Controller
 
         // Load institute types directly from database
         var types = await _context.InstituteTypes
-            .OrderBy(t => t.Name)
-            .Select(t => new LookupItem { Id = t.Id, Name = t.Name })
             .ToListAsync();
-        model.InstituteTypes = types;
+        model.InstituteTypes = types.Select(t => new LookupItem 
+        { 
+            Id = t.Id, 
+            Name = t.Name?.Translate() ?? "???" 
+        }).ToList();
     }
 }

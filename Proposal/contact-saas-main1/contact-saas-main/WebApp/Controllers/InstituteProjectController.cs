@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
 using App.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
+    [Authorize]
     public class InstituteProjectController : Controller
     {
         private readonly AppDbContext _context;

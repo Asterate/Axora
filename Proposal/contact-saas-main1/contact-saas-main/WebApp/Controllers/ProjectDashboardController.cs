@@ -6,7 +6,6 @@ using WebApp.ViewModels;
 
 namespace WebApp.Controllers
 {
-    [Route("ProjectDashboard")]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize(Roles = "admin, employee, owner, instituteadmin")]
     public class ProjectDashboardController : Controller
@@ -36,7 +35,7 @@ namespace WebApp.Controllers
                 Schedules = schedules
             };
 
-            return View("~/Views/AppPages/ProjectDashboard/ProjectDashboard.cshtml", viewModel);
+            return View(viewModel);
         }
     }
 }

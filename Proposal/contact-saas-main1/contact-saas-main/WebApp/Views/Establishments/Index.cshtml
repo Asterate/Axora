@@ -1,0 +1,56 @@
+﻿@model WebApp.ViewModels.EstablishmentsViewModel
+@{
+    ViewData["Title"] = "Establishments";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="establishments-tables">
+    
+    <!-- Institutes -->
+    <div class="mb-5">
+        <h2>Institutes</h2>
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Country</th>
+                    <th>Phone</th>
+                    <th>Active</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Institutes.Any())
+                {
+                    @foreach (var institute in Model.Institutes)
+                    {
+                        <tr>
+                            <td>@institute.InstituteName</td>
+                            <td>@institute.InstituteAddress</td>
+                            <td>@institute.InstituteCountry</td>
+                            <td>@institute.InstitutePhoneNumber</td>
+                            <td>
+                                @(institute.Active ? "Yes" : "No")
+                            </td>
+                            <td>
+                                <a asp-controller="Institute" asp-action="Edit" asp-route-id="@institute.Id" class="btn btn-sm btn-primary">Edit</a>
+                                <a asp-controller="Institute" asp-action="Details" asp-route-id="@institute.Id" class="btn btn-sm btn-info">Details</a>
+                                <a asp-controller="Lab" asp-action="Delete" asp-route-id="@institute.Id" class="btn btn-sm btn-info">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="6" class="text-muted">No institutes found.</td></tr>
+                }
+            </tbody>
+        </table>
+        <a asp-controller="Institute" asp-action="Create" class="btn btn-success">Add New Institute</a>
+    </div>
+
+    
+
+</div>

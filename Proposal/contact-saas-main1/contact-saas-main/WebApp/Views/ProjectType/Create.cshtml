@@ -1,4 +1,4 @@
-@model App.Domain.Entities.ProjectType
+@model WebApp.ViewModels.ProjectTypeViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -9,19 +9,34 @@
 <h4>ProjectType</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-8">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <h5>English</h5>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="NameEn" class="control-label">Name (English)</label>
+                <input asp-for="NameEn" class="form-control" />
+                <span asp-validation-for="NameEn" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <label asp-for="DescriptionEn" class="control-label">Description (English)</label>
+                <input asp-for="DescriptionEn" class="form-control" />
+                <span asp-validation-for="DescriptionEn" class="text-danger"></span>
             </div>
+            
+            <h5>Estonian</h5>
+            <div class="form-group">
+                <label asp-for="NameEt" class="control-label">Name (Estonian)</label>
+                <input asp-for="NameEt" class="form-control" />
+                <span asp-validation-for="NameEt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DescriptionEt" class="control-label">Description (Estonian)</label>
+                <input asp-for="DescriptionEt" class="form-control" />
+                <span asp-validation-for="DescriptionEt" class="text-danger"></span>
+            </div>
+            
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -30,7 +45,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-controller="LookupData" asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

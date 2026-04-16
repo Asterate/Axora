@@ -1,21 +1,21 @@
 ﻿@{
     var currentUrl = Context.Request.Path.Value?.ToLower() ?? "";
-    var isAdminPage = currentUrl.Contains("admindashboard") || currentUrl.Contains("root");
+    var isAdminPage = currentUrl.StartsWith("/admindashboard") || currentUrl.StartsWith("/root");
 
     var navItems = isAdminPage
-        ? new[] // Admin items
+        ? new[] // Admin sidebar items
         {
             new { Name = "Home", Route = "/HomeDashboard", DisplayName = "Home", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest" } },
             new { Name = "Admin", Route = "/AdminDashboard", DisplayName = "Admin", Roles = new[] { "admin" } },
             new { Name = "User management", Route = "/Root/Users", DisplayName = "User management", Roles = new[] { "admin" } },
             new { Name = "Establishments", Route = "/AdminDashboard/Establishments", DisplayName = "Establishments", Roles = new[] { "admin" } },
             new { Name = "Lookup data", Route = "/AdminDashboard/LookupData", DisplayName = "Lookup data", Roles = new[] { "admin" } }
-        }: new[]
+        }: new[] // Main nav items
     {
         new { Name = "Home", Route = "/HomeDashboard", DisplayName = "Home", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user"  } },
         new { Name = "Experiments", Route = "/ProjectDashboard", DisplayName = "Projects", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user"  } },
-        new { Name = "Schedule", Route = "/Schedule", DisplayName = "Schedule", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user" } },
-        new { Name = "Documents", Route = "/DocumentationDashboard", DisplayName = "Documents", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user"  } },
+        new { Name = "Schedule", Route = "/ScheduleDashboard", DisplayName = "Schedule", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user" } },
+        new { Name = "Documents", Route = "/DocumentDashboard", DisplayName = "Documents", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user"  } },
         new { Name = "Analysis", Route = "/AnalysisDashboard", DisplayName = "Analysis", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user"  } },
         new { Name = "Admin", Route = "/AdminDashboard", DisplayName = "Admin", Roles = new[] { "admin" } }
     };
@@ -25,7 +25,7 @@
     <ul>
         @foreach (var item in navItems)
         {
-            var isActive = currentUrl.Contains(item.Route.ToLower());
+            var isActive = currentUrl.StartsWith(item.Route.ToLower());
             var hasAccess = item.Roles.Any(role => User.IsInRole(role));
             
             @if (hasAccess)

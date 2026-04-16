@@ -6,11 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
+using App.Domain;
 using App.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
+using WebApp.ViewModels;
 
 namespace WebApp.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
+    [Authorize(Roles = "admin")]
     public class DocumentTypeController : Controller
     {
         private readonly AppDbContext _context;
@@ -41,7 +45,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            return View(documentType);
+            return View("Index", "LookupData");
         }
 
         // GET: DocumentType/Create
@@ -50,22 +54,36 @@ namespace WebApp.Controllers
             return View();
         }
 
-        // POST: DocumentType/Create
+        // POST: InstituteType/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,Id")] DocumentType documentType)
+        public async Task<IActionResult> Create(DocumentTypeViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                documentType.Id = Guid.NewGuid();
+                var name = new LangStr();
+                name.SetTranslation(viewModel.NameEn, "en");
+                name.SetTranslation(viewModel.NameEt, "et");
+        
+                var description = new LangStr();
+                description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
+                description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
+        
+                var documentType = new DocumentType
+                {
+                    Name = name,
+                    Description = description
+                };
+        
                 _context.Add(documentType);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "LookupData");
             }
-            return View(documentType);
+            return View(viewModel);
         }
+
 
         // GET: DocumentType/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
@@ -88,7 +106,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Name,Description,Id")] DocumentType documentType)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name")] DocumentType documentType)
         {
             if (id != documentType.Id)
             {
@@ -113,9 +131,9 @@ namespace WebApp.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "LookupData");
             }
-            return View(documentType);
+            return View("Index", "LookupData");
         }
 
         // GET: DocumentType/Delete/5
@@ -148,7 +166,7 @@ namespace WebApp.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "LookupData");
         }
 
         private bool DocumentTypeExists(Guid id)

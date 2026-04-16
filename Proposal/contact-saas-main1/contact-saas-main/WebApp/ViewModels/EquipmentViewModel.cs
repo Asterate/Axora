@@ -43,7 +43,7 @@ public class EquipmentViewModel
             UpdatedAt = equipment.UpdatedAt,
             DeletedAt = equipment.DeletedAt,
             EquipmentTypeId = equipment.EquipmentTypeId,
-            EquipmentTypeName = equipment.EquipmentType?.EquipmentTypeName
+            EquipmentTypeName = equipment.EquipmentType?.Name
         };
     }
     

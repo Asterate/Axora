@@ -18,17 +18,17 @@ public class ExperimentService : BaseService, IExperimentService
     /// Get all experiments for the current user (IDOR protected)
     /// Only returns experiments owned by the current user's InstituteUser
     /// </summary>
-    public async Task<IEnumerable<ExperimentDto>> GetAllAsync(Guid appUserId)
+    public async Task<IEnumerable<ExperimentResponse>> GetAllAsync(Guid appUserId)
     {
         var instituteUserId = await GetCurrentInstituteUserIdAsync(appUserId);
         if (!instituteUserId.HasValue)
         {
-            return Enumerable.Empty<ExperimentDto>();
+            return Enumerable.Empty<ExperimentResponse>();
         }
 
         return await _context.Experiments
             .Where(e => e.InstituteUserId == instituteUserId.Value)
-            .Select(e => new ExperimentDto
+            .Select(e => new ExperimentResponse
             {
                 Id = e.Id,
                 ExperimentName = e.ExperimentName,
@@ -46,7 +46,7 @@ public class ExperimentService : BaseService, IExperimentService
     /// Get a specific experiment by ID (IDOR protected)
     /// Only returns the experiment if it belongs to the current user
     /// </summary>
-    public async Task<ExperimentDto?> GetByIdAsync(Guid id, Guid appUserId)
+    public async Task<ExperimentResponse?> GetByIdAsync(Guid id, Guid appUserId)
     {
         var instituteUserId = await GetCurrentInstituteUserIdAsync(appUserId);
         if (!instituteUserId.HasValue)
@@ -62,7 +62,7 @@ public class ExperimentService : BaseService, IExperimentService
             return null;
         }
 
-        return new ExperimentDto
+        return new ExperimentResponse
         {
             Id = experiment.Id,
             ExperimentName = experiment.ExperimentName,
@@ -78,7 +78,7 @@ public class ExperimentService : BaseService, IExperimentService
     /// <summary>
     /// Create a new experiment
     /// </summary>
-    public async Task<ExperimentDto> CreateAsync(CreateExperimentDto dto, Guid appUserId)
+    public async Task<ExperimentResponse> CreateAsync(CreateExperimentRequest dto, Guid appUserId)
     {
         var instituteUserId = await GetCurrentInstituteUserIdAsync(appUserId);
         if (!instituteUserId.HasValue)
@@ -114,7 +114,7 @@ public class ExperimentService : BaseService, IExperimentService
         _context.Experiments.Add(experiment);
         await _context.SaveChangesAsync();
 
-        return new ExperimentDto
+        return new ExperimentResponse
         {
             Id = experiment.Id,
             ExperimentName = experiment.ExperimentName,
@@ -131,7 +131,7 @@ public class ExperimentService : BaseService, IExperimentService
     /// Update an experiment (IDOR protected)
     /// Only allows updating if the experiment belongs to the current user
     /// </summary>
-    public async Task<bool> UpdateAsync(Guid id, CreateExperimentDto dto, Guid appUserId)
+    public async Task<bool> UpdateAsync(Guid id, UpdateExperimentRequest dto, Guid appUserId)
     {
         var instituteUserId = await GetCurrentInstituteUserIdAsync(appUserId);
         if (!instituteUserId.HasValue)

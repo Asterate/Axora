@@ -23,8 +23,8 @@ public class ExperimentsController : ControllerBase
 
     // GET: api/v1.0/experiments
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<ExperimentDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<ExperimentDto>>> GetExperiments()
+    [ProducesResponseType(typeof(IEnumerable<ExperimentResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<ExperimentResponse>>> GetExperiments()
     {
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
@@ -35,9 +35,9 @@ public class ExperimentsController : ControllerBase
 
     // GET: api/v1.0/experiments/{id}
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(ExperimentDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ExperimentResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ExperimentDto>> GetExperiment(Guid id)
+    public async Task<ActionResult<ExperimentResponse>> GetExperiment(Guid id)
     {
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
@@ -50,9 +50,9 @@ public class ExperimentsController : ControllerBase
 
     // POST: api/v1.0/experiments
     [HttpPost]
-    [ProducesResponseType(typeof(ExperimentDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ExperimentResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ExperimentDto>> CreateExperiment([FromBody] CreateExperimentDto dto)
+    public async Task<ActionResult<ExperimentResponse>> CreateExperiment([FromBody] CreateExperimentRequest dto)
     {
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
@@ -73,7 +73,7 @@ public class ExperimentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateExperiment(Guid id, [FromBody] CreateExperimentDto dto)
+    public async Task<IActionResult> UpdateExperiment(Guid id, [FromBody] UpdateExperimentRequest dto)
     {
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");

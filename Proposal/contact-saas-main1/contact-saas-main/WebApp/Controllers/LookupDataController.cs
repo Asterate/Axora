@@ -8,6 +8,7 @@ namespace WebApp.Controllers;
 [ApiExplorerSettings(IgnoreApi = true)]
 [Authorize(Roles = "admin")]
 [Route("AdminDashboard/LookupData")]
+[Route("LookupData")]
 public class LookupDataController : Controller
 {
     private readonly AppDbContext _context;
@@ -32,6 +33,6 @@ public class LookupDataController : Controller
             TaskTypes = await _context.TaskTypes.ToListAsync()
         };
 
-        return View("~/Views/AppPages/AdminDashboard/LookupData.cshtml", model);
+        return View(model);
     }
 }

@@ -6,11 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
+using App.Domain;
 using App.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
+using WebApp.ViewModels;
 
 namespace WebApp.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
+    [Authorize(Roles = "admin")]
     public class InstituteTypeController : Controller
     {
         private readonly AppDbContext _context;
@@ -55,16 +59,29 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,Id")] InstituteType instituteType)
+        public async Task<IActionResult> Create(InstituteTypeViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                instituteType.Id = Guid.NewGuid();
+                var name = new LangStr();
+                name.SetTranslation(viewModel.NameEn, "en");
+                name.SetTranslation(viewModel.NameEt, "et");
+                
+                var description = new LangStr();
+                description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
+                description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
+                
+                var instituteType = new InstituteType
+                {
+                    Id = Guid.NewGuid(),
+                    Name = name,
+                    Description = description
+                };
                 _context.Add(instituteType);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "LookupData");
             }
-            return View(instituteType);
+            return View(viewModel);
         }
 
         // GET: InstituteType/Edit/5
@@ -80,7 +97,17 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-            return View(instituteType);
+            
+            // Convert to ViewModel for display
+            var viewModel = new InstituteTypeViewModel
+            {
+                Id = instituteType.Id,
+                NameEn = instituteType.Name.Translate("en") ?? string.Empty,
+                NameEt = instituteType.Name.Translate("et") ?? string.Empty,
+                DescriptionEn = instituteType.Description?.Translate("en"),
+                DescriptionEt = instituteType.Description?.Translate("et")
+            };
+            return View(viewModel);
         }
 
         // POST: InstituteType/Edit/5
@@ -88,9 +115,9 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Name,Description,Id")] InstituteType instituteType)
+        public async Task<IActionResult> Edit(Guid id, InstituteTypeViewModel viewModel)
         {
-            if (id != instituteType.Id)
+            if (id != viewModel.Id)
             {
                 return NotFound();
             }
@@ -99,12 +126,29 @@ namespace WebApp.Controllers
             {
                 try
                 {
+                    var instituteType = await _context.InstituteTypes.FindAsync(id);
+                    if (instituteType == null)
+                    {
+                        return NotFound();
+                    }
+                    
+                    // Update translations
+                    instituteType.Name.SetTranslation(viewModel.NameEn, "en");
+                    instituteType.Name.SetTranslation(viewModel.NameEt, "et");
+                    
+                    if (instituteType.Description == null)
+                    {
+                        instituteType.Description = new LangStr();
+                    }
+                    instituteType.Description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
+                    instituteType.Description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
+                    
                     _context.Update(instituteType);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!InstituteTypeExists(instituteType.Id))
+                    if (!InstituteTypeExists(viewModel.Id))
                     {
                         return NotFound();
                     }
@@ -113,9 +157,9 @@ namespace WebApp.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "LookupData");
             }
-            return View(instituteType);
+            return View(viewModel);
         }
 
         // GET: InstituteType/Delete/5
@@ -148,7 +192,7 @@ namespace WebApp.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "LookupData");
         }
 
         private bool InstituteTypeExists(Guid id)

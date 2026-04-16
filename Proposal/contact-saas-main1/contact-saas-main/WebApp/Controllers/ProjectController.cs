@@ -9,10 +9,12 @@ using Microsoft.EntityFrameworkCore;
 using App.BLL.Services;
 using App.DAL.EF;
 using App.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
+    [Authorize]
     public class ProjectController : Controller
     {
         private readonly AppDbContext _context;
@@ -119,7 +121,7 @@ namespace WebApp.Controllers
         // POST: Project/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("ProjectName,Funding,Requirements,RequirementsFilePath,PublicTypeId")] App.DTO.v1.CreateProjectDto dto)
+        public async Task<IActionResult> Edit(Guid id, [Bind("ProjectName,Funding,Requirements,RequirementsFilePath,ProjectTypeId")] App.DTO.v1.UpdateProjectRequest dto)
         {
             // Note: id comes from route, dto doesn't have Id (as per CreateProjectDto definition)
             // The service will validate ownership using the route id parameter

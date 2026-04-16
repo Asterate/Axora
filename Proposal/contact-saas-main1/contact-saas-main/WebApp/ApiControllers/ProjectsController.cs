@@ -23,8 +23,8 @@ public class ProjectsController : ControllerBase
 
     // GET: api/v1.0/projects
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<ProjectDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<ProjectDto>>> GetProjects()
+    [ProducesResponseType(typeof(IEnumerable<ProjectResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<ProjectResponse>>> GetProjects()
     {
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
@@ -35,9 +35,9 @@ public class ProjectsController : ControllerBase
 
     // GET: api/v1.0/projects/{id}
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(ProjectDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ProjectDto>> GetProject(Guid id)
+    public async Task<ActionResult<ProjectResponse>> GetProject(Guid id)
     {
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
@@ -50,9 +50,9 @@ public class ProjectsController : ControllerBase
 
     // POST: api/v1.0/projects
     [HttpPost]
-    [ProducesResponseType(typeof(ProjectDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ProjectDto>> CreateProject([FromBody] CreateProjectDto dto)
+    public async Task<ActionResult<ProjectResponse>> CreateProject([FromBody] CreateProjectRequest dto)
     {
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
@@ -68,12 +68,11 @@ public class ProjectsController : ControllerBase
         }
     }
 
-    // PUT: api/v1.0/projects/{id}
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateProject(Guid id, [FromBody] CreateProjectDto dto)
+    public async Task<IActionResult> UpdateProject(Guid id, [FromBody] UpdateProjectRequest dto)
     {
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");

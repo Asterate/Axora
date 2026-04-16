@@ -4,29 +4,29 @@ using Microsoft.AspNetCore.Mvc;
 using WebApp.ViewModels;
 
 namespace WebApp.Controllers;
-[Route("DocumentationDashboard")]
+
 [ApiExplorerSettings(IgnoreApi = true)]
 [Authorize(Roles = "admin, employee, owner, instituteadmin, guest")]
 public class DocumentDashboardController : Controller
 {
-        private readonly AppDbContext _context;
+    private readonly AppDbContext _context;
 
-        public DocumentDashboardController(AppDbContext context)
+    public DocumentDashboardController(AppDbContext context)
+    {
+        _context = context;
+    }
+
+    public IActionResult Index()
+    {
+        var documents = _context.Documents
+            .Where(s => s.DeletedAt == null)
+            .ToList();
+
+        var viewModel = new DocumentationViewModel
         {
-            _context = context;
-        }
-        public IActionResult Index()
-        {
+            Documents = documents,
+        };
 
-            var documents = _context.Documents
-                .Where(s => s.DeletedAt == null)
-                .ToList();
-
-            var viewModel = new DocumentationViewModel
-            {
-                Documents = documents,
-            };
-
-            return View("~/Views/AppPages/DocumentationDashboard/DocumentationDashboard.cshtml", viewModel);
-        }
+        return View(viewModel);
+    }
 }

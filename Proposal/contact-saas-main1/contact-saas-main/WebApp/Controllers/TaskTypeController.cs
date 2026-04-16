@@ -6,11 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
+using App.Domain;
 using App.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
+using WebApp.ViewModels;
 
 namespace WebApp.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
+    [Authorize(Roles = "admin")]
     public class TaskTypeController : Controller
     {
         private readonly AppDbContext _context;
@@ -55,16 +59,29 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TaskTypeName,TaskTypeDescription,Id")] TaskType taskType)
+        public async Task<IActionResult> Create(TaskTypeViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                taskType.Id = Guid.NewGuid();
+                var taskTypeName = new LangStr();
+                taskTypeName.SetTranslation(viewModel.TaskTypeNameEn, "en");
+                taskTypeName.SetTranslation(viewModel.TaskTypeNameEt, "et");
+                
+                var taskTypeDescription = new LangStr();
+                taskTypeDescription.SetTranslation(viewModel.TaskTypeDescriptionEn ?? string.Empty, "en");
+                taskTypeDescription.SetTranslation(viewModel.TaskTypeDescriptionEt ?? string.Empty, "et");
+                
+                var taskType = new TaskType
+                {
+                    Id = Guid.NewGuid(),
+                    Name = taskTypeName,
+                    Description = taskTypeDescription
+                };
                 _context.Add(taskType);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "LookupData");
             }
-            return View(taskType);
+            return View(viewModel);
         }
 
         // GET: TaskType/Edit/5
@@ -80,7 +97,17 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-            return View(taskType);
+            
+            // Convert entity to ViewModel for display
+            var viewModel = new TaskTypeViewModel
+            {
+                Id = taskType.Id,
+                TaskTypeNameEn = taskType.Name.Translate("en") ?? string.Empty,
+                TaskTypeNameEt = taskType.Name.Translate("et") ?? string.Empty,
+                TaskTypeDescriptionEn = taskType.Description?.Translate("en"),
+                TaskTypeDescriptionEt = taskType.Description?.Translate("et")
+            };
+            return View(viewModel);
         }
 
         // POST: TaskType/Edit/5
@@ -88,9 +115,9 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("TaskTypeName,TaskTypeDescription,Id")] TaskType taskType)
+        public async Task<IActionResult> Edit(Guid id, TaskTypeViewModel viewModel)
         {
-            if (id != taskType.Id)
+            if (id != viewModel.Id)
             {
                 return NotFound();
             }
@@ -99,12 +126,29 @@ namespace WebApp.Controllers
             {
                 try
                 {
+                    var taskType = await _context.TaskTypes.FindAsync(id);
+                    if (taskType == null)
+                    {
+                        return NotFound();
+                    }
+                    
+                    // Update translations
+                    taskType.Name.SetTranslation(viewModel.TaskTypeNameEn, "en");
+                    taskType.Name.SetTranslation(viewModel.TaskTypeNameEt, "et");
+                    
+                    if (taskType.Description == null)
+                    {
+                        taskType.Description = new LangStr();
+                    }
+                    taskType.Description.SetTranslation(viewModel.TaskTypeDescriptionEn ?? string.Empty, "en");
+                    taskType.Description.SetTranslation(viewModel.TaskTypeDescriptionEt ?? string.Empty, "et");
+                    
                     _context.Update(taskType);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TaskTypeExists(taskType.Id))
+                    if (!TaskTypeExists(viewModel.Id))
                     {
                         return NotFound();
                     }
@@ -113,9 +157,9 @@ namespace WebApp.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "LookupData");
             }
-            return View(taskType);
+            return View(viewModel);
         }
 
         // GET: TaskType/Delete/5
@@ -148,7 +192,7 @@ namespace WebApp.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "LookupData");
         }
 
         private bool TaskTypeExists(Guid id)

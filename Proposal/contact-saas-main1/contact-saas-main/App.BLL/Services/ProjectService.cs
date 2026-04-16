@@ -32,12 +32,12 @@ public class ProjectService : BaseService, IProjectService
     /// Get all projects for the current user's institute (IDOR protected)
     /// Only returns projects associated with the user's institute via InstituteProject
     /// </summary>
-    public async Task<IEnumerable<ProjectDto>> GetAllAsync(Guid appUserId)
+    public async Task<IEnumerable<ProjectResponse>> GetAllAsync(Guid appUserId)
     {
         var instituteId = await GetCurrentInstituteIdAsync(appUserId);
         if (!instituteId.HasValue)
         {
-            return Enumerable.Empty<ProjectDto>();
+            return Enumerable.Empty<ProjectResponse>();
         }
 
         var projects = await _context.InstituteProjects
@@ -45,14 +45,14 @@ public class ProjectService : BaseService, IProjectService
             .Select(ip => ip.Project)
             .ToListAsync();
 
-        return projects.Select(p => new ProjectDto
+        return projects.Select(p => new ProjectResponse
         {
             Id = p.Id,
             ProjectName = p.ProjectName.Translate() ?? string.Empty,
             Funding = p.Funding,
             Requirements = p.Requirements?.Translate() ?? string.Empty,
             RequirementsFilePath = p.RequirementsFilePath,
-            PublicTypeId = p.ProjectTypeId
+            ProjectTypeId = p.ProjectTypeId
         }).ToList();
     }
 
@@ -60,7 +60,7 @@ public class ProjectService : BaseService, IProjectService
     /// Get a specific project by ID (IDOR protected)
     /// Only returns the project if it belongs to the user's institute
     /// </summary>
-    public async Task<ProjectDto?> GetByIdAsync(Guid id, Guid appUserId)
+    public async Task<ProjectResponse?> GetByIdAsync(Guid id, Guid appUserId)
     {
         var instituteId = await GetCurrentInstituteIdAsync(appUserId);
         if (!instituteId.HasValue)
@@ -82,21 +82,21 @@ public class ProjectService : BaseService, IProjectService
             return null;
         }
 
-        return new ProjectDto
+        return new ProjectResponse
         {
             Id = project.Id,
             ProjectName = project.ProjectName.Translate() ?? string.Empty,
             Funding = project.Funding,
             Requirements = project.Requirements?.Translate() ?? string.Empty,
             RequirementsFilePath = project.RequirementsFilePath,
-            PublicTypeId = project.ProjectTypeId
+            ProjectTypeId = project.ProjectTypeId
         };
     }
 
     /// <summary>
     /// Create a new project and associate it with the user's institute
     /// </summary>
-    public async Task<ProjectDto> CreateAsync(CreateProjectDto dto, Guid appUserId)
+    public async Task<ProjectResponse> CreateAsync(CreateProjectRequest dto, Guid appUserId)
     {
         var instituteId = await GetCurrentInstituteIdAsync(appUserId);
         if (!instituteId.HasValue)
@@ -105,20 +105,20 @@ public class ProjectService : BaseService, IProjectService
         }
 
         // Validate project type exists
-        var projectTypeExists = await _context.ProjectTypes.AnyAsync(p => p.Id == dto.PublicTypeId);
+        var projectTypeExists = await _context.ProjectTypes.AnyAsync(p => p.Id == dto.ProjectTypeId);
         if (!projectTypeExists)
         {
-            throw new InvalidOperationException($"ProjectType with ID {dto.PublicTypeId} not found");
+            throw new InvalidOperationException($"ProjectType with ID {dto.ProjectTypeId} not found");
         }
 
         var project = new Project
         {
             Id = Guid.NewGuid(),
-            ProjectName = new LangStr(dto.ProjectName),
+            ProjectName = new LangStr(dto.ProjectName ?? string.Empty),
             Funding = dto.Funding,
             Requirements = string.IsNullOrEmpty(dto.Requirements) ? null : new LangStr(dto.Requirements),
             RequirementsFilePath = dto.RequirementsFilePath,
-            ProjectTypeId = dto.PublicTypeId
+            ProjectTypeId = dto.ProjectTypeId
         };
 
         _context.Projects.Add(project);
@@ -135,14 +135,14 @@ public class ProjectService : BaseService, IProjectService
         _context.InstituteProjects.Add(instituteProject);
         await _context.SaveChangesAsync();
 
-        return new ProjectDto
+        return new ProjectResponse
         {
             Id = project.Id,
             ProjectName = project.ProjectName.Translate() ?? string.Empty,
             Funding = project.Funding,
             Requirements = project.Requirements?.Translate() ?? string.Empty,
             RequirementsFilePath = project.RequirementsFilePath,
-            PublicTypeId = project.ProjectTypeId
+            ProjectTypeId = project.ProjectTypeId
         };
     }
 
@@ -150,7 +150,7 @@ public class ProjectService : BaseService, IProjectService
     /// Update a project (IDOR protected)
     /// Only allows updating if the project belongs to the user's institute
     /// </summary>
-    public async Task<bool> UpdateAsync(Guid id, CreateProjectDto dto, Guid appUserId)
+    public async Task<bool> UpdateAsync(Guid id, UpdateProjectRequest dto, Guid appUserId)
     {
         var instituteId = await GetCurrentInstituteIdAsync(appUserId);
         if (!instituteId.HasValue)
@@ -168,10 +168,10 @@ public class ProjectService : BaseService, IProjectService
         }
 
         // Validate project type exists
-        var projectTypeExists = await _context.ProjectTypes.AnyAsync(p => p.Id == dto.PublicTypeId);
+        var projectTypeExists = await _context.ProjectTypes.AnyAsync(p => p.Id == dto.ProjectTypeId);
         if (!projectTypeExists)
         {
-            throw new InvalidOperationException($"ProjectType with ID {dto.PublicTypeId} not found");
+            throw new InvalidOperationException($"ProjectType with ID {dto.ProjectTypeId} not found");
         }
 
         var project = await _context.Projects.FindAsync(id);
@@ -180,11 +180,25 @@ public class ProjectService : BaseService, IProjectService
             return false;
         }
 
-        project.ProjectName = new LangStr(dto.ProjectName);
+        // Ensure the entity is attached and marked as modified
+        _context.Entry(project).State = EntityState.Modified;
+        
+        project.ProjectName.SetTranslation(dto.ProjectName);
         project.Funding = dto.Funding;
-        project.Requirements = string.IsNullOrEmpty(dto.Requirements) ? null : new LangStr(dto.Requirements);
+        // Handle Requirements - only update if provided
+        if (!string.IsNullOrEmpty(dto.Requirements))
+        {
+            if (project.Requirements == null)
+            {
+                project.Requirements = new LangStr(dto.Requirements);
+            }
+            else
+            {
+                project.Requirements.SetTranslation(dto.Requirements);
+            }
+        }
         project.RequirementsFilePath = dto.RequirementsFilePath;
-        project.ProjectTypeId = dto.PublicTypeId;
+        project.ProjectTypeId = dto.ProjectTypeId;
 
         await _context.SaveChangesAsync();
         return true;

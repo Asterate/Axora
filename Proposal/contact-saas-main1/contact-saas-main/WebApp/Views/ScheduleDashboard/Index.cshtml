@@ -1,0 +1,56 @@
+@model WebApp.Controllers.ScheduleDashboardViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Schedule Dashboard</title>
+</head>
+<body>
+    <div class="container-fluid">
+        <h1>Schedule Dashboard</h1>
+        <p>
+            <a asp-controller="Schedule" asp-action="Create" class="btn btn-success">Create New Schedule</a>
+        </p>
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Schedule</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Task</th>
+                            <th>Lab</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var schedule in Model.Schedules)
+                        {
+                            <tr>
+                                <td>@schedule.ScheduleName</td>
+                                <td>@schedule.Status</td>
+                                <td>@schedule.StartTime.ToShortDateString()</td>
+                                <td>@schedule.EndTime.ToShortDateString()</td>
+                                <td>@schedule.ExperimentTask?.TaskName</td>
+                                <td>@schedule.Lab?.LabName</td>
+                                <td>
+                                    <a asp-controller="Schedule" asp-action="Edit" asp-route-id="@schedule.Id">Edit</a> |
+                                    <a asp-controller="Schedule" asp-action="Details" asp-route-id="@schedule.Id">Details</a> |
+                                    <a asp-controller="Schedule" asp-action="Delete" asp-route-id="@schedule.Id">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

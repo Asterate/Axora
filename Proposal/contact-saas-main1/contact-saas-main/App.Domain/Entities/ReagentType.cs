@@ -1,12 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using App.Domain;
 
 namespace App.Domain.Entities;
 
 public class ReagentType : BaseEntity
 {
-    public LangStr ReagentName { get; set; } = new();
-    public LangStr? ReagentDescription { get; set; }
+    [Column(TypeName = "jsonb")]
+    public LangStr Name { get; set; } = new();
+    [Column(TypeName = "jsonb")]
+    public LangStr? Description { get; set; }
     [StringLength(64)]
     public string? Category { get; set; }
     [StringLength(64)]

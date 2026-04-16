@@ -1,8 +1,35 @@
-﻿using System.Text.Json.Serialization;
+﻿namespace App.DTO.v1;
 
-namespace App.DTO.v1;
+/// <summary>
+/// Request DTO for creating a new experiment task
+/// </summary>
+public class CreateTaskRequest
+{
+    public string TaskName { get; set; } = default!;
+    public string? TaskDescription { get; set; }
+    public int? Priority { get; set; }
+    public Guid TaskTypeId { get; set; }
+    public Guid ExperimentId { get; set; }
+    public Guid? AssignedUserId { get; set; }
+}
 
-public class ExperimentTaskDto
+/// <summary>
+/// Request DTO for updating an experiment task
+/// </summary>
+public class UpdateTaskRequest
+{
+    public string TaskName { get; set; } = default!;
+    public string? TaskDescription { get; set; }
+    public int? Priority { get; set; }
+    public Guid TaskTypeId { get; set; }
+    public Guid ExperimentId { get; set; }
+    public Guid? AssignedUserId { get; set; }
+}
+
+/// <summary>
+/// Response DTO for experiment task data
+/// </summary>
+public class ExperimentTaskResponse
 {
     public Guid Id { get; set; }
     public string TaskName { get; set; } = default!;
@@ -22,14 +49,4 @@ public class ExperimentTaskDto
     public Guid? AssignedUserId { get; set; }
     public Guid ExperimentId { get; set; }
     public string? TaskTypeName { get; set; }
-}
-
-public class CreateTaskDto
-{
-    public string TaskName { get; set; } = default!;
-    public string? TaskDescription { get; set; }
-    public int? Priority { get; set; }
-    public Guid TaskTypeId { get; set; }
-    public Guid ExperimentId { get; set; }
-    public Guid? AssignedUserId { get; set; }
 }

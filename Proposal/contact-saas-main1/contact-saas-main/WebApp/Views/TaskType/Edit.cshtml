@@ -1,4 +1,4 @@
-@model App.Domain.Entities.TaskType
+@model WebApp.ViewModels.TaskTypeViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -9,19 +9,34 @@
 <h4>TaskType</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-8">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <h5>English</h5>
             <div class="form-group">
-                <label asp-for="TaskTypeName" class="control-label"></label>
-                <input asp-for="TaskTypeName" class="form-control" />
-                <span asp-validation-for="TaskTypeName" class="text-danger"></span>
+                <label asp-for="TaskTypeNameEn" class="control-label">Name (English)</label>
+                <input asp-for="TaskTypeNameEn" class="form-control" />
+                <span asp-validation-for="TaskTypeNameEn" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="TaskTypeDescription" class="control-label"></label>
-                <input asp-for="TaskTypeDescription" class="form-control" />
-                <span asp-validation-for="TaskTypeDescription" class="text-danger"></span>
+                <label asp-for="TaskTypeDescriptionEn" class="control-label">Description (English)</label>
+                <input asp-for="TaskTypeDescriptionEn" class="form-control" />
+                <span asp-validation-for="TaskTypeDescriptionEn" class="text-danger"></span>
             </div>
+            
+            <h5>Estonian</h5>
+            <div class="form-group">
+                <label asp-for="TaskTypeNameEt" class="control-label">Name (Estonian)</label>
+                <input asp-for="TaskTypeNameEt" class="form-control" />
+                <span asp-validation-for="TaskTypeNameEt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskTypeDescriptionEt" class="control-label">Description (Estonian)</label>
+                <input asp-for="TaskTypeDescriptionEt" class="form-control" />
+                <span asp-validation-for="TaskTypeDescriptionEt" class="text-danger"></span>
+            </div>
+            
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -31,7 +46,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-controller="LookupData" asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

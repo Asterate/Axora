@@ -6,11 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
+using App.Domain;
 using App.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
+using WebApp.ViewModels;
 
 namespace WebApp.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
+    [Authorize(Roles = "admin")]
     public class ProjectTypeController : Controller
     {
         private readonly AppDbContext _context;
@@ -51,20 +55,31 @@ namespace WebApp.Controllers
         }
 
         // POST: ProjectType/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,Id")] ProjectType projectType)
+        public async Task<IActionResult> Create(ProjectTypeViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                projectType.Id = Guid.NewGuid();
+                var name = new LangStr();
+                name.SetTranslation(viewModel.NameEn, "en");
+                name.SetTranslation(viewModel.NameEt, "et");
+                
+                var description = new LangStr();
+                description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
+                description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
+                
+                var projectType = new ProjectType
+                {
+                    Id = Guid.NewGuid(),
+                    Name = name,
+                    Description = description
+                };
                 _context.Add(projectType);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "LookupData");
             }
-            return View(projectType);
+            return View(viewModel);
         }
 
         // GET: ProjectType/Edit/5
@@ -80,17 +95,25 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-            return View(projectType);
+            
+            // Convert entity to ViewModel for display
+            var viewModel = new ProjectTypeViewModel
+            {
+                Id = projectType.Id,
+                NameEn = projectType.Name.Translate("en") ?? string.Empty,
+                NameEt = projectType.Name.Translate("et") ?? string.Empty,
+                DescriptionEn = projectType.Description?.Translate("en"),
+                DescriptionEt = projectType.Description?.Translate("et")
+            };
+            return View(viewModel);
         }
 
         // POST: ProjectType/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Name,Description,Id")] ProjectType projectType)
+        public async Task<IActionResult> Edit(Guid id, ProjectTypeViewModel viewModel)
         {
-            if (id != projectType.Id)
+            if (id != viewModel.Id)
             {
                 return NotFound();
             }
@@ -99,12 +122,27 @@ namespace WebApp.Controllers
             {
                 try
                 {
+                    var projectType = await _context.ProjectTypes.FindAsync(id);
+                    if (projectType == null)
+                    {
+                        return NotFound();
+                    }
+                    projectType.Name.SetTranslation(viewModel.NameEn, "en");
+                    projectType.Name.SetTranslation(viewModel.NameEt, "et");
+                    
+                    if (projectType.Description == null)
+                    {
+                        projectType.Description = new LangStr();
+                    }
+                    projectType.Description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
+                    projectType.Description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
+                    
                     _context.Update(projectType);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProjectTypeExists(projectType.Id))
+                    if (!ProjectTypeExists(viewModel.Id))
                     {
                         return NotFound();
                     }
@@ -113,9 +151,9 @@ namespace WebApp.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "LookupData");
             }
-            return View(projectType);
+            return View(viewModel);
         }
 
         // GET: ProjectType/Delete/5
@@ -148,7 +186,7 @@ namespace WebApp.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "LookupData");
         }
 
         private bool ProjectTypeExists(Guid id)

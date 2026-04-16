@@ -56,16 +56,13 @@ public class RegisterController : Controller
         model.Institutes = institutes;
 
         var instituteTypes = await _context.InstituteTypes
-            .OrderBy(t => t.Name)
-            .Select(t => new RegisterViewModel.LookupItem 
-            { 
-                Id = t.Id, 
-                Name = t.Name 
-            })
             .ToListAsync();
+        model.InstituteTypes = instituteTypes.Select(t => new RegisterViewModel.LookupItem 
+        { 
+            Id = t.Id, 
+            Name = t.Name?.Translate() ?? "???" 
+        }).OrderBy(x => x.Name).ToList();
         
-        model.InstituteTypes = instituteTypes;
-
         return View(model);
     }
 
@@ -154,15 +151,12 @@ public class RegisterController : Controller
         model.Institutes = institutes;
 
         var instituteTypes = await _context.InstituteTypes
-            .OrderBy(t => t.Name)
-            .Select(t => new RegisterViewModel.LookupItem 
-            { 
-                Id = t.Id, 
-                Name = t.Name 
-            })
             .ToListAsync();
-        
-        model.InstituteTypes = instituteTypes;
+        model.InstituteTypes = instituteTypes.Select(t => new RegisterViewModel.LookupItem 
+        { 
+            Id = t.Id, 
+            Name = t.Name?.Translate() ?? "???" 
+        }).OrderBy(x => x.Name).ToList();
     }
 
     private async Task<JWTResponse?> GenerateJwtTokenAsync(AppUser user)

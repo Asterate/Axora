@@ -8,6 +8,7 @@ namespace WebApp.Controllers;
 [ApiExplorerSettings(IgnoreApi = true)]
 [Authorize(Roles = "admin")]
 [Route("AdminDashboard/Establishments")]
+[Route("Establishments")]
 public class EstablishmentsController : Controller
 {
     private readonly AppDbContext _context;
@@ -34,6 +35,6 @@ public class EstablishmentsController : Controller
             Labs = labs
         };
 
-        return View("~/Views/AppPages/AdminDashboard/Establishments.cshtml", viewModel);
+        return View(viewModel);
     }
 }
