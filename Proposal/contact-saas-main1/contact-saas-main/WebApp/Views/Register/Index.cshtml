@@ -1,0 +1,102 @@
+@model WebApp.ViewModels.RegisterViewModel
+@using App.DTO.v1.Identity
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <form asp-action="Index" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <hr />
+            <h5>Institute Selection</h5>
+            
+            <div class="form-group mb-3">
+                <label asp-for="InstituteSelection" class="control-label"></label>
+                <select asp-for="InstituteSelection" class="form-select" id="instituteSelection">
+                    <option value="@((int)InstituteSelectionType.SelectExisting)">Select Existing Institute</option>
+                    <option value="@((int)InstituteSelectionType.CreateNew)">Create New Institute</option>
+                </select>
+                <span asp-validation-for="InstituteSelection" class="text-danger"></span>
+            </div>
+            
+            <div id="selectExistingSection">
+                <div class="form-group mb-3">
+                    <label asp-for="InstituteId" class="control-label">Select Institute</label>
+                    <select asp-for="InstituteId" class="form-select">
+                        <option value="">-- Select an Institute --</option>
+                        @foreach (var institute in Model.Institutes)
+                        {
+                            <option value="@institute.Id">@institute.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="InstituteId" class="text-danger"></span>
+                </div>
+            </div>
+            
+            <div id="createNewSection" style="display: none;">
+                <div class="form-group mb-3">
+                    <label asp-for="InstituteName" class="control-label">Institute Name</label>
+                    <input asp-for="InstituteName" class="form-control" />
+                    <span asp-validation-for="InstituteName" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label asp-for="InstituteCountry" class="control-label">Country</label>
+                    <input asp-for="InstituteCountry" class="form-control" />
+                    <span asp-validation-for="InstituteCountry" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label asp-for="InstituteAddress" class="control-label">Address</label>
+                    <input asp-for="InstituteAddress" class="form-control" />
+                    <span asp-validation-for="InstituteAddress" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label asp-for="InstitutePhoneNumber" class="control-label">Phone Number</label>
+                    <input asp-for="InstitutePhoneNumber" class="form-control" />
+                    <span asp-validation-for="InstitutePhoneNumber" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label asp-for="InstituteTypeId" class="control-label">Institute Type</label>
+                    <select asp-for="InstituteTypeId" class="form-select">
+                        <option value="">-- Select Type --</option>
+                        @foreach (var type in Model.InstituteTypes)
+                        {
+                            <option value="@type.Id">@type.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="InstituteTypeId" class="text-danger"></span>
+                </div>
+            </div>
+            
+            <div class="form-group mb-3 mt-4">
+                <button type="submit" class="btn btn-primary w-100">Register</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            $('#instituteSelection').change(function() {
+                var value = $(this).val();
+                if (value == '@((int)InstituteSelectionType.CreateNew)') {
+                    $('#selectExistingSection').hide();
+                    $('#createNewSection').show();
+                } else {
+                    $('#selectExistingSection').show();
+                    $('#createNewSection').hide();
+                }
+            });
+        });
+    </script>
+}

@@ -34,6 +34,8 @@
       <ProjectReference Include="..\App.BLL\App.BLL.csproj" />
       <ProjectReference Include="..\App.DAL.EF\App.DAL.EF.csproj" />
       <ProjectReference Include="..\App.DTO\App.DTO.csproj" />
+      <ProjectReference Include="..\App.Domain\App.Domain.csproj" />
+      <ProjectReference Include="..\App.Helpers\App.Helpers.csproj" />
       <ProjectReference Include="..\App.Resources\App.Resources.csproj" />
     </ItemGroup>
 
@@ -90,6 +92,8 @@
       <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\_ViewImports.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Home\Index.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Home\Privacy.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\AppPages\LegacyDashboard\LegacyDashboard.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\AppPages\EquipmentDashboard\EquipmentDashboard.cshtml" />
     </ItemGroup>
 
 </Project>

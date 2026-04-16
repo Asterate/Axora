@@ -34,7 +34,9 @@
             </div>
             <div class="form-group">
                 <label asp-for="ProjectTypeId" class="control-label"></label>
-                <input asp-for="ProjectTypeId" class="form-control" />
+                <select asp-for="ProjectTypeId" class="form-control" asp-items="ViewBag.ProjectTypeId">
+                    <option value="">-- Select Project Type --</option>
+                </select>
                 <span asp-validation-for="ProjectTypeId" class="text-danger"></span>
             </div>
             <div class="form-group">

@@ -1,11 +1,13 @@
 using System;
 using System.Diagnostics;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using App.DAL.EF;
 using App.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using WebApp.ViewModels;
 
@@ -22,10 +24,18 @@ public class HomeController : Controller
         _context = context;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
         if (User.Identity?.IsAuthenticated == true)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var hasInstitute = await _context.InstituteUsers
+                .Include(iu => iu.User)
+                .AnyAsync(iu => iu.User.Id.ToString() == userId);
+
+            if (!hasInstitute)
+                return RedirectToAction("Index", "InstituteChoice");
+
             return RedirectToAction("Index", "HomeDashboard");
         }
         return Redirect("/Identity/Account/Login?ReturnUrl=%2F");

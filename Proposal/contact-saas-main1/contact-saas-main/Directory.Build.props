@@ -3,5 +3,6 @@
     <PropertyGroup>
         <WarningsAsErrors>$(WarningsAsErrors);nullable</WarningsAsErrors>
         <ImplicitUsings>enable</ImplicitUsings>
+        <NoWarn>$(NoWarn);NU1901;NU1903</NoWarn>
     </PropertyGroup>
 </Project>

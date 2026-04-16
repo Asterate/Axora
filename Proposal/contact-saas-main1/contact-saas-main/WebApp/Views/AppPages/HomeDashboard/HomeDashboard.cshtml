@@ -1,7 +1,8 @@
-﻿@model IEnumerable<App.Domain.Entities.Project>
+@model IEnumerable<App.Domain.Entities.Project>
 
 @{
     Layout = "_Layout";
+    var items = Model == null ? new List<App.Domain.Entities.Project>() : Model.ToList();
 }
 
 <!DOCTYPE html>
@@ -10,10 +11,12 @@
     <title>Institute name</title>
 </head>
 <body>
-<h1>Projects</h1>
-<div class="container-fluid" style="display: flex; gap: 400px;">
-    <partial name="_ProjectList" model="Model"/>
-    <h1 style="flex: 1;">Recent updates</h1>
+<div class="container-fluid">
+    <h1>Projects</h1>
+    <p>
+        <a asp-controller="HomeDashboard" asp-action="Create" class="btn btn-success">Create New Project</a>
+    </p>
+    <partial name="_ProjectList" model="items" />
 </div>
 </body>
 </html>

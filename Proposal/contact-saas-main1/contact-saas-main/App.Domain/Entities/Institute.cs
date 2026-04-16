@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using App.Domain;
 using App.Domain.Identity;
 using Base.Resources;
 
@@ -9,7 +10,7 @@ public class Institute : BaseEntity
 {
     [Display(Name = "Name", ResourceType = typeof(Base.Resources.Common))]
     [StringLength(128, MinimumLength = 2)]
-    public string InstituteName { get; set; }  = default!;
+    public LangStr InstituteName { get; set; } = new();
     
     [Display(Name = "Country", ResourceType = typeof(Base.Resources.Common))]
     [StringLength(128, MinimumLength = 2)]
@@ -17,7 +18,7 @@ public class Institute : BaseEntity
     
     [Display(Name = "Address", ResourceType = typeof(Base.Resources.Common))]
     [StringLength(128, MinimumLength = 5)]
-    public string InstituteAddress { get; set; }  = default!;
+    public LangStr InstituteAddress { get; set; } = new();
     
     [Display(Name = "PhoneNumber", ResourceType = typeof(Base.Resources.Common))]
     [StringLength(128, MinimumLength = 5)]

@@ -1,11 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using App.Domain;
 
 namespace App.Domain.Entities;
 
 public class TaskType : BaseEntity
 {
-    [StringLength(128, MinimumLength = 3)]
-    public string TaskTypeName { get; set; }  = default!;
-    [StringLength(128, MinimumLength = 3)]
-    public string? TaskTypeDescription { get; set; }
+    public LangStr TaskTypeName { get; set; } = new();
+    public LangStr? TaskTypeDescription { get; set; }
 }

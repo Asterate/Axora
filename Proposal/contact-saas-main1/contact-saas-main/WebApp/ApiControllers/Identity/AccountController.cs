@@ -5,7 +5,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using App.DAL.EF;
+using App.Domain.Entities;
 using App.Domain.Identity;
+using App.DTO.v1;
 using App.DTO.v1.Identity;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -192,21 +194,79 @@ public class AccountController : ControllerBase
         {
             _logger.LogInformation("User {Email} created a new account with password", appUser.Email);
 
-            // Auto-create InstituteUser for the new user (link to default Institute)
-            var defaultInstitute = _context.Institutes.FirstOrDefault();
-            if (defaultInstitute != null)
+            // Handle institute selection
+            Institute? institute = null;
+            
+            if (registerModel.InstituteSelection == App.DTO.v1.Identity.InstituteSelectionType.CreateNew)
             {
-                var instituteUser = new App.Domain.Entities.InstituteUser
+                // Create new institute
+                if (registerModel.NewInstitute == null)
+                {
+                    return BadRequest(new App.Dto.v1.Message("New institute details are required when creating a new institute"));
+                }
+                
+                // Get institute type
+                var instituteType = await _context.InstituteTypes.FindAsync(registerModel.NewInstitute.InstituteTypeId);
+                if (instituteType == null)
+                {
+                    return BadRequest(new App.Dto.v1.Message("Invalid institute type"));
+                }
+                
+                institute = new App.Domain.Entities.Institute
                 {
                     Id = Guid.NewGuid(),
-                    InstituteId = defaultInstitute.Id,
-                    User = appUser,
-                    Role = App.Domain.Entities.EInstituteUserRole.Employee
+                    InstituteName = registerModel.NewInstitute.InstituteName,
+                    InstituteCountry = registerModel.NewInstitute.InstituteCountry,
+                    InstituteAddress = registerModel.NewInstitute.InstituteAddress,
+                    InstitutePhoneNumber = registerModel.NewInstitute.InstitutePhoneNumber,
+                    InstituteTypeId = registerModel.NewInstitute.InstituteTypeId,
+                    InstituteType = instituteType,
+                    CreatedAt = DateTime.UtcNow,
+                    Active = true
                 };
-                _context.InstituteUsers.Add(instituteUser);
-                await _context.SaveChangesAsync();
-                _logger.LogInformation("InstituteUser created for {Email}", appUser.Email);
+                _context.Institutes.Add(institute);
+                _logger.LogInformation("New institute {InstituteName} created for {Email}", institute.InstituteName, appUser.Email);
             }
+            else if (registerModel.InstituteSelection == App.DTO.v1.Identity.InstituteSelectionType.SelectExisting)
+            {
+                // Use existing institute
+                if (registerModel.InstituteId == null)
+                {
+                    return BadRequest(new App.Dto.v1.Message("Institute ID is required when selecting an existing institute"));
+                }
+                
+                institute = await _context.Institutes.FindAsync(registerModel.InstituteId);
+                if (institute == null)
+                {
+                    return BadRequest(new App.Dto.v1.Message("Institute not found"));
+                }
+                _logger.LogInformation("User {Email} joining existing institute {InstituteId}", appUser.Email, registerModel.InstituteId);
+            }
+            else
+            {
+                // Fallback: use default institute
+                institute = _context.Institutes.FirstOrDefault();
+                if (institute == null)
+                {
+                    return BadRequest(new App.Dto.v1.Message("No institutes available. Please create one first."));
+                }
+            }
+
+            // Create InstituteUser linking user to institute
+            var instituteUser = new App.Domain.Entities.InstituteUser
+            {
+                Id = Guid.NewGuid(),
+                InstituteId = institute.Id,
+                User = appUser,
+                Role = App.Domain.Entities.EInstituteUserRole.Employee
+            };
+            _context.InstituteUsers.Add(instituteUser);
+            await _context.SaveChangesAsync();
+            
+            // Sync user roles based on InstituteUser role
+            await App.Helpers.UserRoleHelper.SyncCompanyUserRolesToIdentityAsync(_userManager, appUser, instituteUser.Role);
+            
+            _logger.LogInformation("InstituteUser created for {Email} with institute {InstituteName} and role {Role}", appUser.Email, institute.InstituteName, instituteUser.Role);
 
             var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
             var jwt = IdentityExtensions.GenerateJwt(
@@ -392,6 +452,89 @@ public class AccountController : ControllerBase
         var deleteCount = await _context.SaveChangesAsync();
 
         return Ok(new { TokenDeleteCount = deleteCount });
+    }
+
+    [HttpPost("set-institute")]
+    public async Task<ActionResult> SetInstitute([FromBody] App.DTO.v1.Identity.SetInstituteDto setInstitute)
+    {
+        var userId = User.UserId();
+        var appUser = await _context.Users
+            .Where(u => u.Id == userId)
+            .SingleOrDefaultAsync();
+
+        if (appUser == null)
+        {
+            return NotFound(new App.Dto.v1.Message("User not found"));
+        }
+
+        Institute? institute;
+
+        if (setInstitute.InstituteSelection == 1)
+        {
+            // Create new institute
+            Guid? instituteTypeId = string.IsNullOrEmpty(setInstitute.NewInstitute?.InstituteTypeId)
+                ? null
+                : Guid.Parse(setInstitute.NewInstitute.InstituteTypeId);
+
+            institute = new Institute
+            {
+                Id = Guid.NewGuid(),
+                InstituteName = setInstitute.NewInstitute!.InstituteName,
+                InstituteCountry = setInstitute.NewInstitute!.InstituteCountry ?? string.Empty,
+                InstituteAddress = setInstitute.NewInstitute!.InstituteAddress ?? string.Empty,
+                InstitutePhoneNumber = setInstitute.NewInstitute!.InstitutePhoneNumber ?? string.Empty,
+                InstituteTypeId = instituteTypeId ?? Guid.Empty,
+                Active = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Institutes.Add(institute);
+            await _context.SaveChangesAsync();
+        }
+        else
+        {
+            // Select existing institute - verify it exists and is active
+            if (string.IsNullOrEmpty(setInstitute.InstituteId))
+            {
+                return BadRequest(new App.Dto.v1.Message("Institute ID is required when selecting existing institute"));
+            }
+
+            if (!Guid.TryParse(setInstitute.InstituteId, out var instituteGuid))
+            {
+                return BadRequest(new App.Dto.v1.Message("Invalid institute ID format"));
+            }
+            
+            institute = await _context.Institutes
+                .Where(i => i.Id == instituteGuid && i.Active)
+                .FirstOrDefaultAsync();
+            
+            if (institute == null)
+            {
+                return BadRequest(new App.Dto.v1.Message("Institute not found or inactive"));
+            }
+        }
+
+        // Check if user already has an InstituteUser record for this institute
+        var existingLink = await _context.InstituteUsers
+            .Where(iu => iu.UserId == userId && iu.InstituteId == institute.Id)
+            .FirstOrDefaultAsync();
+
+        if (existingLink == null)
+        {
+            // Create new InstituteUser link
+            var instituteUser = new InstituteUser
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                InstituteId = institute.Id,
+                Role = EInstituteUserRole.Employee
+            };
+
+            _context.InstituteUsers.Add(instituteUser);
+            await _context.SaveChangesAsync();
+        }
+
+        return Ok(new { InstituteId = institute.Id, InstituteName = institute.InstituteName });
     }
 
     private DateTime GetExpirationDateTime(int? expiresInSeconds, string settingsKey)

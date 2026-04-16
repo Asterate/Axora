@@ -21,21 +21,21 @@ public class LangStr : Dictionary<string, string>
     {
     }
 
-    public LangStr(string value) : this(value, Thread.CurrentThread.CurrentUICulture.Name)
+    public LangStr(string? value) : this(value ?? string.Empty, Thread.CurrentThread.CurrentUICulture.Name)
     {
     }
 
     public LangStr(string value, string culture)
     {
-        if (culture.Length < 1) throw new ApplicationException("Culture is required!");
+        if (string.IsNullOrEmpty(culture)) culture = DefaultCulture;
 
         var neutralCulture = culture.Split('-')[0];
-        this[neutralCulture] = value;
+        this[neutralCulture] = value ?? string.Empty;
         
         // check for default culture also. if not set - do so
         if (!ContainsKey(DefaultCulture))
         {
-            this[DefaultCulture] = value;
+            this[DefaultCulture] = value ?? string.Empty;
         }
     }
 

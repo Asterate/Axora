@@ -12,11 +12,11 @@
             new { Name = "Lookup data", Route = "/AdminDashboard/LookupData", DisplayName = "Lookup data", Roles = new[] { "admin" } }
         }: new[]
     {
-        new { Name = "Home", Route = "/HomeDashboard", DisplayName = "Home", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest"  } },
-        new { Name = "Experiments", Route = "/ProjectDashboard", DisplayName = "Projects", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest"  } },
-        new { Name = "Schedule", Route = "/Schedule", DisplayName = "Schedule", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest" } },
-        new { Name = "Documents", Route = "/DocumentationDashboard", DisplayName = "Documents", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest"  } },
-        new { Name = "Analysis", Route = "/AnalysisDashboard", DisplayName = "Analysis", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest"  } },
+        new { Name = "Home", Route = "/HomeDashboard", DisplayName = "Home", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user"  } },
+        new { Name = "Experiments", Route = "/ProjectDashboard", DisplayName = "Projects", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user"  } },
+        new { Name = "Schedule", Route = "/Schedule", DisplayName = "Schedule", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user" } },
+        new { Name = "Documents", Route = "/DocumentationDashboard", DisplayName = "Documents", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user"  } },
+        new { Name = "Analysis", Route = "/AnalysisDashboard", DisplayName = "Analysis", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user"  } },
         new { Name = "Admin", Route = "/AdminDashboard", DisplayName = "Admin", Roles = new[] { "admin" } }
     };
 }

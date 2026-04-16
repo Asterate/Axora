@@ -1,0 +1,5 @@
+@model App.Domain.LangStr
+@{
+    var translatedValue = Model?.Translate();
+}
+@(translatedValue ?? string.Empty)

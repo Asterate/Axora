@@ -1,13 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using App.Domain;
 
 namespace App.Domain.Entities;
 
 public class ReagentType : BaseEntity
 {
-    [StringLength(128, MinimumLength = 3)]
-    public string ReagentName { get; set; }  = default!;
-    [StringLength(128, MinimumLength = 3)]
-    public string? ReagentDescription { get; set; }
+    public LangStr ReagentName { get; set; } = new();
+    public LangStr? ReagentDescription { get; set; }
     [StringLength(64)]
     public string? Category { get; set; }
     [StringLength(64)]

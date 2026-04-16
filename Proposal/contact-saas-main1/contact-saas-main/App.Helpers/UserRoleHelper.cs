@@ -9,20 +9,14 @@ public static class UserRoleHelper
     public static async Task SyncCompanyUserRolesToIdentityAsync(
         UserManager<AppUser> userManager,
         AppUser user,
-        EInstituteUserRole companyRoles)
+        EInstituteUserRole companyRole)
     {
-        foreach (EInstituteUserRole flag in Enum.GetValues(typeof(EInstituteUserRole)))
+        // For non-flags enums, we just check the single role
+        var roleName = companyRole.ToIdentityRole();
+
+        if (roleName != "None" && !await userManager.IsInRoleAsync(user, roleName))
         {
-
-            if (companyRoles.HasFlag(flag))
-            {
-                var roleName = flag.ToIdentityRole();
-
-                if (!await userManager.IsInRoleAsync(user, roleName))
-                {
-                    await userManager.AddToRoleAsync(user, roleName);
-                }
-            }
+            await userManager.AddToRoleAsync(user, roleName);
         }
     }
 
@@ -35,6 +29,7 @@ public static class UserRoleHelper
             EInstituteUserRole.Manager => "institutemanager",
             EInstituteUserRole.Guest => "guest",
             EInstituteUserRole.Technician => "Technician",
+            EInstituteUserRole.Employee => "employee",
             _ => "None"
         };
     }

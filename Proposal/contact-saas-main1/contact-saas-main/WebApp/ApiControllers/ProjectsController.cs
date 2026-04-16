@@ -1,10 +1,10 @@
-﻿using App.DAL.EF;
+﻿using App.BLL.Services;
+using App.DAL.EF;
 using App.DTO.v1;
-using App.Domain.Entities;
-using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using Asp.Versioning;
 
 namespace WebApp.ApiControllers;
 
@@ -14,11 +14,11 @@ namespace WebApp.ApiControllers;
 [Authorize(AuthenticationSchemes = "Bearer")]
 public class ProjectsController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IProjectService _projectService;
 
-    public ProjectsController(AppDbContext context)
+    public ProjectsController(IProjectService projectService)
     {
-        _context = context;
+        _projectService = projectService;
     }
 
     // GET: api/v1.0/projects
@@ -26,17 +26,11 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<ProjectDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<ProjectDto>>> GetProjects()
     {
-        return await _context.Projects
-            .Select(e => new ProjectDto
-            {
-                Id = e.Id,
-                ProjectName = e.ProjectName,
-                Funding = e.Funding,
-                Requirements = e.Requirements,
-                RequirementsFilePath = e.RequirementsFilePath,
-                PublicTypeId = e.ProjectTypeId
-            })
-            .ToListAsync();
+        var userId = GetUserId();
+        if (userId == null) return BadRequest("Invalid user token");
+        
+        var projects = await _projectService.GetAllAsync(userId.Value);
+        return Ok(projects);
     }
 
     // GET: api/v1.0/projects/{id}
@@ -45,18 +39,13 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ProjectDto>> GetProject(Guid id)
     {
-        var project = await _context.Projects.FindAsync(id);
+        var userId = GetUserId();
+        if (userId == null) return BadRequest("Invalid user token");
+        
+        var project = await _projectService.GetByIdAsync(id, userId.Value);
         if (project == null) return NotFound();
 
-        return new ProjectDto
-        {
-            Id = project.Id,
-            ProjectName = project.ProjectName,
-            Funding = project.Funding,
-            Requirements = project.Requirements,
-            RequirementsFilePath = project.RequirementsFilePath,
-            PublicTypeId = project.ProjectTypeId
-        };
+        return Ok(project);
     }
 
     // POST: api/v1.0/projects
@@ -65,30 +54,18 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ProjectDto>> CreateProject([FromBody] CreateProjectDto dto)
     {
-        var project = new Project
-        {
-            Id = Guid.NewGuid(),
-            ProjectName = dto.ProjectName,
-            Funding = dto.Funding,
-            Requirements = dto.Requirements,
-            RequirementsFilePath = dto.RequirementsFilePath,
-            ProjectTypeId = dto.PublicTypeId
-        };
-        
-        _context.Projects.Add(project);  // FIXED: Use Projects, not Experiments
-        await _context.SaveChangesAsync();
+        var userId = GetUserId();
+        if (userId == null) return BadRequest("Invalid user token");
 
-        var result = new ProjectDto
+        try
         {
-            Id = project.Id,
-            ProjectName = project.ProjectName,
-            Funding = project.Funding,
-            Requirements = project.Requirements,
-            RequirementsFilePath = project.RequirementsFilePath,
-            PublicTypeId = project.ProjectTypeId
-        };
-
-        return CreatedAtAction(nameof(GetProject), new { id = result.Id }, result);
+            var result = await _projectService.CreateAsync(dto, userId.Value);
+            return CreatedAtAction(nameof(GetProject), new { id = result.Id }, result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     // PUT: api/v1.0/projects/{id}
@@ -98,31 +75,43 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateProject(Guid id, [FromBody] CreateProjectDto dto)
     {
-        var project = await _context.Projects.FindAsync(id);  // FIXED: Use Projects
-        if (project == null) return NotFound();
+        var userId = GetUserId();
+        if (userId == null) return BadRequest("Invalid user token");
 
-        project.ProjectName = dto.ProjectName;
-        project.Funding = dto.Funding;
-        project.Requirements = dto.Requirements;
-        project.RequirementsFilePath = dto.RequirementsFilePath;
-        project.ProjectTypeId = dto.PublicTypeId;
-
-        await _context.SaveChangesAsync();
-        return NoContent();
+        try
+        {
+            var success = await _projectService.UpdateAsync(id, dto, userId.Value);
+            if (!success) return NotFound();
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     // DELETE: api/v1.0/projects/{id}
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteProject(Guid id)  // FIXED: Rename method
+    public async Task<IActionResult> DeleteProject(Guid id)
     {
-        var project = await _context.Projects.FindAsync(id);  // FIXED: Use Projects
-        if (project == null) return NotFound();
+        var userId = GetUserId();
+        if (userId == null) return BadRequest("Invalid user token");
 
-        _context.Projects.Remove(project);  // FIXED: Use Projects
-        await _context.SaveChangesAsync();
-        
+        var success = await _projectService.DeleteAsync(id, userId.Value);
+        if (!success) return NotFound();
+
         return NoContent();
+    }
+
+    private Guid? GetUserId()
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            return null;
+        }
+        return userId;
     }
 }

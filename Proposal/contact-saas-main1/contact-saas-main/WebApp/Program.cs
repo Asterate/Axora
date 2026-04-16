@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Tokens;
 using WebApp.Helpers;
 using WebApp.Setup;
+using App.BLL.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,8 +42,13 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddHttpClient();
+// Configure the Default HTTP client for internal API calls
+var baseUrl = builder.Configuration["AppBaseUrl"] ?? builder.Configuration["Urls"] ?? "http://localhost:5000";
+builder.Services.AddHttpClient("Default")
+    .ConfigureHttpClient(client => client.BaseAddress = new Uri(baseUrl));
 builder.Services.AddSingleton<AppNameService>();
+builder.Services.AddScoped<IExperimentService, ExperimentService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddAppControllers();
 builder.Services.AddForwardedHeaders();
 builder.Services.AddAppCors();

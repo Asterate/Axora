@@ -1,11 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using App.Domain;
 
 namespace App.Domain.Entities;
 
 public class ExperimentType : BaseEntity
 {
-    [StringLength(128, MinimumLength = 3)]
-    public string ExperimentTypeName { get; set; } = default!;
-    [StringLength(128, MinimumLength = 3)]
-    public string? Description { get; set; }
+    public LangStr ExperimentTypeName { get; set; } = new();
+    public LangStr? Description { get; set; }
 }

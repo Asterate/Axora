@@ -1,11 +1,12 @@
 using App.DAL.EF;
 using App.DTO.v1;
+using App.Domain;
 using App.Domain.Entities;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
+using System.Globalization;
 using System.Linq;
 
 namespace WebApp.ApiControllers;
@@ -26,101 +27,101 @@ public class LookupsController : ControllerBase
     // GET: api/v1.0/lookups/experiment-types
     [HttpGet("experiment-types")]
     [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupDto>>> GetExperimentTypes()
+    public async Task<ActionResult<IEnumerable<LookupDto>>> GetExperimentTypes(string? culture)
     {
-        return await _context.ExperimentTypes
-            .Select(e => new LookupDto { Id = e.Id, Name = e.ExperimentTypeName })
-            .ToListAsync();
+        var cultureName = culture ?? Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+        var items = await _context.ExperimentTypes.ToListAsync();
+        return items.Select(e => new LookupDto { Id = e.Id, Name = e.ExperimentTypeName.Translate(cultureName)?? string.Empty }).ToList();
     }
 
     // GET: api/v1.0/lookups/project-types
     [HttpGet("project-types")]
     [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupDto>>> GetProjectTypes()
+    public async Task<ActionResult<IEnumerable<LookupDto>>> GetProjectTypes(string? culture)
     {
-        return await _context.ProjectTypes
-            .Select(e => new LookupDto { Id = e.Id, Name = e.Name })
-            .ToListAsync();
+        var cultureName = culture ?? Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+        var items = await _context.ProjectTypes.ToListAsync();
+        return items.Select(e => new LookupDto { Id = e.Id, Name = e.Name.Translate(cultureName) ?? string.Empty }).ToList();
     }
 
     // GET: api/v1.0/lookups/task-types
     [HttpGet("task-types")]
     [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupDto>>> GetTaskTypes()
+    public async Task<ActionResult<IEnumerable<LookupDto>>> GetTaskTypes(string? culture)
     {
-        return await _context.TaskTypes
-            .Select(e => new LookupDto { Id = e.Id, Name = e.TaskTypeName })
-            .ToListAsync();
+        var cultureName = culture ?? Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+        var items = await _context.TaskTypes.ToListAsync();
+        return items.Select(e => new LookupDto { Id = e.Id, Name = e.TaskTypeName.Translate(cultureName) ?? string.Empty}).ToList();
     }
 
     // GET: api/v1.0/lookups/lab-types
     [HttpGet("lab-types")]
     [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupDto>>> GetLabTypes()
+    public async Task<ActionResult<IEnumerable<LookupDto>>> GetLabTypes(string? culture)
     {
-        return await _context.LabTypes
-            .Select(e => new LookupDto { Id = e.Id, Name = e.Name })
-            .ToListAsync();
+        var cultureName = culture ?? Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+        var items = await _context.LabTypes.ToListAsync();
+        return items.Select(e => new LookupDto { Id = e.Id, Name = e.Name.Translate(cultureName) ?? string.Empty}).ToList();
     }
 
     // GET: api/v1.0/lookups/institute-types
     [HttpGet("institute-types")]
     [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupDto>>> GetInstituteTypes()
+    public async Task<ActionResult<IEnumerable<LookupDto>>> GetInstituteTypes(string? culture)
     {
-        return await _context.InstituteTypes
-            .Select(e => new LookupDto { Id = e.Id, Name = e.Name })
-            .ToListAsync();
+        var cultureName = culture ?? Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+        var items = await _context.InstituteTypes.ToListAsync();
+        return items.Select(e => new LookupDto { Id = e.Id, Name = e.Name.Translate(cultureName) ?? string.Empty}).ToList();
     }
 
     // GET: api/v1.0/lookups/equipment-types
     [HttpGet("equipment-types")]
     [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupDto>>> GetEquipmentTypes()
+    public async Task<ActionResult<IEnumerable<LookupDto>>> GetEquipmentTypes(string? culture)
     {
-        return await _context.EquipmentTypes
-            .Select(e => new LookupDto { Id = e.Id, Name = e.EquipmentTypeName })
-            .ToListAsync();
+        var cultureName = culture ?? Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+        var items = await _context.EquipmentTypes.ToListAsync();
+        return items.Select(e => new LookupDto { Id = e.Id, Name = e.EquipmentTypeName.Translate(cultureName) ?? string.Empty}).ToList();
     }
 
     // GET: api/v1.0/lookups/reagent-types
     [HttpGet("reagent-types")]
     [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupDto>>> GetReagentTypes()
+    public async Task<ActionResult<IEnumerable<LookupDto>>> GetReagentTypes(string? culture)
     {
-        return await _context.ReagentTypes
-            .Select(e => new LookupDto { Id = e.Id, Name = e.ReagentName })
-            .ToListAsync();
+        var cultureName = culture ?? Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+        var items = await _context.ReagentTypes.ToListAsync();
+        return items.Select(e => new LookupDto { Id = e.Id, Name = e.ReagentName.Translate(cultureName) ?? string.Empty }).ToList();
     }
 
     // GET: api/v1.0/lookups/document-types
     [HttpGet("document-types")]
     [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupDto>>> GetDocumentTypes()
+    public async Task<ActionResult<IEnumerable<LookupDto>>> GetDocumentTypes(string? culture)
     {
-        return await _context.DocumentTypes
-            .Select(e => new LookupDto { Id = e.Id, Name = e.Name })
-            .ToListAsync();
+        var cultureName = culture ?? Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+        var items = await _context.DocumentTypes.ToListAsync();
+        return items.Select(e => new LookupDto { Id = e.Id, Name = e.Name.Translate(cultureName)?? string.Empty }).ToList();
     }
 
     // GET: api/v1.0/lookups/certification-types
     [HttpGet("certification-types")]
     [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupDto>>> GetCertificationTypes()
+    public async Task<ActionResult<IEnumerable<LookupDto>>> GetCertificationTypes(string? culture)
     {
-        return await _context.CertificationTypes
-            .Select(e => new LookupDto { Id = e.Id, Name = e.Name })
-            .ToListAsync();
+        var cultureName = culture ?? Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+        var items = await _context.CertificationTypes.ToListAsync();
+        return items.Select(e => new LookupDto { Id = e.Id, Name = e.Name.Translate(cultureName) ?? string.Empty}).ToList();
     }
 
     // GET: api/v1.0/lookups/projects
     [HttpGet("projects")]
     [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupDto>>> GetProjects()
+    public async Task<ActionResult<IEnumerable<LookupDto>>> GetProjects(string? culture)
     {
-        return await _context.Projects
-            .Select(e => new LookupDto { Id = e.Id, Name = e.ProjectName })
-            .ToListAsync();
+        var cultureName = culture ?? Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+        var items = await _context.Projects.ToListAsync();
+        return items.Select(e => new LookupDto { Id = e.Id, Name = e.ProjectName.Translate(cultureName)?? string.Empty }).ToList();
     }
 
     // GET: api/v1.0/lookups/institute-users
@@ -164,5 +165,19 @@ public class LookupsController : ControllerBase
         return Enum.GetValues<EExperimentTaskStatus>()
             .Select(s => new IntLookupDto { Id = (int)s, Name = s.ToString() })
             .ToList();
+    }
+
+    // GET: api/v1.0/lookups/institutes
+    /// <summary>
+    /// Returns available institutes for selection during registration
+    /// </summary>
+    [HttpGet("institutes")]
+    [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
+    [AllowAnonymous]
+    public async Task<ActionResult<IEnumerable<LookupDto>>> GetInstitutes(string? culture)
+    {
+        var cultureName = culture ?? Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+        var items = await _context.Institutes.Where(i => i.Active).ToListAsync();
+        return items.Select(e => new LookupDto { Id = e.Id, Name = e.InstituteName.Translate(cultureName)?? string.Empty }).ToList();
     }
 }

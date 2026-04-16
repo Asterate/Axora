@@ -89,7 +89,7 @@ public class ExperimentTasksController : ControllerBase
         {
             Id = Guid.NewGuid(),
             TaskName = dto.TaskName,
-            TaskDescription = dto.TaskDescription,
+            TaskDescription = dto.TaskDescription ?? string.Empty,
             TaskTypeId = dto.TaskTypeId,
             ExperimentId = dto.ExperimentId,
             AssignedUserId = dto.AssignedUserId,
@@ -128,7 +128,7 @@ public class ExperimentTasksController : ControllerBase
         if (experimentTask == null) return NotFound();
 
         experimentTask.TaskName = dto.TaskName;
-        experimentTask.TaskDescription = dto.TaskDescription;
+        experimentTask.TaskDescription = dto.TaskDescription ??  string.Empty;
         experimentTask.TaskTypeId = dto.TaskTypeId;
         experimentTask.ExperimentId = dto.ExperimentId;
         experimentTask.AssignedUserId = dto.AssignedUserId;

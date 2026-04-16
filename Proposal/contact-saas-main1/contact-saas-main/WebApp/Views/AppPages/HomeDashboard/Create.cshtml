@@ -1,4 +1,4 @@
-@model App.Domain.Entities.Project
+@model App.DTO.v1.ProjectDto
 
 @{
     ViewData["Title"] = "Create";
@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-controller="HomeDashboard" asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="ProjectName" class="control-label"></label>
@@ -33,9 +33,11 @@
                 <span asp-validation-for="RequirementsFilePath" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ProjectTypeId" class="control-label"></label>
-                <input asp-for="ProjectTypeId" class="form-control" />
-                <span asp-validation-for="ProjectTypeId" class="text-danger"></span>
+                <label asp-for="PublicTypeId" class="control-label"></label>
+                <select name="PublicTypeId" class="form-control" asp-items="ViewBag.ProjectTypeId">
+                    <option value="">-- Select Project Type --</option>
+                </select>
+                <span asp-validation-for="PublicTypeId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -45,7 +47,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-controller="Home" asp-action="HomeDashboard">Back to List</a>
 </div>
 
 @section Scripts {

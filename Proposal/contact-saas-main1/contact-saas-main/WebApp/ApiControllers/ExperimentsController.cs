@@ -1,11 +1,10 @@
-﻿using App.DAL.EF;
+﻿using App.BLL.Services;
+using App.DAL.EF;
 using App.DTO.v1;
-using App.Domain.Entities;
-using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using Asp.Versioning;
 
 namespace WebApp.ApiControllers;
 
@@ -15,11 +14,11 @@ namespace WebApp.ApiControllers;
 [Authorize(AuthenticationSchemes = "Bearer")]
 public class ExperimentsController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IExperimentService _experimentService;
 
-    public ExperimentsController(AppDbContext context)
+    public ExperimentsController(IExperimentService experimentService)
     {
-        _context = context;
+        _experimentService = experimentService;
     }
 
     // GET: api/v1.0/experiments
@@ -27,19 +26,11 @@ public class ExperimentsController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<ExperimentDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<ExperimentDto>>> GetExperiments()
     {
-        return await _context.Experiments
-            .Select(e => new ExperimentDto
-            {
-                Id = e.Id,
-                ExperimentName = e.ExperimentName,
-                ExperimentNotes = e.ExperimentNotes,
-                CreatedAt = e.CreatedAt,
-                UpdatedAt = e.UpdatedAt,
-                ExperimentTypeId = e.ExperimentTypeId,
-                ProjectId = e.ProjectId,
-                InstituteUserId = e.InstituteUserId
-            })
-            .ToListAsync();
+        var userId = GetUserId();
+        if (userId == null) return BadRequest("Invalid user token");
+        
+        var experiments = await _experimentService.GetAllAsync(userId.Value);
+        return Ok(experiments);
     }
 
     // GET: api/v1.0/experiments/{id}
@@ -48,20 +39,13 @@ public class ExperimentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ExperimentDto>> GetExperiment(Guid id)
     {
-        var experiment = await _context.Experiments.FindAsync(id);
+        var userId = GetUserId();
+        if (userId == null) return BadRequest("Invalid user token");
+        
+        var experiment = await _experimentService.GetByIdAsync(id, userId.Value);
         if (experiment == null) return NotFound();
 
-        return new ExperimentDto
-        {
-            Id = experiment.Id,
-            ExperimentName = experiment.ExperimentName,
-            ExperimentNotes = experiment.ExperimentNotes,
-            CreatedAt = experiment.CreatedAt,
-            UpdatedAt = experiment.UpdatedAt,
-            ExperimentTypeId = experiment.ExperimentTypeId,
-            ProjectId = experiment.ProjectId,
-            InstituteUserId = experiment.InstituteUserId
-        };
+        return Ok(experiment);
     }
 
     // POST: api/v1.0/experiments
@@ -70,62 +54,18 @@ public class ExperimentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<ExperimentDto>> CreateExperiment([FromBody] CreateExperimentDto dto)
     {
-        // Get user ID from JWT token (secure approach)
-        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
-        {
-            return BadRequest("Invalid user token");
-        }
-        
-        // Find InstituteUser by AppUser ID
-        var instituteUser = await _context.InstituteUsers
-            .Include(u => u.User)
-            .FirstOrDefaultAsync(u => u.User.Id == userId);
-        if (instituteUser == null)
-        {
-            return BadRequest($"User not found in InstituteUser for ID {userId}. Contact admin to add you to institute.");
-        }
-        
-        // Validate that the project exists
-        var projectExists = await _context.Projects.AnyAsync(p => p.Id == dto.ProjectId);
-        if (!projectExists)
-        {
-            return BadRequest($"Project with ID {dto.ProjectId} not found");
-        }
-        
-        // Validate that the experiment type exists
-        var experimentTypeExists = await _context.ExperimentTypes.AnyAsync(e => e.Id == dto.ExperimentTypeId);
-        if (!experimentTypeExists)
-        {
-            return BadRequest($"ExperimentType with ID {dto.ExperimentTypeId} not found");
-        }
-        
-        var experiment = new Experiment
-        {
-            Id = Guid.NewGuid(),
-            ExperimentName = dto.ExperimentName,
-            ExperimentNotes = dto.ExperimentNotes,
-            ExperimentTypeId = dto.ExperimentTypeId,
-            ProjectId = dto.ProjectId,
-            InstituteUserId = instituteUser.Id,
-            CreatedAt = DateTime.UtcNow
-        };
-        
-        _context.Experiments.Add(experiment);
-        await _context.SaveChangesAsync();
+        var userId = GetUserId();
+        if (userId == null) return BadRequest("Invalid user token");
 
-        var result = new ExperimentDto
+        try
         {
-            Id = experiment.Id,
-            ExperimentName = experiment.ExperimentName,
-            ExperimentNotes = experiment.ExperimentNotes,
-            CreatedAt = experiment.CreatedAt,
-            ExperimentTypeId = experiment.ExperimentTypeId,
-            ProjectId = experiment.ProjectId,
-            InstituteUserId = experiment.InstituteUserId
-        };
-
-        return CreatedAtAction(nameof(GetExperiment), new { id = result.Id }, result);
+            var result = await _experimentService.CreateAsync(dto, userId.Value);
+            return CreatedAtAction(nameof(GetExperiment), new { id = result.Id }, result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     // PUT: api/v1.0/experiments/{id}
@@ -135,17 +75,19 @@ public class ExperimentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateExperiment(Guid id, [FromBody] CreateExperimentDto dto)
     {
-        var experiment = await _context.Experiments.FindAsync(id);
-        if (experiment == null) return NotFound();
+        var userId = GetUserId();
+        if (userId == null) return BadRequest("Invalid user token");
 
-        experiment.ExperimentName = dto.ExperimentName;
-        experiment.ExperimentNotes = dto.ExperimentNotes;
-        experiment.ExperimentTypeId = dto.ExperimentTypeId;
-        experiment.ProjectId = dto.ProjectId;
-        experiment.UpdatedAt = DateTime.UtcNow;
-
-        await _context.SaveChangesAsync();
-        return NoContent();
+        try
+        {
+            var success = await _experimentService.UpdateAsync(id, dto, userId.Value);
+            if (!success) return NotFound();
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     // DELETE: api/v1.0/experiments/{id}
@@ -154,12 +96,22 @@ public class ExperimentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteExperiment(Guid id)
     {
-        var experiment = await _context.Experiments.FindAsync(id);
-        if (experiment == null) return NotFound();
+        var userId = GetUserId();
+        if (userId == null) return BadRequest("Invalid user token");
 
-        _context.Experiments.Remove(experiment);
-        await _context.SaveChangesAsync();
-        
+        var success = await _experimentService.DeleteAsync(id, userId.Value);
+        if (!success) return NotFound();
+
         return NoContent();
+    }
+
+    private Guid? GetUserId()
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            return null;
+        }
+        return userId;
     }
 }

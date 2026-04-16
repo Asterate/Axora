@@ -41,12 +41,15 @@ public class UnitTestHomeController
     }
     
     [Fact]
-    public async Task IndexAction_ReturnsNullVm()
+    public async Task IndexAction_Unauthenticated_ReturnsRedirectToLogin()
     {
-        var result = ( _homeController.Index()) as ViewResult;
-        _testOutputHelper.WriteLine(result?.ToString());
-        var vm = result?.Model; // as HomeIndexViewModel;
-        Assert.Null(vm);
+        // No user authenticated (User.Identity.IsAuthenticated is null/false by default)
+        // Should redirect to login page
+        var result = await _homeController.Index();
+        
+        Assert.IsType<RedirectResult>(result);
+        var redirect = result as RedirectResult;
+        Assert.Contains("Identity/Account/Login", redirect?.Url);
     }
 
 }

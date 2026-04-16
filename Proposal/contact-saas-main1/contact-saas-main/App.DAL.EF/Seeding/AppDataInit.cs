@@ -1,3 +1,4 @@
+using App.Domain;
 using App.Domain.Entities;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -13,9 +14,9 @@ public static class AppDataInit
         if (!context.ProjectTypes.Any())
         {
             context.ProjectTypes.AddRange(
-                new ProjectType { Id = Guid.NewGuid(), Name = "Research" },
-                new ProjectType { Id = Guid.NewGuid(), Name = "Commercial" },
-                new ProjectType { Id = Guid.NewGuid(), Name = "Academic" }
+                new ProjectType { Id = Guid.NewGuid(), Name = new LangStr("Research", "Uurimis") },
+                new ProjectType { Id = Guid.NewGuid(), Name = new LangStr("Commercial", "Kommertsiaal") },
+                new ProjectType { Id = Guid.NewGuid(), Name = new LangStr("Academic", "Akadeemiline") }
             );
         }
 
@@ -23,9 +24,9 @@ public static class AppDataInit
         if (!context.ExperimentTypes.Any())
         {
             context.ExperimentTypes.AddRange(
-                new ExperimentType { Id = Guid.NewGuid(), ExperimentTypeName = "Chemistry" },
-                new ExperimentType { Id = Guid.NewGuid(), ExperimentTypeName = "Biology" },
-                new ExperimentType { Id = Guid.NewGuid(), ExperimentTypeName = "Physics" }
+                new ExperimentType { Id = Guid.NewGuid(), ExperimentTypeName = new LangStr("Chemistry", "Keemia") },
+                new ExperimentType { Id = Guid.NewGuid(), ExperimentTypeName = new LangStr("Biology", "Bioloogia") },
+                new ExperimentType { Id = Guid.NewGuid(), ExperimentTypeName = new LangStr("Physics", "Füüsika") }
             );
         }
 
@@ -33,9 +34,9 @@ public static class AppDataInit
         if (!context.LabTypes.Any())
         {
             context.LabTypes.AddRange(
-                new LabType { Id = Guid.NewGuid(), Name = "Chemistry Lab" },
-                new LabType { Id = Guid.NewGuid(), Name = "Biology Lab" },
-                new LabType { Id = Guid.NewGuid(), Name = "Physics Lab" }
+                new LabType { Id = Guid.NewGuid(), Name = new LangStr("Chemistry Lab", "Keemia labor") },
+                new LabType { Id = Guid.NewGuid(), Name = new LangStr("Biology Lab", "Bioloogia labor") },
+                new LabType { Id = Guid.NewGuid(), Name = new LangStr("Physics Lab", "Füüsika labor") }
             );
         }
 
@@ -43,9 +44,9 @@ public static class AppDataInit
         if (!context.EquipmentTypes.Any())
         {
             context.EquipmentTypes.AddRange(
-                new EquipmentType { Id = Guid.NewGuid(), EquipmentTypeName = "Measurement" },
-                new EquipmentType { Id = Guid.NewGuid(), EquipmentTypeName = "Analysis" },
-                new EquipmentType { Id = Guid.NewGuid(), EquipmentTypeName = "Production" }
+                new EquipmentType { Id = Guid.NewGuid(), EquipmentTypeName = new LangStr("Measurement", "Mõõtmine") },
+                new EquipmentType { Id = Guid.NewGuid(), EquipmentTypeName = new LangStr("Analysis", "Analüüs") },
+                new EquipmentType { Id = Guid.NewGuid(), EquipmentTypeName = new LangStr("Production", "Tootmine") }
             );
         }
 
@@ -53,9 +54,9 @@ public static class AppDataInit
         if (!context.TaskTypes.Any())
         {
             context.TaskTypes.AddRange(
-                new TaskType { Id = Guid.NewGuid(), TaskTypeName = "Preparation" },
-                new TaskType { Id = Guid.NewGuid(), TaskTypeName = "Execution" },
-                new TaskType { Id = Guid.NewGuid(), TaskTypeName = "Analysis" }
+                new TaskType { Id = Guid.NewGuid(), TaskTypeName = new LangStr("Preparation", "Ettevalmistus") },
+                new TaskType { Id = Guid.NewGuid(), TaskTypeName = new LangStr("Execution", "Teostamine") },
+                new TaskType { Id = Guid.NewGuid(), TaskTypeName = new LangStr("Analysis", "Analüüs") }
             );
         }
 
@@ -63,9 +64,9 @@ public static class AppDataInit
         if (!context.InstituteTypes.Any())
         {
             context.InstituteTypes.AddRange(
-                new InstituteType { Id = Guid.NewGuid(), Name = "University" },
-                new InstituteType { Id = Guid.NewGuid(), Name = "Research Institute" },
-                new InstituteType { Id = Guid.NewGuid(), Name = "Company" }
+                new InstituteType { Id = Guid.NewGuid(), Name = new LangStr("University", "Ülikool") },
+                new InstituteType { Id = Guid.NewGuid(), Name = new LangStr("Research Institute", "Uurimisasutus") },
+                new InstituteType { Id = Guid.NewGuid(), Name = new LangStr("Company", "Ettevõte") }
             );
         }
 
@@ -73,9 +74,9 @@ public static class AppDataInit
         if (!context.DocumentTypes.Any())
         {
             context.DocumentTypes.AddRange(
-                new DocumentType { Id = Guid.NewGuid(), Name = "Report" },
-                new DocumentType { Id = Guid.NewGuid(), Name = "Manual" },
-                new DocumentType { Id = Guid.NewGuid(), Name = "Certificate" }
+                new DocumentType { Id = Guid.NewGuid(), Name = new LangStr("Report", "Raport") },
+                new DocumentType { Id = Guid.NewGuid(), Name = new LangStr("Manual", "Käsiraamat") },
+                new DocumentType { Id = Guid.NewGuid(), Name = new LangStr("Certificate", "Sertifikaat") }
             );
         }
 
@@ -83,9 +84,9 @@ public static class AppDataInit
         if (!context.ReagentTypes.Any())
         {
             context.ReagentTypes.AddRange(
-                new ReagentType { Id = Guid.NewGuid(), ReagentName = "Chemical" },
-                new ReagentType { Id = Guid.NewGuid(), ReagentName = "Biological" },
-                new ReagentType { Id = Guid.NewGuid(), ReagentName = "Solution" }
+                new ReagentType { Id = Guid.NewGuid(), ReagentName = new LangStr("Chemical", "Keemiline") },
+                new ReagentType { Id = Guid.NewGuid(), ReagentName = new LangStr("Biological", "Bioloogiline") },
+                new ReagentType { Id = Guid.NewGuid(), ReagentName = new LangStr("Solution", "Lahus") }
             );
         }
 
@@ -106,9 +107,9 @@ public static class AppDataInit
             context.Institutes.Add(new Institute
             {
                 Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                InstituteName = "Default Institute",
+                InstituteName = new LangStr("Default Institute", "Vaikeuasutus"),
                 InstituteCountry = "Estonia",
-                InstituteAddress = "Tartu, Estonia",
+                InstituteAddress = new LangStr("Tartu, Estonia", "Tartu, Eesti"),
                 InstitutePhoneNumber = "+372 1234567",
                 InstituteTypeId = instituteTypeId
             });
