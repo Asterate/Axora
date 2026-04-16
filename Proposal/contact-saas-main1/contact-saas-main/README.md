@@ -1,6 +1,8 @@
 # webapp for 2025-2026 spring semester
 
 **Axora - Lab workflow app**
+joovel-csharp-back.proxy.itcollege.ee
+
 
 Backend and admin ui is implemented in AspNet Core MVC, 
 using standard libraries (EF Core, Identity, Postgres DB).  

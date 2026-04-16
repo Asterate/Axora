@@ -3,7 +3,7 @@ namespace App.Domain;
 // [Keyless] // maybe use this for testing
 public class LangStr : Dictionary<string, string>
 {
-    // for ef inMemory testing (or use keyless?)
+    // for ef inMemory testing 
     public Guid Id { get; set; } = Guid.NewGuid();
     
     // look at appsettings.json LangStrDefaultCulture value
