@@ -14,11 +14,11 @@ using WebApp.ViewModels;
 
 namespace WebApp.Controllers;
 [ApiExplorerSettings(IgnoreApi = true)]
+[AllowAnonymous]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly AppDbContext _context;
-
     public HomeController(AppDbContext context, ILogger<HomeController> logger)
     {
         _logger = logger;
@@ -31,16 +31,15 @@ public class HomeController : Controller
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var hasInstitute = await _context.InstituteUsers
-                .Include(iu => iu.User)
                 .AnyAsync(iu => iu.User.Id.ToString() == userId);
 
-            if (!hasInstitute)
-                return RedirectToAction("Index", "InstituteChoice");
+            // if (!hasInstitute) return RedirectToAction("Index", "InstituteChoice");
 
             return RedirectToAction("Index", "HomeDashboard");
         }
         return Redirect("/Identity/Account/Login?ReturnUrl=%2F");
     }
+
 
     public IActionResult HomeDashboard()
     {
