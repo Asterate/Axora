@@ -5,19 +5,19 @@
     var navItems = isAdminPage
         ? new[] // Admin sidebar items
         {
-            new { Name = "Home", Route = "/HomeDashboard", DisplayName = "Home", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest" } },
-            new { Name = "Admin", Route = "/AdminDashboard", DisplayName = "Admin", Roles = new[] { "admin" } },
-            new { Name = "User management", Route = "/Root/Users", DisplayName = "User management", Roles = new[] { "admin" } },
-            new { Name = "Establishments", Route = "/AdminDashboard/Establishments", DisplayName = "Establishments", Roles = new[] { "admin" } },
-            new { Name = "Lookup data", Route = "/AdminDashboard/LookupData", DisplayName = "Lookup data", Roles = new[] { "admin" } }
+            new { Name = "Home", Route = "/HomeDashboard", DisplayName = App.Resources.Views.Shared._Navigation.Home, Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest" } },
+            new { Name = "Admin", Route = "/AdminDashboard", DisplayName = App.Resources.Views.Shared._Navigation.Admin, Roles = new[] { "admin" } },
+            new { Name = "User management", Route = "/Root/Users", DisplayName = App.Resources.Views.Shared._Navigation.UserManagement, Roles = new[] { "admin" } },
+            new { Name = "Establishments", Route = "/AdminDashboard/Establishments", DisplayName = App.Resources.Views.Shared._Navigation.Establishments, Roles = new[] { "admin" } },
+            new { Name = "Lookup data", Route = "/AdminDashboard/LookupData", DisplayName = App.Resources.Views.Shared._Navigation.LookupData, Roles = new[] { "admin" } }
         }: new[] // Main nav items
     {
-        new { Name = "Home", Route = "/HomeDashboard", DisplayName = "Home", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user"  } },
-        new { Name = "Experiments", Route = "/ProjectDashboard", DisplayName = "Projects", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user"  } },
-        new { Name = "Schedule", Route = "/ScheduleDashboard", DisplayName = "Schedule", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user" } },
-        new { Name = "Documents", Route = "/DocumentDashboard", DisplayName = "Documents", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user"  } },
-        new { Name = "Analysis", Route = "/AnalysisDashboard", DisplayName = "Analysis", Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user"  } },
-        new { Name = "Admin", Route = "/AdminDashboard", DisplayName = "Admin", Roles = new[] { "admin" } }
+        new { Name = "Home", Route = "/HomeDashboard", DisplayName = App.Resources.Views.Shared._Navigation.Home, Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user"  } },
+        new { Name = "Experiments", Route = "/ProjectDashboard", DisplayName = App.Resources.Views.Shared._Navigation.Projects, Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user"  } },
+        new { Name = "Schedule", Route = "/ScheduleDashboard", DisplayName = App.Resources.Views.Shared._Navigation.Schedule, Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user" } },
+        new { Name = "Documents", Route = "/DocumentDashboard", DisplayName = App.Resources.Views.Shared._Navigation.Documents, Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user"  } },
+        new { Name = "Analysis", Route = "/AnalysisDashboard", DisplayName = App.Resources.Views.Shared._Navigation.Analysis, Roles = new[] { "admin", "support", "billing", "owner", "instituteadmin", "institutemanager", "employee",  "guest", "user"  } },
+        new { Name = "Admin", Route = "/AdminDashboard", DisplayName = App.Resources.Views.Shared._Navigation.Admin, Roles = new[] { "admin" } }
     };
 }
 
