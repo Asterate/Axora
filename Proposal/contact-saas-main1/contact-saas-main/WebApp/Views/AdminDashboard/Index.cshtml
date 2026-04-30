@@ -1,18 +1,18 @@
 ﻿@model WebApp.ViewModels.AdminDashboardViewModel
-
+@using App.Resources.Views.AdminDashboard
 @{
-    ViewData["Title"] = "Admin Dashboard";
+    ViewData["Title"] = @AdminDashboardIndex.Admin_Dashboard;
 }
 
 <h1>@ViewData["Title"]</h1>
 
-<h3>Overall Stats</h3>
+<h3>@AdminDashboardIndex.Overall_stats</h3>
 
 <div class="row mt-4">
     <div class="col-md-3">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Total Users</h5>
+                <h5 class="card-title">@AdminDashboardIndex.Total_users</h5>
                 <p class="card-text display-4">@Model.TotalUsers</p>
             </div>
         </div>
@@ -20,7 +20,7 @@
     <div class="col-md-3">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Total Institutes</h5>
+                <h5 class="card-title">@AdminDashboardIndex.Total_institutes</h5>
                 <p class="card-text display-4">@Model.TotalInstitutes</p>
             </div>
         </div>
@@ -28,7 +28,7 @@
     <div class="col-md-3">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Total Labs</h5>
+                <h5 class="card-title">@AdminDashboardIndex.Total_labs</h5>
                 <p class="card-text display-4">@Model.TotalLabs</p>
             </div>
         </div>
@@ -36,7 +36,7 @@
     <div class="col-md-3">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Total Projects</h5>
+                <h5 class="card-title">@AdminDashboardIndex.Total_Projects</h5>
                 <p class="card-text display-4">@Model.TotalProjects</p>
             </div>
         </div>
@@ -46,12 +46,12 @@
 @if (Model.RecentInstitutes.Any())
 {
     <div class="mt-5">
-        <h4>Recent Institutes</h4>
+        <h4>@AdminDashboardIndex.Recent_institutes</h4>
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Created</th>
+                    <th>@AdminDashboardIndex.Name</th>
+                    <th>@AdminDashboardIndex.Created</th>
                 </tr>
             </thead>
             <tbody>
@@ -70,11 +70,11 @@
 @if (Model.RecentProjects.Any())
 {
     <div class="mt-5">
-        <h4>Recent Projects</h4>
+        <h4>@AdminDashboardIndex.Recent_projects</h4>
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Name</th>
+                    <th>@AdminDashboardIndex.Name</th>
                 </tr>
             </thead>
             <tbody>

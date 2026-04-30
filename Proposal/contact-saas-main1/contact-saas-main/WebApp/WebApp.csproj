@@ -157,4 +157,9 @@
       <_ContentIncludedByDefault Remove="Views\InstituteLab\Index.cshtml" />
     </ItemGroup>
 
+
+    <ItemGroup>
+      <AdditionalFiles Include="Views\ExperimentDashboard\ExperimentDashboard.cshtml" />
+    </ItemGroup>
+
 </Project>

@@ -1,4 +1,5 @@
 @model WebApp.ViewModels.DocumentationViewModel
+@using Index = App.Resources.Views.DocumentDashboard.Index
 @{
     Layout = "_Layout";
 }
@@ -11,17 +12,17 @@
 </head>
 <body>
 <div class="col-md-12">
-    <h3>Documents</h3>
+    <h3>@Index.Documents</h3>
     <p>
-        <a asp-controller="Document" asp-action="Create" class="btn btn-success">Create New Document</a>
+        <a asp-controller="Document" asp-action="Create" class="btn btn-success">@Index.Create_new_document</a>
     </p>
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Created</th>
-            <th>Actions</th>
+            <th>@Index.Name</th>
+            <th>@Index.Type</th>
+            <th>@Index.Created</th>
+            <th>@Index.Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -32,9 +33,9 @@
                 <td>@document.DocumentType?.Description</td>
                 <td>@document.CreatedAt.ToShortDateString()</td>
                 <td>
-                    <a asp-controller="Document" asp-action="Edit" asp-route-id="@document.Id">Edit</a> |
-                    <a asp-controller="Document" asp-action="Details" asp-route-id="@document.Id">Details</a> |
-                    <a asp-controller="Document" asp-action="Delete" asp-route-id="@document.Id">Delete</a>
+                    <a asp-controller="Document" asp-action="Edit" asp-route-id="@document.Id">@Index.Edit</a> |
+                    <a asp-controller="Document" asp-action="Details" asp-route-id="@document.Id">@Index.Details</a> |
+                    <a asp-controller="Document" asp-action="Delete" asp-route-id="@document.Id">@Index.Delete</a>
                 </td>
             </tr>
         }

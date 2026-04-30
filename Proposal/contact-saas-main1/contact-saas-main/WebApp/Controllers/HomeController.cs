@@ -4,8 +4,10 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using App.DAL.EF;
 using App.Domain.Entities;
+using App.Domain.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,10 +21,12 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly AppDbContext _context;
-    public HomeController(AppDbContext context, ILogger<HomeController> logger)
+    private readonly UserManager<AppUser> _userManager;
+    public HomeController(AppDbContext context, ILogger<HomeController> logger , UserManager<AppUser> userManager)
     {
         _logger = logger;
         _context = context;
+        _userManager = userManager;
     }
 
     public async Task<IActionResult> Index()
@@ -32,6 +36,12 @@ public class HomeController : Controller
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var hasInstitute = await _context.InstituteUsers
                 .AnyAsync(iu => iu.User.Id.ToString() == userId);
+            var user = await _userManager.FindByIdAsync(userId!);
+            if (user != null)
+            {
+                user.LastSeen = DateTimeOffset.UtcNow;
+                await _userManager.UpdateAsync(user);
+            }
 
             // if (!hasInstitute) return RedirectToAction("Index", "InstituteChoice");
 

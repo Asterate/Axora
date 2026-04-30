@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace App.Resources.Views.Establishments {
+namespace App.Resources.Views.ScheduleDashboard {
     using System;
     
     
@@ -21,14 +21,14 @@ namespace App.Resources.Views.Establishments {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class EstablishmentsIndex {
+    public class ScheduleDashboardIndex {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal EstablishmentsIndex() {
+        internal ScheduleDashboardIndex() {
         }
         
         /// <summary>
@@ -38,7 +38,7 @@ namespace App.Resources.Views.Establishments {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("App.Resources.Views.Establishments.Index", typeof(EstablishmentsIndex).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("App.Resources.Views.ScheduleDashboard.ScheduleDashboardIndex", typeof(ScheduleDashboardIndex).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -69,38 +69,11 @@ namespace App.Resources.Views.Establishments {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Active.
+        ///   Looks up a localized string similar to Create new schedule.
         /// </summary>
-        public static string Active {
+        public static string Create_new_schedule {
             get {
-                return ResourceManager.GetString("Active", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add New Institute.
-        /// </summary>
-        public static string AddNewInstitute {
-            get {
-                return ResourceManager.GetString("AddNewInstitute", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Address.
-        /// </summary>
-        public static string Address {
-            get {
-                return ResourceManager.GetString("Address", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Country.
-        /// </summary>
-        public static string Country {
-            get {
-                return ResourceManager.GetString("Country", resourceCulture);
+                return ResourceManager.GetString("Create new schedule", resourceCulture);
             }
         }
         
@@ -132,20 +105,20 @@ namespace App.Resources.Views.Establishments {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Institutes.
+        ///   Looks up a localized string similar to End time.
         /// </summary>
-        public static string Institutes {
+        public static string End_Time {
             get {
-                return ResourceManager.GetString("Institutes", resourceCulture);
+                return ResourceManager.GetString("End Time", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to meme.
+        ///   Looks up a localized string similar to Lab.
         /// </summary>
-        public static string meme {
+        public static string Lab {
             get {
-                return ResourceManager.GetString("meme", resourceCulture);
+                return ResourceManager.GetString("Lab", resourceCulture);
             }
         }
         
@@ -159,47 +132,47 @@ namespace App.Resources.Views.Establishments {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No.
+        ///   Looks up a localized string similar to Schedule.
         /// </summary>
-        public static string No {
+        public static string Schedule {
             get {
-                return ResourceManager.GetString("No", resourceCulture);
+                return ResourceManager.GetString("Schedule", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No institutes found..
+        ///   Looks up a localized string similar to Schedule Dashboard.
         /// </summary>
-        public static string NoInstitutesFound {
+        public static string Schedule_Dashboard {
             get {
-                return ResourceManager.GetString("NoInstitutesFound", resourceCulture);
+                return ResourceManager.GetString("Schedule Dashboard", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Phone.
+        ///   Looks up a localized string similar to Start time.
         /// </summary>
-        public static string Phone {
+        public static string Start_Time {
             get {
-                return ResourceManager.GetString("Phone", resourceCulture);
+                return ResourceManager.GetString("Start Time", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Establishments.
+        ///   Looks up a localized string similar to Status.
         /// </summary>
-        public static string Title {
+        public static string Status {
             get {
-                return ResourceManager.GetString("Title", resourceCulture);
+                return ResourceManager.GetString("Status", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Yes.
+        ///   Looks up a localized string similar to Task.
         /// </summary>
-        public static string Yes {
+        public static string Task {
             get {
-                return ResourceManager.GetString("Yes", resourceCulture);
+                return ResourceManager.GetString("Task", resourceCulture);
             }
         }
     }

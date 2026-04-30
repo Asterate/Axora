@@ -24,6 +24,7 @@ public class EstablishmentsController : Controller
             .Where(s => s.DeletedAt == null)
             .ToList();
 
+
         var labs = _context.Labs
             .Include(l => l.LabType)
             .Where(s => s.DeletedAt == null)

@@ -107,8 +107,7 @@ namespace WebApp.Controllers
             {
                 return Challenge();
             }
-
-            // IDOR protected
+            
             var project = await _projectService.GetByIdAsync(id.Value, userId.Value);
             if (project == null)
             {
@@ -161,8 +160,7 @@ namespace WebApp.Controllers
             {
                 return Challenge();
             }
-
-            // IDOR protected
+            
             var project = await _projectService.GetByIdAsync(id.Value, userId.Value);
             if (project == null)
             {

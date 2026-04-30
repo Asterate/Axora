@@ -5,6 +5,7 @@
 @model List<App.Domain.Identity.AppUser>
 @inject UserManager<AppUser> UserManager
 @inject RoleManager<AppRole> RoleManager
+@using App.Resources.Views.UserManagement
 
 @{
     ViewData["Title"] = "Users";
@@ -12,15 +13,17 @@
     var allRoles = await RoleManager.Roles.OrderBy(r => r.Name).ToListAsync();
 }
 
-<h1>Users</h1>
+<h1>@UserManagementIndex.Users</h1>
 
 <table class="table">
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model[0].UserName)
+            @UserManagementIndex.User_Name
         </th>
-        <th>Roles</th>
+        <th>@UserManagementIndex.Roles</th>
+        <th>@UserManagementIndex.Status</th>
+        <th>@UserManagementIndex.Last_active</th>
         <th></th>
     </tr>
     </thead>
@@ -28,28 +31,102 @@
     @foreach (var item in Model)
     {
         var userRoles = await UserManager.GetRolesAsync(item);
+        var isActive = item.LockoutEnd == null || item.LockoutEnd <= DateTimeOffset.UtcNow;
         <tr>
-            <td>@Html.DisplayFor(modelItem => item.UserName)</td>
             <td>
-                <ul>
-                    @foreach (var role in allRoles)
-                    {
-                        <li>
-                            @role.Name
-                            @if (userRoles.Any(r => r == role.Name))
-                            {
-                                <a asp-action="RoleRemove" asp-route-userId="@item.Id" asp-route-role="@role">Remove</a>
-                            }
-                            else
-                            {
-                                <a asp-action="RoleAdd" asp-route-userId="@item.Id" asp-route-role="@role">Add</a>
-                            }
-                        </li>
-                    }
-                </ul>
+                <div>@item.FirstName @item.LastName</div>
+                <small class="text-muted">@item.UserName</small>
             </td>
             <td>
-                <a asp-action="PasswordLink" asp-route-id="@item.Id">Reset PWD</a>
+                @foreach (var role in userRoles)
+                {
+                    <span class="badge bg-secondary me-1">@role</span>
+                }
+            </td>
+            <td>
+                @if (isActive)
+                {
+                    <span class="badge bg-success">@UserManagementIndex.Active</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">@UserManagementIndex.Inactive</span>
+                }
+            </td>
+            <td>
+                @if (item.LastSeen == null)
+                {
+                    <div>@UserManagementIndex.Never</div>
+                }
+                else
+                {
+                    @item.LastSeen?.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                }
+            </td>
+            <td>
+                <a class="btn btn-sm btn-outline-secondary " 
+                   type="button"
+                   asp-action="PasswordLink" 
+                   asp-route-id="@item.Id">@UserManagementIndex.Reset_PWD</a>
+                <div class="dropdown d-inline-block ms-1">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                            type="button" 
+                            data-bs-toggle="dropdown" 
+                            data-bs-auto-close="outside">
+                        @UserManagementIndex.Roles
+                    </button>
+                    <ul class="dropdown-menu">
+                        @foreach (var role in allRoles)
+                        {
+                            <li>
+                                @if (userRoles.Any(r => r == role.Name))
+                                {
+                                    <a asp-action="RoleRemove" 
+                                       asp-route-userId="@item.Id" 
+                                       asp-route-role="@role"
+                                       class="dropdown-item d-flex align-items-center gap-2">
+                                        <span class="text-success fw-500">✓</span>
+                                        <span>@role.Name</span>
+                                        <small class="text-muted ms-auto">click to remove</small>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a asp-action="RoleAdd" 
+                                       asp-route-userId="@item.Id" 
+                                       asp-route-role="@role"
+                                       class="dropdown-item d-flex align-items-center gap-2 text-muted">
+                                        <span style="width:12px"></span>
+                                        <span>@role.Name</span>
+                                    </a>
+                                }
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </td>
+            <td>
+                @if (isActive)
+                {
+                    <form asp-action="Deactivate" method="post" class="mb-1">
+                        <input type="hidden" name="userId" value="@item.Id" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger">@UserManagementIndex.Deactivate</button>
+                    </form>
+                }
+                else
+                {
+                    <form asp-action="Activate" method="post">
+                        <input type="hidden" name="userId" value="@item.Id" />
+                        <button type="submit" class="btn btn-sm btn-outline-danger">@UserManagementIndex.Actiavte</button>
+                    </form>
+                }
+                <div>
+                    <form asp-action="Delete" method="post" 
+                          onsubmit="return confirm('Kas oled kindel? Seda ei saa tagasi võtta.')">
+                        <input type="hidden" name="userId" value="@item.Id"/>
+                        <button type="submit" class="btn btn-sm btn-outline-danger">@UserManagementIndex.Delete</button>
+                    </form>
+                </div>
             </td>
         </tr>
     }

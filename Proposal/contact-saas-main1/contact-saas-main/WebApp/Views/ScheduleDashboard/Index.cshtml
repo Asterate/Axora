@@ -1,4 +1,5 @@
 @model WebApp.Controllers.ScheduleDashboardViewModel
+@using App.Resources.Views.ScheduleDashboard
 
 @{
     Layout = "_Layout";
@@ -11,23 +12,23 @@
 </head>
 <body>
     <div class="container-fluid">
-        <h1>Schedule Dashboard</h1>
+        <h1>@ScheduleDashboardIndex.Schedule_Dashboard</h1>
         <p>
-            <a asp-controller="Schedule" asp-action="Create" class="btn btn-success">Create New Schedule</a>
+            <a asp-controller="Schedule" asp-action="Create" class="btn btn-success">@ScheduleDashboardIndex.Create_new_schedule</a>
         </p>
         <div class="row">
             <div class="col-md-12">
-                <h3>Schedule</h3>
+                <h3>@ScheduleDashboardIndex.Schedule</h3>
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Status</th>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                            <th>Task</th>
-                            <th>Lab</th>
-                            <th>Actions</th>
+                            <th>@ScheduleDashboardIndex.Name</th>
+                            <th>@ScheduleDashboardIndex.Status</th>
+                            <th>@ScheduleDashboardIndex.Start_Time</th>
+                            <th>@ScheduleDashboardIndex.End_Time</th>
+                            <th>@ScheduleDashboardIndex.Task</th>
+                            <th>@ScheduleDashboardIndex.Lab</th>
+                            <th>@ScheduleDashboardIndex.Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -41,9 +42,9 @@
                                 <td>@schedule.ExperimentTask?.TaskName</td>
                                 <td>@schedule.Lab?.LabName</td>
                                 <td>
-                                    <a asp-controller="Schedule" asp-action="Edit" asp-route-id="@schedule.Id">Edit</a> |
-                                    <a asp-controller="Schedule" asp-action="Details" asp-route-id="@schedule.Id">Details</a> |
-                                    <a asp-controller="Schedule" asp-action="Delete" asp-route-id="@schedule.Id">Delete</a>
+                                    <a asp-controller="Schedule" asp-action="Edit" asp-route-id="@schedule.Id">@ScheduleDashboardIndex.Edit</a> |
+                                    <a asp-controller="Schedule" asp-action="Details" asp-route-id="@schedule.Id">@ScheduleDashboardIndex.Details</a> |
+                                    <a asp-controller="Schedule" asp-action="Delete" asp-route-id="@schedule.Id">@ScheduleDashboardIndex.Delete</a>
                                 </td>
                             </tr>
                         }

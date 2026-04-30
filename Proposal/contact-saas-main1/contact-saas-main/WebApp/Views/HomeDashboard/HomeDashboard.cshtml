@@ -1,3 +1,4 @@
+@using App.Resources.Views.HomeDashboard
 @model IEnumerable<App.Domain.Entities.Project>
 
 @{
@@ -12,9 +13,9 @@
 </head>
 <body>
 <div class="container-fluid">
-    <h1>Projects</h1>
+    <h1>@HomeDashboard.Projects</h1>
     <p>
-        <a asp-controller="HomeDashboard" asp-action="Create" class="btn btn-success">Create New Project</a>
+        <a asp-controller="HomeDashboard" asp-action="Create" class="btn btn-success">@HomeDashboard.Create_new_Project</a>
     </p>
     <partial name="_ProjectList" model="items" />
 </div>

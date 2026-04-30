@@ -56,4 +56,7 @@
     <data name="AddNewInstitute" xml:space="preserve">
         <value>Lisa uus instituut</value>
     </data>
+    <data name="meme" xml:space="preserve">
+        <value>meem</value>
+    </data>
 </root>

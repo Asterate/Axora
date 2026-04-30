@@ -19,6 +19,78 @@
         <Generator>PublicResXFileCodeGenerator</Generator>
         <LastGenOutput>Index.Designer.cs</LastGenOutput>
       </EmbeddedResource>
+      <EmbeddedResource Update="Views\Document\Index.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Index.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\Document\Index.et.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Index.et.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\HomeDashboard\HomeDashboard.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>HomeDashboard.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\HomeDashboard\HomeDashboard.et.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>HomeDashboard.et.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\ProjectDashboard\Index.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Index.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\ProjectDashboard\Index.et.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Index.et.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\DocumentDashboard\Index.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Index.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\DocumentDashboard\Index.et.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Index.et.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\ScheduleDashboard\ScheduleDashboardIndex.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>ScheduleDashboardIndex.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\ScheduleDashboard\ScheduleDashboardIndex.et.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>ScheduleDashboardIndex.et.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\AnalysisDashboard\AnalysisDashboardIndex.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>AnalysisDashboardIndex.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\AnalysisDashboard\AnalysisDashboardIndex.et.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>AnalysisDashboardIndex.et.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\AdminDashboard\AdminDashboardIndex.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>AdminDashboardIndex.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\AdminDashboard\AdminDashboardIndex.et.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>AdminDashboard.et.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\UserManagement\UserManagementIndex.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>UsrManagementIndex.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\UserManagement\UserManagementIndex.et.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>UserManagementIndex.et.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\LookupData\LookupDataIndex.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>LookupDataIndex.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\LookupData\LookupDataIndex.et.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>LookupData.et.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -36,6 +108,56 @@
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
         <DependentUpon>Index.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Views\Document\Index.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Index.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Views\Document\Index.et.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Index.et.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Views\HomeDashboard\HomeDashboard.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>HomeDashboard.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Views\ProjectDashboard\Index.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Index.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Views\DocumentDashboard\Index.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Index.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Views\ScheduleDashboard\ScheduleDashboardIndex.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ScheduleDashboardIndex.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Views\AnalysisDashboard\AnalysisDashboardIndex.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>AnalysisDashboardIndex.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Views\AdminDashboard\AdminDashboardIndex.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>AdminDashboardIndex.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Views\UserManagement\UserManagementIndex.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>UserManagementIndex.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Views\LookupData\LookupDataIndex.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>LookupDataIndex.resx</DependentUpon>
       </Compile>
     </ItemGroup>
 

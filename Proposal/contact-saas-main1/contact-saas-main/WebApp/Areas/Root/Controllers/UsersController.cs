@@ -98,5 +98,34 @@ public class UsersController : Controller
 
         return View(vm);
     }
+    [HttpPost]
+    public async Task<IActionResult> Deactivate(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return NotFound();
+        user.LockoutEnd = DateTimeOffset.MaxValue;
+        user.LockoutEnabled = true;
+        await _userManager.UpdateAsync(user);
+        TempData["Success"] = "User deactivated.";
+        return RedirectToAction("Index");
+    }
+    [HttpPost]
+    public async Task<IActionResult> Activate(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return NotFound();
+        user.LockoutEnd = null;
+        await _userManager.UpdateAsync(user);
+        TempData["Success"] = "User activated.";
+        return RedirectToAction("Index");
+    } 
+    [HttpPost]
+    public async Task<IActionResult> Delete(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return NotFound();
+        await  _userManager.DeleteAsync(user);
+        return RedirectToAction("Index");
+    }
 
 }
