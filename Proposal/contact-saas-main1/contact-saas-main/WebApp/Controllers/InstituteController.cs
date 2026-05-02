@@ -102,7 +102,7 @@ namespace WebApp.Controllers
                     };
                     _context.Add(institute);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Index", "Establishments");
                 }
                 catch (Exception ex)
                 {
@@ -111,7 +111,7 @@ namespace WebApp.Controllers
             }
             
             ViewData["InstituteTypeId"] = new SelectList(_context.InstituteTypes, "Id", "Name");
-            return View();
+            return RedirectToAction("Index", "Establishments");
         }
 
         // GET: Institute/Edit/5
@@ -159,10 +159,10 @@ namespace WebApp.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Establishments");
             }
             ViewData["InstituteTypeId"] = new SelectList(_context.InstituteTypes, "Id", "Name", institute.InstituteTypeId);
-            return View(institute);
+            return RedirectToAction("Index", "Establishments");
         }
 
         // GET: Institute/Delete/5
@@ -196,7 +196,7 @@ namespace WebApp.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Establishments");
         }
 
         private bool InstituteExists(Guid id)

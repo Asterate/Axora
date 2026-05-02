@@ -16,6 +16,24 @@
 <h1>@UserManagementIndex.Users</h1>
 
 <table class="table">
+    <div class="mb-3">
+        <button onclick="filterUsers('all', this)" class="btn btn-sm btn-outline-secondary filter-btn">@UserManagementIndex.All</button>
+        <button onclick="filterUsers('active', this)" class="btn btn-sm btn-outline-secondary filter-btn">@UserManagementIndex.Active</button>
+        <button onclick="filterUsers('inactive', this)" class="btn btn-sm btn-outline-secondary filter-btn">@UserManagementIndex.Inactive</button>
+        <button onclick="sortBySeen(this)" class="btn btn-sm btn-outline-secondary filter-btn">@UserManagementIndex.Last_active</button>
+        <button onclick="filterByRole('admin', this)" class="btn btn-sm btn-outline-secondary filter-btn">admin</button>
+        <button onclick="filterByRole('billing', this)" class="btn btn-sm btn-outline-secondary filter-btn">billing</button>
+        <button onclick="filterByRole('employee', this)" class="btn btn-sm btn-outline-secondary filter-btn">employee</button>
+        <button onclick="filterByRole('guest', this)" class="btn btn-sm btn-outline-secondary filter-btn">guest</button>
+        <button onclick="filterByRole('instituteadmin', this)" class="btn btn-sm btn-outline-secondary filter-btn">institute admin</button>
+        <button onclick="filterByRole('institutemanager', this)" class="btn btn-sm btn-outline-secondary filter-btn">institute manager</button>
+        <button onclick="filterByRole('owner', this)" class="btn btn-sm btn-outline-secondary filter-btn">owner</button>
+        <button onclick="filterByRole('support', this)" class="btn btn-sm btn-outline-secondary filter-btn">support</button>
+        <button onclick="filterByRole('user', this)" class="btn btn-sm btn-outline-secondary filter-btn">user</button>
+    </div>
+    <div>
+        <input placeholder="@UserManagementIndex.Search" oninput="searchUsers(this.value)" class="form-control mb-2"/>
+    </div>
     <thead>
     <tr>
         <th>
@@ -32,7 +50,10 @@
     {
         var userRoles = await UserManager.GetRolesAsync(item);
         var isActive = item.LockoutEnd == null || item.LockoutEnd <= DateTimeOffset.UtcNow;
-        <tr>
+        <tr data-status="@(isActive ? "active" : "inactive")"
+            data-roles="@string.Join(" ", userRoles)"
+            data-lastseen="@(item.LastSeen?.ToString("yyyy-MM-dd HH:mm") ?? "")"
+            data-name="@($"{item.FirstName} {item.LastName} {item.UserName} {item.LastSeen}".ToLower())">
             <td>
                 <div>@item.FirstName @item.LastName</div>
                 <small class="text-muted">@item.UserName</small>
@@ -64,14 +85,14 @@
                 }
             </td>
             <td>
-                <a class="btn btn-sm btn-outline-secondary " 
+                <a class="btn btn-sm btn-outline-secondary "
                    type="button"
-                   asp-action="PasswordLink" 
+                   asp-action="PasswordLink"
                    asp-route-id="@item.Id">@UserManagementIndex.Reset_PWD</a>
                 <div class="dropdown d-inline-block ms-1">
-                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
-                            type="button" 
-                            data-bs-toggle="dropdown" 
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                            type="button"
+                            data-bs-toggle="dropdown"
                             data-bs-auto-close="outside">
                         @UserManagementIndex.Roles
                     </button>
@@ -81,8 +102,8 @@
                             <li>
                                 @if (userRoles.Any(r => r == role.Name))
                                 {
-                                    <a asp-action="RoleRemove" 
-                                       asp-route-userId="@item.Id" 
+                                    <a asp-action="RoleRemove"
+                                       asp-route-userId="@item.Id"
                                        asp-route-role="@role"
                                        class="dropdown-item d-flex align-items-center gap-2">
                                         <span class="text-success fw-500">✓</span>
@@ -92,8 +113,8 @@
                                 }
                                 else
                                 {
-                                    <a asp-action="RoleAdd" 
-                                       asp-route-userId="@item.Id" 
+                                    <a asp-action="RoleAdd"
+                                       asp-route-userId="@item.Id"
                                        asp-route-role="@role"
                                        class="dropdown-item d-flex align-items-center gap-2 text-muted">
                                         <span style="width:12px"></span>
@@ -109,20 +130,20 @@
                 @if (isActive)
                 {
                     <form asp-action="Deactivate" method="post" class="mb-1">
-                        <input type="hidden" name="userId" value="@item.Id" />
+                        <input type="hidden" name="userId" value="@item.Id"/>
                         <button type="submit" class="btn btn-sm btn-outline-danger">@UserManagementIndex.Deactivate</button>
                     </form>
                 }
                 else
                 {
                     <form asp-action="Activate" method="post">
-                        <input type="hidden" name="userId" value="@item.Id" />
+                        <input type="hidden" name="userId" value="@item.Id"/>
                         <button type="submit" class="btn btn-sm btn-outline-danger">@UserManagementIndex.Actiavte</button>
                     </form>
                 }
                 <div>
-                    <form asp-action="Delete" method="post" 
-                          onsubmit="return confirm('Kas oled kindel? Seda ei saa tagasi võtta.')">
+                    <form asp-action="Delete" method="post"
+                          onsubmit="return confirm('@UserManagementIndex.Warning')">
                         <input type="hidden" name="userId" value="@item.Id"/>
                         <button type="submit" class="btn btn-sm btn-outline-danger">@UserManagementIndex.Delete</button>
                     </form>
@@ -132,3 +153,55 @@
     }
     </tbody>
 </table>
+<script>
+    function setActiveButton(clicked) {
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        clicked.classList.add('active');
+    }
+    function filterUsers(status, btn) {
+        setActiveButton(btn);
+        document.querySelectorAll('tbody tr').forEach(row => {
+            if (status === 'all' || row.dataset.status === status) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    function filterByRole(role, btn) {
+        setActiveButton(btn);
+        document.querySelectorAll('tbody tr').forEach(row => {
+            if (row.dataset.roles.includes(role)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    function sortBySeen(btn) {
+        setActiveButton(btn);
+        const tbody = document.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        rows.forEach(row => {row.style.display = '';});
+        rows.sort((a, b) => {
+            const aVal = a.dataset.lastseen || '';
+            const bVal = b.dataset.lastseen || '';
+            return bVal.localeCompare(aVal);
+        });
+        rows.forEach(row => tbody.appendChild(row));
+    }
+    
+    function searchUsers(query){
+        const q = query.toLowerCase();
+        document.querySelectorAll('tbody tr').forEach(row => {
+            if (row.dataset.name.includes(q) || row.dataset.lastseen.includes(q)) {
+                row.style.display = '';
+            }
+            else {
+                row.style.display = 'none';
+            }
+        })
+    }
+</script>

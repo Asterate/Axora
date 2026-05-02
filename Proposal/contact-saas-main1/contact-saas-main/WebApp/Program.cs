@@ -67,6 +67,7 @@ builder.Services.AddAppLocalization(builder.Configuration);
 var app = builder.Build();
 
 app.SetupAppData();
+app.UseMiddleware<ErrorLoggingMiddleware>();
 app.UseAppMiddleware();
 app.UseAppSwagger();
 app.MapAppEndpoints();

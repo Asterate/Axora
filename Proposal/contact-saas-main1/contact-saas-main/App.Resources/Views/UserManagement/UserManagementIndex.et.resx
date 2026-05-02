@@ -57,4 +57,13 @@
     <data name="Never" xml:space="preserve">
         <value>Mitte kunagi</value>
     </data>
+    <data name="Are you sure? This action is not reversable" xml:space="preserve">
+        <value>Kas olete kindel? Seda tegevust ei saa tagasi võtta</value>
+    </data>
+    <data name="All" xml:space="preserve">
+        <value>Kõik</value>
+    </data>
+    <data name="Search" xml:space="preserve">
+        <value>Otsimine</value>
+    </data>
 </root>

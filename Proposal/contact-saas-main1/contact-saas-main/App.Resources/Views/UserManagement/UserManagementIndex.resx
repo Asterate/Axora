@@ -57,4 +57,13 @@
     <data name="Never" xml:space="preserve">
         <value>Never</value>
     </data>
+    <data name="Are you sure? This action is not reversable" xml:space="preserve">
+        <value>Are you sure? This action is not reversable</value>
+    </data>
+    <data name="All" xml:space="preserve">
+        <value>All</value>
+    </data>
+    <data name="Search" xml:space="preserve">
+        <value>Search</value>
+    </data>
 </root>

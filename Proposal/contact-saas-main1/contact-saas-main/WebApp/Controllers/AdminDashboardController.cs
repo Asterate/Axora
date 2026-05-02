@@ -40,7 +40,12 @@ public class AdminDashboardController : Controller
             RecentProjects = await _context.Projects
                 .OrderByDescending(p => p.Id)
                 .Take(5)
-                .ToListAsync()
+                .ToListAsync(),
+            
+            RecentLogs = await _context.SystemLogs
+            .OrderByDescending(l => l.Timestamp)
+            .Take(20)
+            .ToListAsync()
         };
 
         return View(model);

@@ -56,6 +56,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public DbSet<EquipmentLab> EquipmentLabs { get; set; }
     public DbSet<Lab> Labs { get; set; }
     public DbSet<LabType> LabTypes { get; set; }
+    public DbSet<SystemLog> SystemLogs { get; set; }
     
     protected override void OnModelCreating(ModelBuilder builder)
     {

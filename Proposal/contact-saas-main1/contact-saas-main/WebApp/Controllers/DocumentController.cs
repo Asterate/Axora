@@ -67,6 +67,7 @@ namespace WebApp.Controllers
                 document.Id = Guid.NewGuid();
                 _context.Add(document);
                 await _context.SaveChangesAsync();
+                TempData["Success"] = "Document created";
                 return RedirectToAction(nameof(Index));
             }
             ViewData["DocumentTypeId"] = new SelectList(_context.DocumentTypes, "Id", "Name", document.DocumentTypeId);
@@ -78,12 +79,14 @@ namespace WebApp.Controllers
         {
             if (id == null)
             {
+                TempData["Error"] = "Document not found";
                 return NotFound();
             }
 
             var document = await _context.Documents.FindAsync(id);
             if (document == null)
             {
+                TempData["Error"] = "Document not found";
                 return NotFound();
             }
             ViewData["DocumentTypeId"] = new SelectList(_context.DocumentTypes, "Id", "Name", document.DocumentTypeId);
@@ -99,6 +102,7 @@ namespace WebApp.Controllers
         {
             if (id != document.Id)
             {
+                TempData["Error"] = "Document not found";
                 return NotFound();
             }
 
@@ -108,16 +112,14 @@ namespace WebApp.Controllers
                 {
                     _context.Update(document);
                     await _context.SaveChangesAsync();
+                    TempData["Success"] = "Document edited";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!DocumentExists(document.Id))
                     {
+                        TempData["Error"] = "Document not found";
                         return NotFound();
-                    }
-                    else
-                    {
-                        throw;
                     }
                 }
                 return RedirectToAction(nameof(Index));
@@ -131,6 +133,7 @@ namespace WebApp.Controllers
         {
             if (id == null)
             {
+                TempData["Error"] = "Document not found";
                 return NotFound();
             }
 
@@ -139,9 +142,10 @@ namespace WebApp.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (document == null)
             {
+                TempData["Error"] = "Document not found";
                 return NotFound();
             }
-
+            
             return View(document);
         }
 
@@ -153,9 +157,10 @@ namespace WebApp.Controllers
             var document = await _context.Documents.FindAsync(id);
             if (document != null)
             {
+                TempData["Error"] = "Document not found";
                 _context.Documents.Remove(document);
             }
-
+            TempData["Success"] = "Document deleted";
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

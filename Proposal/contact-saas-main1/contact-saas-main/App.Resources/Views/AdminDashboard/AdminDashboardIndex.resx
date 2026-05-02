@@ -48,4 +48,10 @@
     <data name="Recent projects" xml:space="preserve">
         <value>Recent projects</value>
     </data>
+    <data name="Search" xml:space="preserve">
+        <value>Search</value>
+    </data>
+    <data name="Errors" xml:space="preserve">
+        <value>Errors</value>
+    </data>
 </root>

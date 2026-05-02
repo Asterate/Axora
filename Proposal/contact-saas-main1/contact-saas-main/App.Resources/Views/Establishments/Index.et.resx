@@ -59,4 +59,7 @@
     <data name="meme" xml:space="preserve">
         <value>meem</value>
     </data>
+    <data name="Search" xml:space="preserve">
+        <value>Otsimine</value>
+    </data>
 </root>

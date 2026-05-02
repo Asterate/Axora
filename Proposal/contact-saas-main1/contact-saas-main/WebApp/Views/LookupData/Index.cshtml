@@ -8,38 +8,40 @@
 <h1>@ViewData["Title"]</h1>
 
 <div class="lookup-tables">
-
+    <div>
+        <input placeholder="@LookupDataIndex.Search" oninput="searchTypes(this.value)" class="form-control mb-2"/>
+    </div>
     <!-- Document Types -->
     <div class="mb-5">
         <h2>@LookupDataIndex.Document_Types</h2>
         <table class="table table-striped">
             <thead class="table-dark">
-                <tr>
-                    <th>@LookupDataIndex.Name</th>
-                    <th>@LookupDataIndex.Description</th>
-                    <th>@LookupDataIndex.Actions</th>
-                </tr>
+            <tr>
+                <th>@LookupDataIndex.Name</th>
+                <th>@LookupDataIndex.Description</th>
+                <th>@LookupDataIndex.Actions</th>
+            </tr>
             </thead>
             <tbody>
-                @if (Model.DocumentTypes.Any())
+            @if (Model.DocumentTypes.Any())
+            {
+                @foreach (var item in Model.DocumentTypes)
                 {
-                    @foreach (var item in Model.DocumentTypes)
-                    {
-                        <tr>
-                            <td>@item.Name</td>
-                            <td>@item.Description</td>
-                            <td>
-                                <a asp-controller="DocumentType" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">@LookupDataIndex.Edit</a>
-                                <a asp-controller="DocumentType" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Details</a>
-                                <a asp-controller="DocumentType" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Delete</a>
-                            </td>
-                        </tr>
-                    }
+                    <tr data-name="@($"{item.Name} {item.Description}".ToLower())">
+                        <td>@item.Name</td>
+                        <td>@item.Description</td>
+                        <td>
+                            <a asp-controller="DocumentType" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">@LookupDataIndex.Edit</a>
+                            <a asp-controller="DocumentType" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Details</a>
+                            <a asp-controller="DocumentType" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Delete</a>
+                        </td>
+                    </tr>
                 }
-                else
-                {
-                    <tr><td colspan="4" class="text-muted">@LookupDataIndex.Not_found</td></tr>
-                }
+            }
+            else
+            {
+                <tr><td colspan="4" class="text-muted">@LookupDataIndex.Not_found</td></tr>
+            }
             </tbody>
         </table>
         <a asp-controller="DocumentType" asp-action="Create" class="btn btn-success">@LookupDataIndex.Add_new_document_type</a>
@@ -50,32 +52,32 @@
         <h2>@LookupDataIndex.Experiment_types</h2>
         <table class="table table-striped">
             <thead class="table-dark">
-                <tr>
-                    <th>@LookupDataIndex.Name</th>
-                    <th>@LookupDataIndex.Description</th>
-                    <th>@LookupDataIndex.Actions</th>
-                </tr>
+            <tr>
+                <th>@LookupDataIndex.Name</th>
+                <th>@LookupDataIndex.Description</th>
+                <th>@LookupDataIndex.Actions</th>
+            </tr>
             </thead>
             <tbody>
-                @if (Model.ExperimentTypes.Any())
+            @if (Model.ExperimentTypes.Any())
+            {
+                @foreach (var item in Model.ExperimentTypes)
                 {
-                    @foreach (var item in Model.ExperimentTypes)
-                    {
-                        <tr>
-                            <td>@item.Name</td>
-                            <td>@item.Description</td>
-                            <td>
-                                <a asp-controller="ExperimentType" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">@LookupDataIndex.Edit</a>
-                                <a asp-controller="ExperimentType" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Details</a>
-                                <a asp-controller="ExperimentType" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Delete</a>
-                            </td>
-                        </tr>
-                    }
+                    <tr data-name="@($"{item.Name} {item.Description}".ToLower())">
+                        <td>@item.Name</td>
+                        <td>@item.Description</td>
+                        <td>
+                            <a asp-controller="ExperimentType" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">@LookupDataIndex.Edit</a>
+                            <a asp-controller="ExperimentType" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Details</a>
+                            <a asp-controller="ExperimentType" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Delete</a>
+                        </td>
+                    </tr>
                 }
-                else
-                {
-                    <tr><td colspan="4" class="text-muted">@LookupDataIndex.Not_found</td></tr>
-                }
+            }
+            else
+            {
+                <tr><td colspan="4" class="text-muted">@LookupDataIndex.Not_found</td></tr>
+            }
             </tbody>
         </table>
         <a asp-controller="ExperimentType" asp-action="Create" class="btn btn-success">@LookupDataIndex.Add_new_experiment_types</a>
@@ -86,69 +88,69 @@
         <h2>@LookupDataIndex.Institute_types</h2>
         <table class="table table-striped">
             <thead class="table-dark">
-                <tr>
-                    <th>@LookupDataIndex.Name</th>
-                    <th>@LookupDataIndex.Description</th>
-                    <th>@LookupDataIndex.Actions</th>
-                </tr>
+            <tr>
+                <th>@LookupDataIndex.Name</th>
+                <th>@LookupDataIndex.Description</th>
+                <th>@LookupDataIndex.Actions</th>
+            </tr>
             </thead>
             <tbody>
-                @if (Model.InstituteTypes.Any())
+            @if (Model.InstituteTypes.Any())
+            {
+                @foreach (var item in Model.InstituteTypes)
                 {
-                    @foreach (var item in Model.InstituteTypes)
-                    {
-                        <tr>
-                            <td>@item.Name</td>
-                            <td>@item.Description</td>
-                            <td>
-                                <a asp-controller="InstituteType" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">@LookupDataIndex.Edit</a>
-                                <a asp-controller="InstituteType" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Details</a>
-                                <a asp-controller="InstituteType" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Delete</a>
-                            </td>
-                        </tr>
-                    }
+                    <tr data-name="@($"{item.Name} {item.Description}".ToLower())">
+                        <td>@item.Name</td>
+                        <td>@item.Description</td>
+                        <td>
+                            <a asp-controller="InstituteType" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">@LookupDataIndex.Edit</a>
+                            <a asp-controller="InstituteType" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Details</a>
+                            <a asp-controller="InstituteType" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Delete</a>
+                        </td>
+                    </tr>
                 }
-                else
-                {
-                    <tr><td colspan="4" class="text-muted">@LookupDataIndex.Not_found</td></tr>
-                }
+            }
+            else
+            {
+                <tr><td colspan="4" class="text-muted">@LookupDataIndex.Not_found</td></tr>
+            }
             </tbody>
         </table>
         <a asp-controller="InstituteType" asp-action="Create" class="btn btn-success">@LookupDataIndex.Add_new_institute_type</a>
     </div>
-    
+
 
     <!-- Project Types -->
     <div class="mb-5">
         <h2>@LookupDataIndex.Project_types</h2>
         <table class="table table-striped">
             <thead class="table-dark">
-                <tr>
-                    <th>@LookupDataIndex.Name</th>
-                    <th>@LookupDataIndex.Description</th>
-                    <th>@LookupDataIndex.Actions</th>
-                </tr>
+            <tr>
+                <th>@LookupDataIndex.Name</th>
+                <th>@LookupDataIndex.Description</th>
+                <th>@LookupDataIndex.Actions</th>
+            </tr>
             </thead>
             <tbody>
-                @if (Model.ProjectTypes.Any())
+            @if (Model.ProjectTypes.Any())
+            {
+                @foreach (var item in Model.ProjectTypes)
                 {
-                    @foreach (var item in Model.ProjectTypes)
-                    {
-                        <tr>
-                            <td>@item.Name</td>
-                            <td>@item.Description</td>
-                            <td>
-                                <a asp-controller="ProjectType" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">@LookupDataIndex.Edit</a>
-                                <a asp-controller="ProjectType" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Details</a>
-                                <a asp-controller="ProjectType" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Delete</a>
-                            </td>
-                        </tr>
-                    }
+                    <tr data-name="@($"{item.Name} {item.Description}".ToLower())">
+                        <td>@item.Name</td>
+                        <td>@item.Description</td>
+                        <td>
+                            <a asp-controller="ProjectType" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">@LookupDataIndex.Edit</a>
+                            <a asp-controller="ProjectType" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Details</a>
+                            <a asp-controller="ProjectType" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Delete</a>
+                        </td>
+                    </tr>
                 }
-                else
-                {
-                    <tr><td colspan="4" class="text-muted">@LookupDataIndex.Not_found</td></tr>
-                }
+            }
+            else
+            {
+                <tr><td colspan="4" class="text-muted">@LookupDataIndex.Not_found</td></tr>
+            }
             </tbody>
         </table>
         <a asp-controller="ProjectType" asp-action="Create" class="btn btn-success">@LookupDataIndex.Add_new_project_type</a>
@@ -159,35 +161,47 @@
         <h2>@LookupDataIndex.Task_Types</h2>
         <table class="table table-striped">
             <thead class="table-dark">
-                <tr>
-                    <th>@LookupDataIndex.Name</th>
-                    <th>@LookupDataIndex.Description</th>
-                    <th>@LookupDataIndex.Actions</th>
-                </tr>
+            <tr>
+                <th>@LookupDataIndex.Name</th>
+                <th>@LookupDataIndex.Description</th>
+                <th>@LookupDataIndex.Actions</th>
+            </tr>
             </thead>
             <tbody>
-                @if (Model.TaskTypes.Any())
+            @if (Model.TaskTypes.Any())
+            {
+                @foreach (var item in Model.TaskTypes)
                 {
-                    @foreach (var item in Model.TaskTypes)
-                    {
-                        <tr>
-                            <td>@item.Name</td>
-                            <td>@item.Description</td>
-                            <td>
-                                <a asp-controller="TaskType" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">@LookupDataIndex.Edit</a>
-                                <a asp-controller="TaskType" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Details</a>
-                                <a asp-controller="TaskType" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Delete</a>
-                            </td>
-                        </tr>
-                    }
+                    <tr data-name="@($"{item.Name} {item.Description}".ToLower())">
+                        <td>@item.Name</td>
+                        <td>@item.Description</td>
+                        <td>
+                            <a asp-controller="TaskType" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">@LookupDataIndex.Edit</a>
+                            <a asp-controller="TaskType" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Details</a>
+                            <a asp-controller="TaskType" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Delete</a>
+                        </td>
+                    </tr>
                 }
-                else
-                {
-                    <tr><td colspan="4" class="text-muted">@LookupDataIndex.Not_found</td></tr>
-                }
+            }
+            else
+            {
+                <tr><td colspan="4" class="text-muted">@LookupDataIndex.Not_found</td></tr>
+            }
             </tbody>
         </table>
         <a asp-controller="TaskType" asp-action="Create" class="btn btn-success">@LookupDataIndex.Add_new_task_type</a>
     </div>
 
 </div>
+<script>
+    function searchTypes(query) {
+        const q = query.toLowerCase();
+        document.querySelectorAll('tbody tr').forEach(row => {
+            if (!row.dataset.name || row.dataset.name.includes(q)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+</script>

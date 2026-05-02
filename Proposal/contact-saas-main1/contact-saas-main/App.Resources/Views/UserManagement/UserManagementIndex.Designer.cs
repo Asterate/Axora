@@ -159,6 +159,27 @@ namespace App.Resources.Views.UserManagement {
             get {
                 return ResourceManager.GetString("Never", resourceCulture);
             }
+        }/// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        public static string Warning {
+            get {
+                return ResourceManager.GetString("Are you sure? This action is not reversable", resourceCulture);
+            }
+        }/// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        public static string All {
+            get {
+                return ResourceManager.GetString("All", resourceCulture);
+            }
+        }/// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        public static string Search {
+            get {
+                return ResourceManager.GetString("Search", resourceCulture);
+            }
         }
     }
 }

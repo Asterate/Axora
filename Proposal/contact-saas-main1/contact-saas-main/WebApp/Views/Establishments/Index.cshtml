@@ -7,7 +7,9 @@
 <h1>@ViewData["Title"]</h1>
 
 <div class="establishments-tables">
-
+    <div>
+        <input placeholder="@EstablishmentsIndex.Search" oninput="searchEstablishments(this.value)" class="form-control mb-2"/>
+    </div>
     <!-- Institutes -->
     <div class="mb-5">
         <h2>@EstablishmentsIndex.Institutes</h2>
@@ -27,7 +29,7 @@
                 {
                     @foreach (var institute in Model.Institutes)
                     {
-                        <tr>
+                        <tr data-name="@($"{institute.InstituteName} {institute.InstituteAddress} {institute.InstituteCountry}".ToLower())">
                             <td>@Html.DisplayFor(modelItem => institute.InstituteName)</td>
                             <td>@Html.DisplayFor(modelItem => institute.InstituteAddress)</td>
                             <td>@Html.DisplayFor(modelItem => institute.InstituteCountry)</td>
@@ -55,3 +57,15 @@
 
 
 </div>
+<script>
+    function searchEstablishments(query) {
+        const q = query.toLowerCase();
+        document.querySelectorAll('tbody tr').forEach(row => {
+            if (!row.dataset.name || row.dataset.name.includes(q)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+</script>

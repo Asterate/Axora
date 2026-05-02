@@ -213,6 +213,15 @@ namespace App.Resources.Views.LookupData {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string Search {
+            get {
+                return ResourceManager.GetString("Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Task types.
         /// </summary>
         public static string Task_Types {

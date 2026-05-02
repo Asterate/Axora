@@ -48,4 +48,10 @@
     <data name="Recent projects" xml:space="preserve">
         <value>Viimased projektid</value>
     </data>
+    <data name="Search" xml:space="preserve">
+        <value>Otsimine</value>
+    </data>
+    <data name="Errors" xml:space="preserve">
+        <value>Vead</value>
+    </data>
 </root>

@@ -66,4 +66,7 @@
     <data name="meme" xml:space="preserve">
         <value>meme</value>
     </data>
+    <data name="Search" xml:space="preserve">
+        <value>Search</value>
+    </data>
 </root>

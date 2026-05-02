@@ -43,48 +43,74 @@
     </div>
 </div>
 
-@if (Model.RecentInstitutes.Any())
-{
-    <div class="mt-5">
-        <h4>@AdminDashboardIndex.Recent_institutes</h4>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>@AdminDashboardIndex.Name</th>
-                    <th>@AdminDashboardIndex.Created</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var institute in Model.RecentInstitutes)
-                {
-                    <tr>
-                        <td>@institute.InstituteName</td>
-                        <td>@institute.CreatedAt.ToString("yyyy-MM-dd")</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+<div class="mt-5">
+    <h4>Logs</h4>
+    <div>
+        <input placeholder="@AdminDashboardIndex.Search" oninput="searchLogs(this.value)" class="form-control mb-2"/>
     </div>
-}
-
-@if (Model.RecentProjects.Any())
-{
-    <div class="mt-5">
-        <h4>@AdminDashboardIndex.Recent_projects</h4>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>@AdminDashboardIndex.Name</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var project in Model.RecentProjects)
-                {
-                    <tr>
-                        <td>@project.ProjectName</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+    <div class="mb-2">
+        <button onclick="filterLogs('all')" class="btn btn-sm btn-outline-secondary filter-btn">All</button>
+        <button onclick="filterLogs('error')" class="btn btn-sm btn-outline-secondary filter-btn">Errors</button>
+        <button onclick="filterLogs('activity')" class="btn btn-sm btn-outline-secondary filter-btn">Activity</button>
     </div>
-}
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Timestamp</th>
+            <th>Type</th>
+            <th>Message</th>
+            <th>User</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody id="logs-tbody">
+        @if (Model.RecentLogs.Any())
+        {
+            @foreach (var log in Model.RecentLogs)
+            {
+                <tr data-type="@log.Type"
+                    data-name="@($"{log.Message} {log.Timestamp} {log.StatusCode} {log.UserName} {log.Type}".ToLower())">
+                    <td>@log.Timestamp.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>
+                        @if (log.Type == "error")
+                        {
+                            <span class="badge bg-danger">Error</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Activity</span>
+                        }
+                    </td>
+                    <td>@log.Message</td>
+                    <td>@(log.UserName ?? "-")</td>
+                    <td>@(log.StatusCode?.ToString() ?? "-")</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr><td colspan="5" class="text-muted">No logs yet.</td></tr>
+        }
+        </tbody>
+    </table>
+</div>
+<script>
+    function filterLogs(type) {
+        document.querySelectorAll('#logs-tbody tr').forEach(row => {
+            if (type === 'all' || row.dataset.type === type) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }function searchLogs(query) {
+        const q = query.toLowerCase();
+        document.querySelectorAll('tbody tr').forEach(row => {
+            if (!row.dataset.name || row.dataset.name.includes(q)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+</script>

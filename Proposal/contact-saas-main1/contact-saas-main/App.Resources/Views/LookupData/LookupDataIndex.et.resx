@@ -72,4 +72,7 @@
     <data name="Not found" xml:space="preserve">
         <value>Ei leia</value>
     </data>
+    <data name="Search" xml:space="preserve">
+        <value>Otsimine</value>
+    </data>
 </root>

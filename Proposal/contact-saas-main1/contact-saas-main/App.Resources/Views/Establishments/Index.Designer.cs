@@ -186,6 +186,15 @@ namespace App.Resources.Views.Establishments {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string Search {
+            get {
+                return ResourceManager.GetString("Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Establishments.
         /// </summary>
         public static string Title {

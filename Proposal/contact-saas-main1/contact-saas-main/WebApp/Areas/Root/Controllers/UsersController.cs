@@ -123,8 +123,15 @@ public class UsersController : Controller
     public async Task<IActionResult> Delete(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
-        if (user == null) return NotFound();
+        if (user == null)
+        {
+            TempData["Error"] = "User Not Found";
+            return NotFound();
+        }
+        var roles = await _userManager.GetRolesAsync(user);
+        await _userManager.RemoveFromRolesAsync(user, roles);
         await  _userManager.DeleteAsync(user);
+        TempData["Success"] = "User deleted";
         return RedirectToAction("Index");
     }
 
