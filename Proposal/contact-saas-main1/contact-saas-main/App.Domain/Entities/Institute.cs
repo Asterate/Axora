@@ -2,40 +2,29 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using App.Domain;
 using App.Domain.Identity;
-using Base.Resources;
 
 namespace App.Domain.Entities;
 
 public class Institute : BaseEntity
 {
-    [Display(Name = "Name", ResourceType = typeof(Base.Resources.Common))]
     [StringLength(128, MinimumLength = 2)]
-    [Column(TypeName = "jsonb")]
     public LangStr InstituteName { get; set; } = new();
     
-    [Display(Name = "Country", ResourceType = typeof(Base.Resources.Common))]
     [StringLength(128, MinimumLength = 2)]
     public string InstituteCountry {get; set;}  = default!;
     
-    [Display(Name = "Address", ResourceType = typeof(Base.Resources.Common))]
     [StringLength(128, MinimumLength = 5)]
-    [Column(TypeName = "jsonb")]
     public LangStr InstituteAddress { get; set; } = new();
     
-    [Display(Name = "PhoneNumber", ResourceType = typeof(Base.Resources.Common))]
     [StringLength(128, MinimumLength = 5)]
     public string InstitutePhoneNumber { get; set; }   = default!;
     
-    [Display(Name = "CreatedAt", ResourceType = typeof(Base.Resources.Common))]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     
-    [Display(Name = "UpdatedAt", ResourceType = typeof(Base.Resources.Common))]
     public DateTime? UpdatedAt { get; set; }
     
-    [Display(Name = "DeletedAt", ResourceType = typeof(Base.Resources.Common))]
     public DateTime? DeletedAt { get; set; }
     
-    [Display(Name = "Active", ResourceType = typeof(Base.Resources.Common))]
     public Boolean Active { get; set; } =  true;
     
     public Guid InstituteTypeId { get; set; }

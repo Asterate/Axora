@@ -1,4 +1,4 @@
-namespace App.Domain;
+namespace App.Shared.Domain;
 
 public interface IBaseEntity
 {

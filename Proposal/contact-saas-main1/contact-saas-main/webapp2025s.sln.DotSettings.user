@@ -17,5 +17,5 @@
 	<s:Boolean x:Key="/Default/ResxEditorPersonal/CheckedGroups/=App_002EResources_002FViews_002FUserManagement_002FUserManagementIndex/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/ResxEditorPersonal/CheckedGroups/=App_002EResources_002FViews_002FUserManagement_002FUsrManagementIndex/@EntryIndexedValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/ResxEditorPersonal/CheckedGroups/=App_002EResources_002FViews_002FUserManagement_002FUsrManagementIndex/@EntryIndexRemoved">True</s:Boolean>
-	<s:Boolean x:Key="/Default/ResxEditorPersonal/CheckedGroups/=Base_002EResources_002FCommon/@EntryIndexedValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/ResxEditorPersonal/CheckedGroups/=Base_002EResources_002FCommon/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/ResxEditorPersonal/Initialized/@EntryValue">True</s:Boolean></wpf:ResourceDictionary>

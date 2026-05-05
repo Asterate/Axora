@@ -7,4 +7,9 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\App.Domain\App.Domain.csproj" />
+    <ProjectReference Include="..\Base.Resources\Base.Resources.csproj" />
+  </ItemGroup>
+
 </Project>

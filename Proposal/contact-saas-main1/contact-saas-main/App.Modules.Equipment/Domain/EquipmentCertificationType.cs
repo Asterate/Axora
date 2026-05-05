@@ -1,4 +1,6 @@
-﻿namespace App.Domain.Entities;
+﻿using App.Shared.Domain;
+
+namespace App.Modules.Equipment.Domain;
 
 public class EquipmentCertificationType : BaseEntity
 {

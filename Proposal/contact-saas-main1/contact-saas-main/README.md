@@ -149,3 +149,8 @@ Under api button in footer there is swagger part where can currently do in clien
 - Break down requirements to smaller tasks in table
 - Map UX/Views to backend endponts - “Button X → Calls Endpoint Y → Affects Entity Z”
 - Write down things idk ask AI and document so later ik what I learned and to refer it for defence
+
+
+## REMINDERS FOR LATER TO DO
+- When repos done, remove DAL reference from BLL and use repo and interface
+- DAL should reference BLL, DTO, DOMAIN

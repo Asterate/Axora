@@ -1,6 +1,8 @@
 using App.DTO.v1;
 
 namespace App.BLL.Services;
+// TODO: Replace AppDbContext with IUnitOfWork after repositories are implemented
+
 
 /// <summary>
 /// Interface for Project service with IDOR protection

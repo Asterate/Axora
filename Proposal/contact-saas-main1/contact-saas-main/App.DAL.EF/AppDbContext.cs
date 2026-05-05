@@ -75,6 +75,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
             relationship.DeleteBehavior = DeleteBehavior.Restrict;
         }
     }
+    private static void ConfigureMaxLengths(ModelBuilder builder)
+    {
+        builder.Entity<CertificationType>()
+            .Property(x => x.Description)
+            .HasMaxLength(512);
+    
+        // add others here as needed
+    }
     
     /// <summary>
     /// Configures all DateTime and DateTime? properties to convert to UTC when saving to PostgreSQL.

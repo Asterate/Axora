@@ -4,6 +4,8 @@ using App.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.BLL.Services;
+// TODO: Replace AppDbContext with IUnitOfWork after repositories are implemented
+
 
 /// <summary>
 /// Experiment service with IDOR protection

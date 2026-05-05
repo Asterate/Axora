@@ -1,4 +1,4 @@
-namespace App.Domain;
+namespace App.Shared.Domain;
 
 // [Keyless] // maybe use this for testing
 public class LangStr : Dictionary<string, string>

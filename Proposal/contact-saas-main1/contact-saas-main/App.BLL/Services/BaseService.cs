@@ -2,6 +2,8 @@ using App.DAL.EF;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.BLL.Services;
+// TODO: Replace AppDbContext with IUnitOfWork after repositories are implemented
+
 
 /// <summary>
 /// Base service class providing common database access and user identification functionality

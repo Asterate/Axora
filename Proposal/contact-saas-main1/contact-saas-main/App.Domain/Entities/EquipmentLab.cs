@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using App.Modules.Equipment.Domain;
+using App.Shared.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.Domain.Entities;
+namespace App.Modules.Equipment.Domain;
 
 [Index(nameof(EquipmentId), nameof(LabId), IsUnique = true)]
 public class EquipmentLab : BaseEntity
