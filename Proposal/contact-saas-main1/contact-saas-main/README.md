@@ -154,3 +154,4 @@ Under api button in footer there is swagger part where can currently do in clien
 ## REMINDERS FOR LATER TO DO
 - When repos done, remove DAL reference from BLL and use repo and interface
 - DAL should reference BLL, DTO, DOMAIN
+- Need to fix DTO and services based on what I want to do on client

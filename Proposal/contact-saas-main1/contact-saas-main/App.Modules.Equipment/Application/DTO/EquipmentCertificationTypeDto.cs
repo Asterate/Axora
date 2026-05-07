@@ -1,8 +1,22 @@
-﻿namespace Modules.Equipment.Application.DTO;
-
-public class EquipmentCertificationTypeDto
+﻿public class EquipmentCertificationTypeListResponse
 {
-    public Guid EquipmentId { get; set; }
-    public Guid CertificationTypeId { get; set; }
-    public string? CertificationTypeName { get; set; }
+    public Guid Id { get; set; }
+    public string? Name { get; set; }
+}
+
+public class EquipmentCertificationTypeResponse
+{
+    public Guid Id { get; set; }
+    public string? Name { get; set; }
+}
+
+public class CreateEquipmentCertificationTypeRequest
+{
+    public Guid Id { get; set; }
+}
+
+public class UpdateEquipmentCertificationTypeRequest
+{
+    public Guid Id { get; set; }
+    public string? Name { get; set; }
 }

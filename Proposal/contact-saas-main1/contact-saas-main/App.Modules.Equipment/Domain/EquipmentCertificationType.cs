@@ -9,5 +9,5 @@ public class EquipmentCertificationType : BaseEntity
         
 
         public Guid CertificationTypeId { get; set; }
-        public required CertificationType CertificationType { get; set; }  = default!;
+        public CertificationType CertificationType { get; set; }  = default!;
 }

@@ -13,7 +13,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\App.DAL.EF\App.DAL.EF.csproj" />
-        <ProjectReference Include="..\App.Domain\App.Domain.csproj" />
         <ProjectReference Include="..\App.DTO\App.DTO.csproj" />
         <PackageReference Include="AutoMapper" Version="13.0.2" />
     </ItemGroup>

@@ -1,0 +1,28 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using App.Domain;
+using App.Shared.Domain;
+
+namespace App.Domain.Entities;
+
+public class ExperimentTask : BaseEntity
+{
+    [StringLength(128, MinimumLength = 3)]
+    [Column(TypeName = "jsonb")]
+    public LangStr TaskName { get; set; } = new();
+    [StringLength(128, MinimumLength = 3)]
+    [Column(TypeName = "jsonb")]
+    public LangStr? TaskDescription { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
+    public EExperimentTaskStatus Status { get; set; } = EExperimentTaskStatus.Pending;
+    public int? Priority { get; set; }
+    
+    public Guid ExperimentId { get; set; }
+    public Experiment Experiment { get; set; } = default!;
+    public Guid TaskTypeId { get; set; }
+    public ExperimentTaskType ExperimentTaskType { get; set; } = default!;
+    public Guid? AssignedUserId { get; set; }
+    public EExperimentTaskPriority PriorityType { get; set; } = EExperimentTaskPriority.Low;
+}

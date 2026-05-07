@@ -1,11 +1,10 @@
 using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Tokens;
 using WebApp.Helpers;
 using WebApp.Setup;
 using App.BLL.Services;
-using App.Domain;
+using App.Shared.Domain;
 using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -62,6 +61,11 @@ builder.Services.AddAppCors();
 builder.Services.AddAppApiVersioning();
 builder.Services.AddAppSwagger();
 builder.Services.AddAppLocalization(builder.Configuration);
+
+//Modular monolith registration
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
+
+builder.Services.AddEquipmentModule(connectionString);
 
 // Build and configure pipeline
 var app = builder.Build();

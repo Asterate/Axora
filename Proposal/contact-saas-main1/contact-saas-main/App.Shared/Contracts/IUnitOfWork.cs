@@ -1,6 +1,6 @@
 ﻿namespace App.Shared.Contracts;
 
-public class IUnitOfWork
-{
-    
+public interface IUnitOfWork
+{ 
+    Task<int> SaveChangesAsync();
 }

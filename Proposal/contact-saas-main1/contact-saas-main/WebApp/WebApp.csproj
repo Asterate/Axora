@@ -35,7 +35,9 @@
       <ProjectReference Include="..\App.DAL.EF\App.DAL.EF.csproj" />
       <ProjectReference Include="..\App.DTO\App.DTO.csproj" />
       <ProjectReference Include="..\App.Helpers\App.Helpers.csproj" />
+      <ProjectReference Include="..\App.Modules.Equipment\App.Modules.Equipment.csproj" />
       <ProjectReference Include="..\App.Resources\App.Resources.csproj" />
+      <ProjectReference Include="..\App.Shared\App.Shared.csproj" />
     </ItemGroup>
 
     <ItemGroup>

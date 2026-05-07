@@ -1,72 +1,46 @@
 ﻿using App.Modules.Equipment.Application.Interfaces;
-using Modules.Equipment.Application.DTO;
-
-namespace App.Modules.Equipment.Application.Service;
+using App.Modules.Equipment.Application.Mapper;
+using App.Shared.Contracts;
 
 public class EquipmentService
 {
     private readonly IEquipmentRepository _equipmentRepo;
-    private readonly IEquipmentTypeRepository _equipmentTypeRepo;
+    private readonly IUnitOfWork _uow;
 
     public EquipmentService(
         IEquipmentRepository equipmentRepo,
-        IEquipmentTypeRepository equipmentTypeRepo)
+        IUnitOfWork uow)
     {
         _equipmentRepo = equipmentRepo;
-        _equipmentTypeRepo = equipmentTypeRepo;
+        _uow = uow;
+    }
+    public async Task<IEnumerable<EquipmentListResponse>> GetAllAsync()
+    {
+        var entities = await _equipmentRepo.GetAllAsync();
+        return entities.Select(EquipmentMapper.ToListResponse);
     }
 
-    public async Task<IEnumerable<EquipmentDto>> GetAllAsync()
+    public async Task<EquipmentResponse?> GetByIdAsync(Guid id)
     {
-        var equipment = await _equipmentRepo.GetAllAsync();
-        return equipment.Select(e => new EquipmentDto
-        {
-            Id = e.Id,
-            Name = e.EquipmentName.ToString(),
-            EquipmentSerialCode = e.EquipmentSerialCode,
-            ManualFilePath = e.ManualFilePath,
-            EquipmentTypeId = e.EquipmentTypeId,
-        });
+        var entity = await _equipmentRepo.GetByIdAsync(id);
+        if (entity == null) return null;
+        return EquipmentMapper.ToResponse(entity);
     }
 
-    public async Task<EquipmentDto?> GetByIdAsync(Guid id)
+    public async Task CreateAsync(CreateEquipmentRequest request)
     {
-        var equipment = await _equipmentRepo.GetByIdAsync(id);
-        if (equipment == null) return null;
-
-        return new EquipmentDto
-        {
-            Id = equipment.Id,
-            Name = equipment.EquipmentName.ToString(),
-            EquipmentSerialCode = equipment.EquipmentSerialCode,
-            ManualFilePath = equipment.ManualFilePath,
-            EquipmentTypeId = equipment.EquipmentTypeId,
-        };
-    }
-
-    public async Task CreateAsync(EquipmentDto dto)
-    {
-        var entity = new Domain.Equipment
-        {
-            EquipmentName = new Shared.Domain.LangStr { ["en"] = dto.Name ?? "" },
-            EquipmentSerialCode = dto.EquipmentSerialCode,
-            ManualFilePath = dto.ManualFilePath,
-            EquipmentTypeId = dto.EquipmentTypeId,
-        };
+        var entity = EquipmentMapper.ToEntity(request);
         await _equipmentRepo.AddAsync(entity);
+        await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(EquipmentDto dto)
+    public async Task UpdateAsync(Guid id, UpdateEquipmentRequest request)
     {
-        var entity = await _equipmentRepo.GetByIdAsync(dto.Id);
+        var entity = await _equipmentRepo.GetByIdAsync(id);
         if (entity == null) return;
-
-        entity.EquipmentName = new Shared.Domain.LangStr { ["en"] = dto.Name ?? "" };
-        entity.EquipmentSerialCode = dto.EquipmentSerialCode;
-        entity.ManualFilePath = dto.ManualFilePath;
-        entity.EquipmentTypeId = dto.EquipmentTypeId;
-
+        EquipmentMapper.UpdateEntity(entity, request);
         _equipmentRepo.Update(entity);
+        await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
     public async Task DeleteAsync(Guid id)
@@ -74,7 +48,6 @@ public class EquipmentService
         var entity = await _equipmentRepo.GetByIdAsync(id);
         if (entity == null) return;
         _equipmentRepo.Delete(entity);
+        await _uow.SaveChangesAsync(); // ← actually saves now
     }
-    
-    
 }
