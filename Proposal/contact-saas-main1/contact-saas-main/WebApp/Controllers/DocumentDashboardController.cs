@@ -9,18 +9,16 @@ namespace WebApp.Controllers;
 [Authorize(Roles = "admin, employee, owner, instituteadmin, guest")]
 public class DocumentDashboardController : Controller
 {
-    private readonly AppDbContext _context;
+    private readonly DocumentService _document;
 
-    public DocumentDashboardController(AppDbContext context)
+    public DocumentDashboardController(DocumentService documentService)
     {
-        _context = context;
+        _document = documentService;
     }
 
     public IActionResult Index()
     {
-        var documents = _context.Documents
-            .Where(s => s.DeletedAt == null)
-            .ToList();
+        var documents =  _document.FindDeletedAsync().Result;
 
         var viewModel = new DocumentationViewModel
         {

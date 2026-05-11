@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
-using App.Domain;
 using App.Domain.Entities;
+using App.Shared.Domain;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels;
 
@@ -17,17 +11,17 @@ namespace WebApp.Controllers
     [Authorize(Roles = "admin")]
     public class ExperimentTypeController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly ExperimentTypeService _experimentTypeService;
 
-        public ExperimentTypeController(AppDbContext context)
+        public ExperimentTypeController(ExperimentTypeService experimentTypeService)
         {
-            _context = context;
+            _experimentTypeService = experimentTypeService;
         }
 
         // GET: ExperimentType
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ExperimentTypes.ToListAsync());
+            return View(await _experimentTypeService.GetAllAsync());
         }
 
         // GET: ExperimentType/Details/5
@@ -38,8 +32,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var experimentType = await _context.ExperimentTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var experimentType = await _experimentTypeService.GetByIdAsync(id.Value);
             if (experimentType == null)
             {
                 return NotFound();
@@ -71,14 +64,12 @@ namespace WebApp.Controllers
                 description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
                 description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
                 
-                var experimentType = new ExperimentType()
+                var experimentType = new CreateExperimentTypeRequest()
                 {
                     Name = name,
-                    Description = description
                 };
                 
-                _context.Add(experimentType);
-                await _context.SaveChangesAsync();
+                await _experimentTypeService.CreateAsync(experimentType);
                 return RedirectToAction("Index", "LookupData");
             }
             return View(viewModel);
@@ -92,7 +83,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var experimentType = await _context.ExperimentTypes.FindAsync(id);
+            var experimentType = await _experimentTypeService.GetByIdAsync(id.Value);
             if (experimentType == null)
             {
                 return NotFound();
@@ -116,18 +107,14 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(experimentType);
-                    await _context.SaveChangesAsync();
+                    var update = new UpdateExperimentTypeRequest(experimentType);
+                    await _experimentTypeService.UpdateAsync(id, update);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ExperimentTypeExists(experimentType.Id))
+                    if (!await ExperimentTypeExists(experimentType.Id))
                     {
                         return NotFound();
-                    }
-                    else
-                    {
-                        throw;
                     }
                 }
                 return RedirectToAction("Index", "LookupData");
@@ -143,8 +130,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var experimentType = await _context.ExperimentTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var experimentType = await _experimentTypeService.GetByIdAsync(id.Value);
             if (experimentType == null)
             {
                 return NotFound();
@@ -158,19 +144,18 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var experimentType = await _context.ExperimentTypes.FindAsync(id);
+            var experimentType = await _experimentTypeService.GetByIdAsync(id);
             if (experimentType != null)
             {
-                _context.ExperimentTypes.Remove(experimentType);
+                await _experimentTypeService.DeleteAsync(id);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction("Index", "LookupData");
         }
 
-        private bool ExperimentTypeExists(Guid id)
+        private async Task<bool> ExperimentTypeExists(Guid id)
         {
-            return _context.ExperimentTypes.Any(e => e.Id == id);
+            return await _experimentTypeService.GetByIdAsync(id) != null;
         }
     }
 }

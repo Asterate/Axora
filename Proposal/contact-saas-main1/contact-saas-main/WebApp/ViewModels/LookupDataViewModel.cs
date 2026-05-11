@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using App.Domain.Entities;
+using App.Modules.Equipment.Domain;
 
 namespace WebApp.ViewModels;
 
@@ -32,7 +33,7 @@ public class LookupDataViewModel
     public List<ReagentType> ReagentTypes { get; set; } = new();
     
     // Task Types
-    public List<TaskType> TaskTypes { get; set; } = new();
+    public List<ExperimentTaskType> TaskTypes { get; set; } = new();
 }
 
 public class LookupItemViewModel

@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
-using App.Domain;
 using App.Domain.Entities;
+using App.Shared.Domain;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels;
 
@@ -17,17 +12,17 @@ namespace WebApp.Controllers
     [Authorize(Roles = "admin")]
     public class InstituteTypeController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly InstituteTypeService _instituteTypeService;
 
-        public InstituteTypeController(AppDbContext context)
+        public InstituteTypeController(InstituteTypeService instituteTypeService)
         {
-            _context = context;
+            _instituteTypeService = instituteTypeService;
         }
 
         // GET: InstituteType
         public async Task<IActionResult> Index()
         {
-            return View(await _context.InstituteTypes.ToListAsync());
+            return View(await _instituteTypeService.GetAllAsync());
         }
 
         // GET: InstituteType/Details/5
@@ -38,8 +33,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var instituteType = await _context.InstituteTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var instituteType = await _instituteTypeService.GetByIdAsync(id.Value);
             if (instituteType == null)
             {
                 return NotFound();
@@ -71,14 +65,11 @@ namespace WebApp.Controllers
                 description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
                 description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
                 
-                var instituteType = new InstituteType
+                var instituteType = new CreateInstituteTypeRequest()
                 {
-                    Id = Guid.NewGuid(),
                     Name = name,
-                    Description = description
                 };
-                _context.Add(instituteType);
-                await _context.SaveChangesAsync();
+                await _instituteTypeService.CreateAsync(instituteType);
                 return RedirectToAction("Index", "LookupData");
             }
             return View(viewModel);
@@ -92,7 +83,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var instituteType = await _context.InstituteTypes.FindAsync(id);
+            var instituteType = await _instituteTypeService.GetByIdAsync(id.Value);
             if (instituteType == null)
             {
                 return NotFound();
@@ -102,11 +93,7 @@ namespace WebApp.Controllers
             var viewModel = new InstituteTypeViewModel
             {
                 Id = instituteType.Id,
-                NameEn = instituteType.Name.Translate("en") ?? string.Empty,
-                NameEt = instituteType.Name.Translate("et") ?? string.Empty,
-                DescriptionEn = instituteType.Description?.Translate("en"),
-                DescriptionEt = instituteType.Description?.Translate("et")
-            };
+                };
             return View(viewModel);
         }
 
@@ -126,25 +113,25 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    var instituteType = await _context.InstituteTypes.FindAsync(id);
+                    var instituteType = await _instituteTypeService.GetByIdAsync(id);
                     if (instituteType == null)
                     {
                         return NotFound();
                     }
                     
                     // Update translations
-                    instituteType.Name.SetTranslation(viewModel.NameEn, "en");
-                    instituteType.Name.SetTranslation(viewModel.NameEt, "et");
+                    //instituteType.Name.SetTranslation(viewModel.NameEn, "en");
+                    //instituteType.Name.SetTranslation(viewModel.NameEt, "et");
                     
-                    if (instituteType.Description == null)
+                    /*if (instituteType.Description == null)
                     {
                         instituteType.Description = new LangStr();
                     }
                     instituteType.Description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
                     instituteType.Description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
-                    
-                    _context.Update(instituteType);
-                    await _context.SaveChangesAsync();
+                    */
+                    var instituteTypeUpdate = new UpdateInstituteTypeRequest(instituteType);
+                    await _instituteTypeService.UpdateAsync(id, instituteTypeUpdate);
                 }
                 catch (DbUpdateConcurrencyException)
                 {

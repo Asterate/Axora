@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
 using App.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 
@@ -15,18 +9,18 @@ namespace WebApp.Controllers
     [Authorize]
     public class DocumentController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly DocumentService _document;
 
-        public DocumentController(AppDbContext context)
+        public DocumentController(DocumentService documentService)
         {
-            _context = context;
+            _document = documentService;
         }
 
         // GET: Document
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Documents.Include(d => d.DocumentType);
-            return View(await appDbContext.ToListAsync());
+            var documents = _document.GetAllAsync();
+            return View(documents);
         }
 
         // GET: Document/Details/5
@@ -37,9 +31,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var document = await _context.Documents
-                .Include(d => d.DocumentType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var document = await _document.GetByIdAsync(id.Value);
             if (document == null)
             {
                 return NotFound();
@@ -51,7 +43,6 @@ namespace WebApp.Controllers
         // GET: Document/Create
         public IActionResult Create()
         {
-            ViewData["DocumentTypeId"] = new SelectList(_context.DocumentTypes, "Id", "Name");
             return View();
         }
 
@@ -64,32 +55,32 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                document.Id = Guid.NewGuid();
-                _context.Add(document);
-                await _context.SaveChangesAsync();
-                TempData["Success"] = "Document created";
-                return RedirectToAction(nameof(Index));
+                await _document.CreateAsync(new CreateDocumentRequest
+                {
+                    DocumentName = document.DocumentName,
+                    FilePath = document.FilePath,
+                    DocumentTypeId = document.DocumentTypeId
+                });
             }
-            ViewData["DocumentTypeId"] = new SelectList(_context.DocumentTypes, "Id", "Name", document.DocumentTypeId);
             return View(document);
         }
 
         // GET: Document/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null)
+            if (id == null || id == Guid.Empty)
             {
                 TempData["Error"] = "Document not found";
                 return NotFound();
             }
 
-            var document = await _context.Documents.FindAsync(id);
+            var document = await _document.GetByIdAsync(id.Value);
             if (document == null)
             {
                 TempData["Error"] = "Document not found";
                 return NotFound();
             }
-            ViewData["DocumentTypeId"] = new SelectList(_context.DocumentTypes, "Id", "Name", document.DocumentTypeId);
+
             return View(document);
         }
 
@@ -98,7 +89,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("DocumentName,CreatedAt,UpdatedAt,DeletedAt,FilePath,DocumentTypeId,Id")] Document document)
+        public async Task<IActionResult> Edit(Guid id, [Bind("DocumentName,CreatedAt,UpdatedAt,FilePath,DocumentTypeId,Id")] Document document)
         {
             if (id != document.Id)
             {
@@ -110,13 +101,13 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(document);
-                    await _context.SaveChangesAsync();
+                    var update = new UpdateDocumentRequest(document);
+                    await _document.UpdateAsync(id, update);
                     TempData["Success"] = "Document edited";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DocumentExists(document.Id))
+                    if (!await DocumentExists(document.Id))
                     {
                         TempData["Error"] = "Document not found";
                         return NotFound();
@@ -124,22 +115,19 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DocumentTypeId"] = new SelectList(_context.DocumentTypes, "Id", "Name", document.DocumentTypeId);
             return View(document);
         }
 
         // GET: Document/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null)
+            if (id == null || id == Guid.Empty)
             {
                 TempData["Error"] = "Document not found";
                 return NotFound();
             }
 
-            var document = await _context.Documents
-                .Include(d => d.DocumentType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var document = await _document.GetByIdAsync(id.Value);
             if (document == null)
             {
                 TempData["Error"] = "Document not found";
@@ -154,20 +142,18 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var document = await _context.Documents.FindAsync(id);
+            var document = await _document.GetByIdAsync(id);
             if (document != null)
             {
                 TempData["Error"] = "Document not found";
-                _context.Documents.Remove(document);
+                await _document.DeleteAsync(id);
             }
             TempData["Success"] = "Document deleted";
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        private bool DocumentExists(Guid id)
+        private async Task<bool> DocumentExists(Guid id)
         {
-            return _context.Documents.Any(e => e.Id == id);
+            return await _document.GetByIdAsync(id) != null;
         }
     }
 }

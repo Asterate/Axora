@@ -1,63 +1,53 @@
 ﻿using App.Modules.Equipment.Application.Interfaces;
-using App.Modules.Equipment.Domain;
-
-namespace App.Modules.Equipment.Application.Service;
+using App.Modules.Equipment.Application.Mapper;
+using App.Shared.Contracts;
 
 public class EquipmentCertificationTypeService
 {
-    private readonly IEquipmentCertificationTypeRepository  _equipmentCertificationTypeRepo;
+    private readonly IEquipmentCertificationTypeRepository _equipmentCertificationTypeRepo;
+    private readonly IUnitOfWork _uow;
 
     public EquipmentCertificationTypeService(
-        IEquipmentCertificationTypeRepository equipmentCertificationTypeRepo)
+        IEquipmentCertificationTypeRepository equipmentCertificationTypeRepo,
+        IUnitOfWork uow)
     {
         _equipmentCertificationTypeRepo = equipmentCertificationTypeRepo;
+        _uow = uow;
     }
-
     public async Task<IEnumerable<EquipmentCertificationTypeListResponse>> GetAllAsync()
     {
-        var equipment = await  _equipmentCertificationTypeRepo.GetAllAsync();
-        return equipment.Select(e => new EquipmentCertificationTypeListResponse
-        {
-            Id = e.Id,
-        });
+        var entities = await _equipmentCertificationTypeRepo.GetAllAsync();
+        return entities.Select(EquipmentCertificationTypeMapper.ToListResponse);
     }
 
-    public async Task<EquipmentCertificationTypeResponse?> EquipmentCertificationTypeResponse(Guid id)
+    public async Task<EquipmentCertificationTypeResponse?> GetByIdAsync(Guid id)
     {
-        var equipment = await  _equipmentCertificationTypeRepo.GetByIdAsync(id);
-        if (equipment == null) return null;
-
-        return new EquipmentCertificationTypeResponse
-        {
-            Id = equipment.Id,
-        };
+        var entity = await _equipmentCertificationTypeRepo.GetByIdAsync(id);
+        if (entity == null) return null;
+        return EquipmentCertificationTypeMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateEquipmentCertificationTypeRequest dto)
+    public async Task CreateAsync(CreateEquipmentCertificationTypeRequest request)
     {
-        var entity = new EquipmentCertificationType
-        {
-            Id = dto.Id,
-        };
-        await  _equipmentCertificationTypeRepo.AddAsync(entity);
+        var entity = EquipmentCertificationTypeMapper.ToEntity(request);
+        await _equipmentCertificationTypeRepo.AddAsync(entity);
+        await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(UpdateEquipmentCertificationTypeRequest dto)
+    public async Task UpdateAsync(Guid id, UpdateEquipmentCertificationTypeRequest request)
     {
-        var entity = await  _equipmentCertificationTypeRepo.GetByIdAsync(dto.Id);
+        var entity = await _equipmentCertificationTypeRepo.GetByIdAsync(id);
         if (entity == null) return;
-
-        entity.Id = entity.Id;
-
+        EquipmentCertificationTypeMapper.UpdateEntity(entity, request);
         _equipmentCertificationTypeRepo.Update(entity);
+        await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
     public async Task DeleteAsync(Guid id)
     {
-        var entity = await  _equipmentCertificationTypeRepo.GetByIdAsync(id);
+        var entity = await _equipmentCertificationTypeRepo.GetByIdAsync(id);
         if (entity == null) return;
         _equipmentCertificationTypeRepo.Delete(entity);
+        await _uow.SaveChangesAsync(); // ← actually saves now
     }
-    
-    
 }

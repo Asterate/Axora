@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
+using App.Domain.Identity;
+using Microsoft.AspNetCore.Identity;
 using WebApp.ViewModels;
 
 namespace WebApp.Controllers;
@@ -10,42 +11,38 @@ namespace WebApp.Controllers;
 [Authorize(Roles = "admin")]
 public class AdminDashboardController : Controller
 {
-    private readonly AppDbContext _context;
+    private readonly InstituteService _institute;
+    private readonly LabService _lab;
+    private readonly ProjectService _project;
+    private readonly SystemLogService _audit;
+    private readonly UserManager<AppUser> _userManager;
 
-    public AdminDashboardController(AppDbContext context)
+
+    public AdminDashboardController(
+        InstituteService instituteService,
+        LabService labService,
+        ProjectService projectService,
+        SystemLogService auditService,
+        UserManager<AppUser> userManager)
     {
-        _context = context;
+        _institute = instituteService;
+        _lab = labService;
+        _project = projectService;
+        _audit = auditService;
+        _userManager = userManager;
     }
 
     public async Task<IActionResult> Index()
     {
         var model = new AdminDashboardViewModel
         {
-            TotalUsers = await _context.Users.CountAsync(),
-            TotalInstitutes = await _context.Institutes
-                .Where(i => i.DeletedAt == null)
-                .CountAsync(),
-            TotalLabs = await _context.Labs
-                .Where(l => l.DeletedAt == null)
-                .CountAsync(),
-            TotalProjects = await _context.Projects
-                .CountAsync(),
-            
-            RecentInstitutes = await _context.Institutes
-                .Where(i => i.DeletedAt == null)
-                .OrderByDescending(i => i.CreatedAt)
-                .Take(5)
-                .ToListAsync(),
-                
-            RecentProjects = await _context.Projects
-                .OrderByDescending(p => p.Id)
-                .Take(5)
-                .ToListAsync(),
-            
-            RecentLogs = await _context.SystemLogs
-            .OrderByDescending(l => l.Timestamp)
-            .Take(20)
-            .ToListAsync()
+            TotalUsers = await _userManager.Users.CountAsync(),
+            TotalInstitutes = await _institute.CountAsync(),
+            TotalLabs = await _lab.CountAsync(),
+            TotalProjects = await _project.CountAsync(),
+            RecentInstitutes = await _institute.GetRecentAsync(5),
+            RecentProjects = await _project.GetRecentAsync(5),
+            RecentLogs = await _audit.GetRecentAsync(5)
         };
 
         return View(model);

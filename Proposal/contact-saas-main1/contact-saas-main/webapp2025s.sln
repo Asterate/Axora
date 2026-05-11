@@ -49,7 +49,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Modules.Lab", "App.Modu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Modules.Institute", "App.Modules.Institute\App.Modules.Institute.csproj", "{0563A54F-4EF3-4B59-95DF-86DB2C80735F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Modules.Reagant", "App.Modules.Reagant\App.Modules.Reagant.csproj", "{A14612F6-7B68-4123-BF31-DF9A2F94E98D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Modules.Reagent", "App.Modules.Reagent\App.Modules.Reagent.csproj", "{A14612F6-7B68-4123-BF31-DF9A2F94E98D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.Modules.Experiment", "App.Modules.Experiment\App.Modules.Experiment.csproj", "{6DF3121F-D5C3-4ECC-8C04-73CC492F9C27}"
 EndProject

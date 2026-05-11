@@ -4,7 +4,7 @@ namespace WebApp.ViewModels;
 
 public class EstablishmentsViewModel
 {
-    public IEnumerable<Institute>  Institutes { get; set; } = new List<Institute>();
+    public IEnumerable<InstituteListResponse>  Institutes { get; set; } = new List<InstituteListResponse>();
 
-    public IEnumerable<Lab>  Labs { get; set; } = new List<Lab>();
+    public IEnumerable<LabListResponse>  Labs { get; set; } = new List<LabListResponse>();
 }

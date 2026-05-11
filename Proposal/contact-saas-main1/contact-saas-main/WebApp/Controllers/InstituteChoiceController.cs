@@ -13,6 +13,7 @@ using App.DAL.EF;
 using App.Domain.Entities;
 using App.Domain.Identity;
 using App.Helpers;
+using App.Shared.Contracts;
 
 namespace WebApp.Controllers;
 
@@ -23,15 +24,21 @@ public class InstituteChoiceController : Controller
     private readonly AppDbContext _context;
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
+    private readonly InstituteService _instituteService;
+    private readonly InstituteUserService _instituteUserService;
 
     public InstituteChoiceController(
         AppDbContext context, 
         UserManager<AppUser> userManager,
-        SignInManager<AppUser> signInManager)
+        SignInManager<AppUser> signInManager,
+        InstituteService instituteService,
+        InstituteUserService instituteUserService)
     {
         _context = context;
         _userManager = userManager;
         _signInManager = signInManager;
+        _instituteService = instituteService;
+        _instituteUserService = instituteUserService;
     }
 
     [HttpGet]
@@ -40,11 +47,7 @@ public class InstituteChoiceController : Controller
         var model = new InstituteChoiceViewModel();
         
         // Load institutes directly from database
-        var institutes = await _context.Institutes
-            .Where(i => i.Active && i.DeletedAt == null)
-            .OrderBy(i => i.InstituteName)
-            .Select(i => new LookupItem { Id = i.Id, Name = i.InstituteName })
-            .ToListAsync();
+        var institutes = await _instituteService.GetActivesAsync();
         model.Institutes = institutes;
 
         // Load institute types directly from database
@@ -109,13 +112,13 @@ public class InstituteChoiceController : Controller
                 else
                 {
                     // Create new institute user record
-                    var newInstituteUser = new App.Domain.Entities.InstituteUser
+                    var newInstituteUser = new CreateInstituteUserRequest
                     {
+                        Id = userId,
                         UserId = userId,
-                        InstituteId = model.InstituteId.Value,
-                        Role = App.Domain.Entities.EInstituteUserRole.Employee
+                        Role = EInstituteUserRole.Employee
                     };
-                    _context.InstituteUsers.Add(newInstituteUser);
+                    await _instituteUserService.CreateAsync(newInstituteUser);
                 }
 
                 await _context.SaveChangesAsync();
@@ -142,8 +145,9 @@ public class InstituteChoiceController : Controller
             if (model.InstituteSelection == 1)
             {
                 // Create new institute
-                var newInstitute = new App.Domain.Entities.Institute
+                var newInstitute = new CreateInstituteRequest
                 {
+                    Id =  userId,
                     InstituteName = model.InstituteName ?? "",
                     InstituteCountry = model.InstituteCountry ?? "",
                     InstituteAddress = model.InstituteAddress ?? "",
@@ -153,17 +157,16 @@ public class InstituteChoiceController : Controller
                     CreatedAt = DateTime.UtcNow
                 };
 
-                _context.Institutes.Add(newInstitute);
-                await _context.SaveChangesAsync();
+                await _instituteService.CreateAsync(newInstitute);
 
                 // Create institute user record
-                var newInstituteUser = new App.Domain.Entities.InstituteUser
+                var newInstituteUser = new CreateInstituteUserRequest
                 {
                     UserId = userId,
                     InstituteId = newInstitute.Id,
-                    Role = App.Domain.Entities.EInstituteUserRole.Owner
+                    Role = EInstituteUserRole.Owner
                 };
-                _context.InstituteUsers.Add(newInstituteUser);
+                await _instituteUserService.CreateAsync(newInstituteUser);
                 await _context.SaveChangesAsync();
 
                 // Sync roles to Identity
@@ -188,12 +191,7 @@ public class InstituteChoiceController : Controller
     private async Task LoadDropdowns(InstituteChoiceViewModel model)
     {
         // Load institutes directly from database
-        var institutes = await _context.Institutes
-            .Where(i => i.Active && i.DeletedAt == null)
-            .OrderBy(i => i.InstituteName)
-            .Select(i => new LookupItem { Id = i.Id, Name = i.InstituteName })
-            .ToListAsync();
-        model.Institutes = institutes;
+        model.Institutes = await _instituteService.GetActivesAsync();
 
         // Load institute types directly from database
         var types = await _context.InstituteTypes

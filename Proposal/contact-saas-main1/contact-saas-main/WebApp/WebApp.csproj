@@ -35,7 +35,14 @@
       <ProjectReference Include="..\App.DAL.EF\App.DAL.EF.csproj" />
       <ProjectReference Include="..\App.DTO\App.DTO.csproj" />
       <ProjectReference Include="..\App.Helpers\App.Helpers.csproj" />
+      <ProjectReference Include="..\App.Modules.Audit\App.Modules.Audit.csproj" />
       <ProjectReference Include="..\App.Modules.Equipment\App.Modules.Equipment.csproj" />
+      <ProjectReference Include="..\App.Modules.Experiment\App.Modules.Experiment.csproj" />
+      <ProjectReference Include="..\App.Modules.Identity\App.Modules.Identity.csproj" />
+      <ProjectReference Include="..\App.Modules.Institute\App.Modules.Institute.csproj" />
+      <ProjectReference Include="..\App.Modules.Lab\App.Modules.Lab.csproj" />
+      <ProjectReference Include="..\App.Modules.Project\App.Modules.Project.csproj" />
+      <ProjectReference Include="..\App.Modules.Reagent\App.Modules.Reagent.csproj" />
       <ProjectReference Include="..\App.Resources\App.Resources.csproj" />
       <ProjectReference Include="..\App.Shared\App.Shared.csproj" />
     </ItemGroup>

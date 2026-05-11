@@ -9,18 +9,16 @@ namespace WebApp.Controllers;
 [Authorize(Roles = "admin, employee, owner, instituteadmin, guest")]
 public class AnalysisDashboardController : Controller
 {
-    private readonly AppDbContext _context;
+    private readonly ResultService _result;
 
-    public AnalysisDashboardController(AppDbContext context)
+    public AnalysisDashboardController(ResultService resultService)
     {
-        _context = context;
+        _result = resultService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        var results = _context.Results
-            .Where(e => e.DeletedAt == null)
-            .ToList();
+        var results = await _result.GetAllAsync();
 
         var viewModel = new AnalysisDashboardViewModel
         {

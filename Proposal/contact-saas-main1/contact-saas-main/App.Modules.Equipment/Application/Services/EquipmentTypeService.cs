@@ -1,57 +1,46 @@
 ﻿using App.Modules.Equipment.Application.Interfaces;
-using App.Modules.Equipment.Domain;
-
-namespace App.Modules.Equipment.Application.Service;
+using App.Modules.Equipment.Application.Mapper;
+using App.Shared.Contracts;
 
 public class EquipmentTypeService
 {
     private readonly IEquipmentTypeRepository _equipmentTypeRepo;
+    private readonly IUnitOfWork _uow;
 
     public EquipmentTypeService(
-        IEquipmentTypeRepository equipmentTypeRepo)
+        IEquipmentTypeRepository equipmentTypeRepo,
+        IUnitOfWork uow)
     {
         _equipmentTypeRepo = equipmentTypeRepo;
+        _uow = uow;
     }
-
     public async Task<IEnumerable<EquipmentTypeListResponse>> GetAllAsync()
     {
-        var equipment = await _equipmentTypeRepo.GetAllAsync();
-        return equipment.Select(e => new EquipmentTypeListResponse
-        {
-            Id = e.Id,
-            Name = e.Name.ToString(),
-        });
+        var entities = await _equipmentTypeRepo.GetAllAsync();
+        return entities.Select(EquipmentTypeMapper.ToListResponse);
     }
 
-    public async Task<EquipmentTypeResponse?> EquipmentResponse(Guid id)
+    public async Task<EquipmentTypeResponse?> GetByIdAsync(Guid id)
     {
-        var equipment = await _equipmentTypeRepo.GetByIdAsync(id);
-        if (equipment == null) return null;
-
-        return new EquipmentTypeResponse
-        {
-            Id = equipment.Id,
-            Name = equipment.Name.ToString()
-        };
+        var entity = await _equipmentTypeRepo.GetByIdAsync(id);
+        if (entity == null) return null;
+        return EquipmentTypeMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateEquipmentTypeRequest dto)
+    public async Task CreateAsync(CreateEquipmentTypeRequest request)
     {
-        var entity = new EquipmentType
-        {
-            Name = new Shared.Domain.LangStr { ["en"] = dto.Name ?? "" },
-        };
+        var entity = EquipmentTypeMapper.ToEntity(request);
         await _equipmentTypeRepo.AddAsync(entity);
+        await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(UpdateEquipmentTypeRequest dto)
+    public async Task UpdateAsync(Guid id, UpdateEquipmentTypeRequest request)
     {
-        var entity = await _equipmentTypeRepo.GetByIdAsync(dto.Id);
+        var entity = await _equipmentTypeRepo.GetByIdAsync(id);
         if (entity == null) return;
-
-        entity.Name = new Shared.Domain.LangStr { ["en"] = dto.Name ?? "" };
-
+        EquipmentTypeMapper.UpdateEntity(entity, request);
         _equipmentTypeRepo.Update(entity);
+        await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
     public async Task DeleteAsync(Guid id)
@@ -59,7 +48,6 @@ public class EquipmentTypeService
         var entity = await _equipmentTypeRepo.GetByIdAsync(id);
         if (entity == null) return;
         _equipmentTypeRepo.Delete(entity);
+        await _uow.SaveChangesAsync(); // ← actually saves now
     }
-    
-    
 }

@@ -1,5 +1,4 @@
 ﻿using App.Modules.Equipment.Application.Interfaces;
-using App.Modules.Equipment.Application.Service;
 using App.Modules.Equipment.Infrastructure;
 using App.Modules.Equipment.Infrastructure.Data;
 using App.Modules.Equipment.Infrastructure.Repositories;

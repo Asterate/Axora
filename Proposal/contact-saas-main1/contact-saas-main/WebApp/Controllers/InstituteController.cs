@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
 using App.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 
@@ -15,18 +9,21 @@ namespace WebApp.Controllers
     [Authorize]
     public class InstituteController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly InstituteTypeService _instituteTypeService;
+        private readonly InstituteService _instituteService;
 
-        public InstituteController(AppDbContext context)
+        public InstituteController(InstituteTypeService instituteTypeService,
+            InstituteService instituteService)
         {
-            _context = context;
+            _instituteTypeService = instituteTypeService;
+            _instituteService = instituteService;
         }
 
         // GET: Institute
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Institutes.Include(i => i.InstituteType);
-            return View(await appDbContext.ToListAsync());
+            var instituteTypes = _instituteTypeService.GetAllAsync();
+            return View(instituteTypes);
         }
 
         // GET: Institute/Details/5
@@ -37,9 +34,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var institute = await _context.Institutes
-                .Include(i => i.InstituteType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var institute = await _instituteTypeService.GetByIdAsync(id.Value);
             if (institute == null)
             {
                 return NotFound();
@@ -51,7 +46,6 @@ namespace WebApp.Controllers
         // GET: Institute/Create
         public IActionResult Create()
         {
-            ViewData["InstituteTypeId"] = new SelectList(_context.InstituteTypes, "Id", "Name");
             return View();
         }
 
@@ -89,7 +83,7 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    var institute = new Institute
+                    var institute = new CreateInstituteRequest()
                     {
                         Id = Guid.NewGuid(),
                         InstituteName = name,
@@ -100,8 +94,7 @@ namespace WebApp.Controllers
                         InstituteTypeId = typeId,
                         CreatedAt = DateTime.UtcNow
                     };
-                    _context.Add(institute);
-                    await _context.SaveChangesAsync();
+                    await _instituteService.CreateAsync(institute);
                     return RedirectToAction("Index", "Establishments");
                 }
                 catch (Exception ex)
@@ -110,7 +103,6 @@ namespace WebApp.Controllers
                 }
             }
             
-            ViewData["InstituteTypeId"] = new SelectList(_context.InstituteTypes, "Id", "Name");
             return RedirectToAction("Index", "Establishments");
         }
 
@@ -122,12 +114,11 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var institute = await _context.Institutes.FindAsync(id);
+            var institute = await _instituteService.GetByIdAsync(id.Value);
             if (institute == null)
             {
                 return NotFound();
             }
-            ViewData["InstituteTypeId"] = new SelectList(_context.InstituteTypes, "Id", "Name", institute.InstituteTypeId);
             return View(institute);
         }
 
@@ -145,23 +136,17 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(institute);
-                    await _context.SaveChangesAsync();
+                    var update = new UpdateInstituteRequest(institute);
+                    await _instituteService.UpdateAsync(id, update);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!InstituteExists(institute.Id))
+                    if (!await InstituteExists(institute.Id))
                     {
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
                 }
-                return RedirectToAction("Index", "Establishments");
             }
-            ViewData["InstituteTypeId"] = new SelectList(_context.InstituteTypes, "Id", "Name", institute.InstituteTypeId);
             return RedirectToAction("Index", "Establishments");
         }
 
@@ -173,9 +158,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var institute = await _context.Institutes
-                .Include(i => i.InstituteType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var institute = await _instituteService.GetByIdAsync(id.Value);
             if (institute == null)
             {
                 return NotFound();
@@ -189,19 +172,18 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var institute = await _context.Institutes.FindAsync(id);
+            var institute = await _instituteService.GetByIdAsync(id);
             if (institute != null)
             {
-                _context.Institutes.Remove(institute);
+                await _instituteService.DeleteAsync(id);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction("Index", "Establishments");
         }
 
-        private bool InstituteExists(Guid id)
+        private async Task<bool> InstituteExists(Guid id)
         {
-            return _context.Institutes.Any(e => e.Id == id);
+            return await _instituteService.GetByIdAsync(id) != null;
         }
     }
 }

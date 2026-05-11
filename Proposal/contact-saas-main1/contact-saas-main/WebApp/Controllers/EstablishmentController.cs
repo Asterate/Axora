@@ -11,24 +11,21 @@ namespace WebApp.Controllers;
 [Route("Establishments")]
 public class EstablishmentsController : Controller
 {
-    private readonly AppDbContext _context;
+    private readonly InstituteService _institute;
+    private readonly LabService _lab;
 
-    public EstablishmentsController(AppDbContext context)
+    public EstablishmentsController(InstituteService instituteService, LabService labService)
     {
-        _context = context;
+        _institute = instituteService;
+        _lab = labService;
     }
 
     public IActionResult Index()
     {
-        var institutes = _context.Institutes
-            .Where(s => s.DeletedAt == null)
-            .ToList();
+        var institutes = _institute.FindDeletedAsync().Result;
 
 
-        var labs = _context.Labs
-            .Include(l => l.LabType)
-            .Where(s => s.DeletedAt == null)
-            .ToList();
+        var labs = _lab.GetAllAsync().Result;
 
         var viewModel = new EstablishmentsViewModel
         {

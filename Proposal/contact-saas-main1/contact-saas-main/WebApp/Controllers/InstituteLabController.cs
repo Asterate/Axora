@@ -15,18 +15,18 @@ namespace WebApp.Controllers
     [Authorize(Roles = "admin")]
     public class InstituteLabController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly InstituteLabService _instituteLabService;
 
-        public InstituteLabController(AppDbContext context)
+        public InstituteLabController(InstituteLabService instituteLabService)
         {
-            _context = context;
+            _instituteLabService = instituteLabService;
         }
 
         // GET: InstituteLab
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.InstituteLabs.Include(i => i.Institute).Include(i => i.Lab);
-            return View(await appDbContext.ToListAsync());
+            var instituteLabs = await _instituteLabService.GetAllAsync();
+            return View(instituteLabs);
         }
 
         // GET: InstituteLab/Details/5
@@ -37,10 +37,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var instituteLab = await _context.InstituteLabs
-                .Include(i => i.Institute)
-                .Include(i => i.Lab)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var instituteLab = await _instituteLabService.GetByIdAsync(id.Value);
             if (instituteLab == null)
             {
                 return NotFound();
@@ -52,8 +49,7 @@ namespace WebApp.Controllers
         // GET: InstituteLab/Create
         public IActionResult Create()
         {
-            ViewData["InstituteId"] = new SelectList(_context.Institutes, "Id", "InstituteAddress");
-            ViewData["LabId"] = new SelectList(_context.Labs, "Id", "LabAddress");
+            
             return View();
         }
 
@@ -66,13 +62,13 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                instituteLab.Id = Guid.NewGuid();
-                _context.Add(instituteLab);
-                await _context.SaveChangesAsync();
+                var newInstituteLab = new CreateInstituteLabRequest()
+                {
+                    Id = instituteLab.Id,
+                };
+                await _instituteLabService.CreateAsync(newInstituteLab);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["InstituteId"] = new SelectList(_context.Institutes, "Id", "InstituteAddress", instituteLab.InstituteId);
-            ViewData["LabId"] = new SelectList(_context.Labs, "Id", "LabAddress", instituteLab.LabId);
             return View(instituteLab);
         }
 
@@ -84,13 +80,11 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var instituteLab = await _context.InstituteLabs.FindAsync(id);
+            var instituteLab = await _instituteLabService.GetByIdAsync(id.Value);
             if (instituteLab == null)
             {
                 return NotFound();
             }
-            ViewData["InstituteId"] = new SelectList(_context.Institutes, "Id", "InstituteAddress", instituteLab.InstituteId);
-            ViewData["LabId"] = new SelectList(_context.Labs, "Id", "LabAddress", instituteLab.LabId);
             return View(instituteLab);
         }
 
@@ -110,12 +104,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(instituteLab);
-                    await _context.SaveChangesAsync();
+                    var instituteLabInstitute = new UpdateInstituteLabRequest(instituteLab);
+                    await _instituteLabService.UpdateAsync(id, instituteLabInstitute);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!InstituteLabExists(instituteLab.Id))
+                    if (!await InstituteLabExists(instituteLab.Id))
                     {
                         return NotFound();
                     }
@@ -126,8 +120,6 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["InstituteId"] = new SelectList(_context.Institutes, "Id", "InstituteAddress", instituteLab.InstituteId);
-            ViewData["LabId"] = new SelectList(_context.Labs, "Id", "LabAddress", instituteLab.LabId);
             return View(instituteLab);
         }
 
@@ -139,10 +131,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var instituteLab = await _context.InstituteLabs
-                .Include(i => i.Institute)
-                .Include(i => i.Lab)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var instituteLab = await _instituteLabService.GetByIdAsync(id.Value);
             if (instituteLab == null)
             {
                 return NotFound();
@@ -156,19 +145,18 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var instituteLab = await _context.InstituteLabs.FindAsync(id);
+            var instituteLab = await _instituteLabService.GetByIdAsync(id);
             if (instituteLab != null)
             {
-                _context.InstituteLabs.Remove(instituteLab);
+                await _instituteLabService.DeleteAsync(id);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool InstituteLabExists(Guid id)
+        private async Task<bool> InstituteLabExists(Guid id)
         {
-            return _context.InstituteLabs.Any(e => e.Id == id);
+            return await _instituteLabService.GetByIdAsync(id) != null;
         }
     }
 }

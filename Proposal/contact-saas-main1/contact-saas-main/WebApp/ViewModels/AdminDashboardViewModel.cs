@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using App.Domain.Entities;
-
 namespace WebApp.ViewModels;
 
 public class AdminDashboardViewModel
@@ -10,7 +7,7 @@ public class AdminDashboardViewModel
     public int TotalLabs { get; set; }
     public int TotalProjects { get; set; }
     
-    public List<SystemLog> RecentLogs { get; set; } = new();
-    public List<Institute> RecentInstitutes { get; set; } = new();
-    public List<Project> RecentProjects { get; set; } = new();
+    public IEnumerable<SystemLogListResponse> RecentLogs { get; set; } = new List<SystemLogListResponse>();
+    public IEnumerable<InstituteListResponse> RecentInstitutes { get; set; } =  new List<InstituteListResponse>();
+    public IEnumerable<ProjectListResponse> RecentProjects { get; set; } = new List<ProjectListResponse>();
 }

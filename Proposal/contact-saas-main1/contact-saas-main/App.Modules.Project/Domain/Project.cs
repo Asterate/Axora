@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using App.Domain;
 using App.Shared.Domain;
 
 namespace App.Domain.Entities;
@@ -15,6 +13,9 @@ public class Project : BaseEntity
     public LangStr? Requirements { get; set; } 
     
     public string? RequirementsFilePath { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
     
     public Guid ProjectTypeId {get; set;}
     public ProjectType ProjectType {get; set;}  = default!;

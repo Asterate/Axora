@@ -4,5 +4,5 @@ namespace WebApp.ViewModels;
 
 public class DocumentationViewModel
 {
-    public IEnumerable<Document> Documents { get; set; } =  new List<Document>();
+    public IEnumerable<DocumentListResponse> Documents { get; set; } =  new List<DocumentListResponse>();
 }

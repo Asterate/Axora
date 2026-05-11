@@ -4,6 +4,11 @@ using Microsoft.IdentityModel.Tokens;
 using WebApp.Helpers;
 using WebApp.Setup;
 using App.BLL.Services;
+using App.Modules.Experiment;
+using App.Modules.Identity;
+using App.Modules.Institute;
+using App.Modules.Lab.Infrastructure;
+using App.Modules.Project.Infrastructure;
 using App.Shared.Domain;
 using Npgsql;
 
@@ -53,8 +58,6 @@ var baseUrl = builder.Configuration["AppBaseUrl"] ?? builder.Configuration["Urls
 builder.Services.AddHttpClient("Default")
     .ConfigureHttpClient(client => client.BaseAddress = new Uri(baseUrl));
 builder.Services.AddSingleton<AppNameService>();
-builder.Services.AddScoped<IExperimentService, ExperimentService>();
-builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddAppControllers();
 builder.Services.AddForwardedHeaders();
 builder.Services.AddAppCors();
@@ -66,6 +69,13 @@ builder.Services.AddAppLocalization(builder.Configuration);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
 
 builder.Services.AddEquipmentModule(connectionString);
+builder.Services.AddAuditModule(connectionString);
+builder.Services.AddExperimentModule(connectionString);
+builder.Services.AddIdentityModule(connectionString);
+builder.Services.AddInstituteModule(connectionString);
+builder.Services.AddLabModule(connectionString);
+builder.Services.AddProjectModule(connectionString);
+builder.Services.AddReagentModule(connectionString);
 
 // Build and configure pipeline
 var app = builder.Build();

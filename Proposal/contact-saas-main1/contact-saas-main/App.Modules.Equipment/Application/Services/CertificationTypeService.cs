@@ -1,65 +1,53 @@
 ﻿using App.Modules.Equipment.Application.Interfaces;
-using App.Modules.Equipment.Domain;
-
-namespace App.Modules.Equipment.Application.Service;
+using App.Modules.Equipment.Application.Mapper;
+using App.Shared.Contracts;
 
 public class CertificationTypeService
 {
-    private readonly ICertificationTypeRepository  _certificationTypeRepo;
+    private readonly ICertificationTypeRepository _certificationTypeRepo;
+    private readonly IUnitOfWork _uow;
 
     public CertificationTypeService(
-        ICertificationTypeRepository certificationTypeRepo)
+        ICertificationTypeRepository certificationTypeRepo,
+        IUnitOfWork uow)
     {
         _certificationTypeRepo = certificationTypeRepo;
+        _uow = uow;
     }
-
     public async Task<IEnumerable<CertificationTypeListResponse>> GetAllAsync()
     {
-        var equipment = await  _certificationTypeRepo.GetAllAsync();
-        return equipment.Select(e => new CertificationTypeListResponse
-        {
-            Id = e.Id,
-            Name = e.Name.ToString(),
-        });
+        var entities = await _certificationTypeRepo.GetAllAsync();
+        return entities.Select(CertificationTypeMapper.ToListResponse);
     }
 
-    public async Task<CertificationTypeResponse?> CertificationTypeResponse(Guid id)
+    public async Task<CertificationTypeResponse?> GetByIdAsync(Guid id)
     {
-        var equipment = await  _certificationTypeRepo.GetByIdAsync(id);
-        if (equipment == null) return null;
-
-        return new CertificationTypeResponse
-        {
-            Id = equipment.Id,
-            Name = equipment.Name.ToString()
-        };
+        var entity = await _certificationTypeRepo.GetByIdAsync(id);
+        if (entity == null) return null;
+        return CertificationTypeMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateCertificationTypeRequest dto)
+    public async Task CreateAsync(CreateCertificationTypeRequest request)
     {
-        var entity = new CertificationType
-        {
-            Name = new Shared.Domain.LangStr { ["en"] = dto.Name ?? "" },
-        };
-        await  _certificationTypeRepo.AddAsync(entity);
+        var entity = CertificationTypeMapper.ToEntity(request);
+        await _certificationTypeRepo.AddAsync(entity);
+        await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(UpdateCertificationTypeRequest dto)
+    public async Task UpdateAsync(Guid id, UpdateCertificationTypeRequest request)
     {
-        var entity = await  _certificationTypeRepo.GetByIdAsync(dto.Id);
+        var entity = await _certificationTypeRepo.GetByIdAsync(id);
         if (entity == null) return;
-
-        entity.Name = new Shared.Domain.LangStr { ["en"] = dto.Name ?? "" };
-
+        CertificationTypeMapper.UpdateEntity(entity, request);
         _certificationTypeRepo.Update(entity);
+        await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
     public async Task DeleteAsync(Guid id)
     {
-        var entity = await  _certificationTypeRepo.GetByIdAsync(id);
+        var entity = await _certificationTypeRepo.GetByIdAsync(id);
         if (entity == null) return;
         _certificationTypeRepo.Delete(entity);
+        await _uow.SaveChangesAsync(); // ← actually saves now
     }
-    
-    
 }

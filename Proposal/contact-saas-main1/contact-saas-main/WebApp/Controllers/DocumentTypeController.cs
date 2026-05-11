@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
-using App.Domain;
 using App.Domain.Entities;
+using App.Shared.Domain;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels;
 
@@ -18,10 +13,12 @@ namespace WebApp.Controllers
     public class DocumentTypeController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly DocumentTypeService _documentType;
 
-        public DocumentTypeController(AppDbContext context)
+        public DocumentTypeController(AppDbContext context, DocumentTypeService documentType)
         {
             _context = context;
+            _documentType = documentType;
         }
 
         // GET: DocumentType
@@ -93,7 +90,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var documentType = await _context.DocumentTypes.FindAsync(id);
+            var documentType = await _documentType.GetByIdAsync(id.Value);
             if (documentType == null)
             {
                 return NotFound();
@@ -122,7 +119,7 @@ namespace WebApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DocumentTypeExists(documentType.Id))
+                    if (!await DocumentTypeExists(documentType.Id))
                     {
                         return NotFound();
                     }
@@ -144,8 +141,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var documentType = await _context.DocumentTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var documentType = await _documentType.GetByIdAsync(id.Value);
             if (documentType == null)
             {
                 return NotFound();
@@ -169,9 +165,9 @@ namespace WebApp.Controllers
             return RedirectToAction("Index", "LookupData");
         }
 
-        private bool DocumentTypeExists(Guid id)
+        private async Task<bool> DocumentTypeExists(Guid id)
         {
-            return _context.DocumentTypes.Any(e => e.Id == id);
+            return await _documentType.GetByIdAsync(id) != null;
         }
     }
 }

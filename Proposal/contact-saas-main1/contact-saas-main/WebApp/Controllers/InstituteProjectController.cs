@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
 using App.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 
@@ -15,18 +9,18 @@ namespace WebApp.Controllers
     [Authorize]
     public class InstituteProjectController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly InstituteProjectService _instituteProjectService;
 
-        public InstituteProjectController(AppDbContext context)
+        public InstituteProjectController(InstituteProjectService instituteProjectService)
         {
-            _context = context;
+            _instituteProjectService = instituteProjectService;
         }
 
         // GET: InstituteProject
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.InstituteProjects.Include(i => i.Institute).Include(i => i.Project);
-            return View(await appDbContext.ToListAsync());
+            var instituteProjects = _instituteProjectService.GetAllAsync();
+            return View(instituteProjects);
         }
 
         // GET: InstituteProject/Details/5
@@ -37,10 +31,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var instituteProject = await _context.InstituteProjects
-                .Include(i => i.Institute)
-                .Include(i => i.Project)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var instituteProject = await _instituteProjectService.GetByIdAsync(id.Value);
             if (instituteProject == null)
             {
                 return NotFound();
@@ -52,8 +43,6 @@ namespace WebApp.Controllers
         // GET: InstituteProject/Create
         public IActionResult Create()
         {
-            ViewData["InstituteId"] = new SelectList(_context.Institutes, "Id", "InstituteAddress");
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "ProjectName");
             return View();
         }
 
@@ -66,13 +55,12 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                instituteProject.Id = Guid.NewGuid();
-                _context.Add(instituteProject);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var newInstituteProject = new CreateInstituteProjectRequest()
+                {
+                    Id = instituteProject.Id,
+                };
+               await _instituteProjectService.CreateAsync(newInstituteProject);
             }
-            ViewData["InstituteId"] = new SelectList(_context.Institutes, "Id", "InstituteAddress", instituteProject.InstituteId);
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "ProjectName", instituteProject.ProjectId);
             return View(instituteProject);
         }
 
@@ -84,13 +72,11 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var instituteProject = await _context.InstituteProjects.FindAsync(id);
+            var instituteProject = await _instituteProjectService.GetByIdAsync(id.Value);
             if (instituteProject == null)
             {
                 return NotFound();
             }
-            ViewData["InstituteId"] = new SelectList(_context.Institutes, "Id", "InstituteAddress", instituteProject.InstituteId);
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "ProjectName", instituteProject.ProjectId);
             return View(instituteProject);
         }
 
@@ -110,12 +96,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(instituteProject);
-                    await _context.SaveChangesAsync();
+                    var InstituteProjectUpdate = new UpdateInstituteProjectRequest(instituteProject);
+                    await _instituteProjectService.UpdateAsync(id, InstituteProjectUpdate);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!InstituteProjectExists(instituteProject.Id))
+                    if (!await InstituteProjectExists(instituteProject.Id))
                     {
                         return NotFound();
                     }
@@ -126,8 +112,6 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["InstituteId"] = new SelectList(_context.Institutes, "Id", "InstituteAddress", instituteProject.InstituteId);
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "ProjectName", instituteProject.ProjectId);
             return View(instituteProject);
         }
 
@@ -139,10 +123,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var instituteProject = await _context.InstituteProjects
-                .Include(i => i.Institute)
-                .Include(i => i.Project)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var instituteProject = await _instituteProjectService.GetByIdAsync(id.Value);
             if (instituteProject == null)
             {
                 return NotFound();
@@ -156,19 +137,18 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var instituteProject = await _context.InstituteProjects.FindAsync(id);
+            var instituteProject = await _instituteProjectService.GetByIdAsync(id);
             if (instituteProject != null)
             {
-                _context.InstituteProjects.Remove(instituteProject);
+                await _instituteProjectService.DeleteAsync(id);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool InstituteProjectExists(Guid id)
+        private async Task<bool> InstituteProjectExists(Guid id)
         {
-            return _context.InstituteProjects.Any(e => e.Id == id);
+            return await _instituteProjectService.GetByIdAsync(id) != null;
         }
     }
 }

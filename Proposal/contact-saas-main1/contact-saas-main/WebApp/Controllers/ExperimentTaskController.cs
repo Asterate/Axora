@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
 using App.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 
@@ -15,18 +9,18 @@ namespace WebApp.Controllers
     [Authorize]
     public class ExperimentTaskController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly ExperimentTaskService _experimentTask;
 
-        public ExperimentTaskController(AppDbContext context)
+        public ExperimentTaskController(ExperimentTaskService experimentTaskService)
         {
-            _context = context;
+            _experimentTask = experimentTaskService;
         }
 
         // GET: ExperimentTask
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.ExperimentTasks.Include(e => e.AssignedUser).Include(e => e.Experiment).Include(e => e.TaskType);
-            return View(await appDbContext.ToListAsync());
+            var experiments = await _experimentTask.GetAllAsync();
+            return View(experiments);
         }
 
         // GET: ExperimentTask/Details/5
@@ -37,11 +31,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var experimentTask = await _context.ExperimentTasks
-                .Include(e => e.AssignedUser)
-                .Include(e => e.Experiment)
-                .Include(e => e.TaskType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var experimentTask = await _experimentTask.GetByIdAsync(id.Value);
             if (experimentTask == null)
             {
                 return NotFound();
@@ -53,9 +43,7 @@ namespace WebApp.Controllers
         // GET: ExperimentTask/Create
         public IActionResult Create()
         {
-            ViewData["AssignedUserId"] = new SelectList(_context.InstituteUsers, "Id", "Id");
-            ViewData["ExperimentId"] = new SelectList(_context.Experiments, "Id", "ExperimentName");
-            ViewData["TaskTypeId"] = new SelectList(_context.TaskTypes, "Id", "TaskTypeName");
+            
             return View();
         }
 
@@ -68,14 +56,17 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                experimentTask.Id = Guid.NewGuid();
-                _context.Add(experimentTask);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                await _experimentTask.CreateAsync(new CreateExperimentTaskRequest
+                {
+                    TaskName = experimentTask.TaskName,
+                    Status = experimentTask.Status,
+                    Priority = experimentTask.Priority,
+                    ExperimentId = experimentTask.ExperimentId,
+                    TaskTypeId = experimentTask.TaskTypeId,
+                    AssignedUserId = experimentTask.AssignedUserId,
+                    
+                });
             }
-            ViewData["AssignedUserId"] = new SelectList(_context.InstituteUsers, "Id", "Id", experimentTask.AssignedUserId);
-            ViewData["ExperimentId"] = new SelectList(_context.Experiments, "Id", "ExperimentName", experimentTask.ExperimentId);
-            ViewData["TaskTypeId"] = new SelectList(_context.TaskTypes, "Id", "TaskTypeName", experimentTask.TaskTypeId);
             return View(experimentTask);
         }
 
@@ -87,14 +78,11 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var experimentTask = await _context.ExperimentTasks.FindAsync(id);
+            var experimentTask = await _experimentTask.GetByIdAsync(id.Value);
             if (experimentTask == null)
             {
                 return NotFound();
             }
-            ViewData["AssignedUserId"] = new SelectList(_context.InstituteUsers, "Id", "Id", experimentTask.AssignedUserId);
-            ViewData["ExperimentId"] = new SelectList(_context.Experiments, "Id", "ExperimentName", experimentTask.ExperimentId);
-            ViewData["TaskTypeId"] = new SelectList(_context.TaskTypes, "Id", "TaskTypeName", experimentTask.TaskTypeId);
             return View(experimentTask);
         }
 
@@ -114,25 +102,19 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(experimentTask);
-                    await _context.SaveChangesAsync();
+                    var update = new UpdateExperimentTaskRequest(experimentTask);
+                    await _experimentTask.UpdateAsync(id, update);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ExperimentTaskExists(experimentTask.Id))
+                    if (!await ExperimentTaskExists(experimentTask.Id))
                     {
                         return NotFound();
-                    }
-                    else
-                    {
-                        throw;
                     }
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AssignedUserId"] = new SelectList(_context.InstituteUsers, "Id", "Id", experimentTask.AssignedUserId);
-            ViewData["ExperimentId"] = new SelectList(_context.Experiments, "Id", "ExperimentName", experimentTask.ExperimentId);
-            ViewData["TaskTypeId"] = new SelectList(_context.TaskTypes, "Id", "TaskTypeName", experimentTask.TaskTypeId);
+            
             return View(experimentTask);
         }
 
@@ -144,11 +126,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var experimentTask = await _context.ExperimentTasks
-                .Include(e => e.AssignedUser)
-                .Include(e => e.Experiment)
-                .Include(e => e.TaskType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var experimentTask = await _experimentTask.GetByIdAsync(id.Value);
             if (experimentTask == null)
             {
                 return NotFound();
@@ -162,19 +140,18 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var experimentTask = await _context.ExperimentTasks.FindAsync(id);
+            var experimentTask = await _experimentTask.GetByIdAsync(id);
             if (experimentTask != null)
             {
-                _context.ExperimentTasks.Remove(experimentTask);
+                await _experimentTask.DeleteAsync(id);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ExperimentTaskExists(Guid id)
+        private async Task<bool> ExperimentTaskExists(Guid id)
         {
-            return _context.ExperimentTasks.Any(e => e.Id == id);
+            return await _experimentTask.GetByIdAsync(id) != null;
         }
     }
 }

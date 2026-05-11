@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using App.Domain.Entities;
-using App.Modules.Equipment.Domain;
-using App.Shared.Domain;
+﻿using App.Shared.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Modules.Equipment.Domain;
@@ -15,6 +12,6 @@ public class EquipmentLab : BaseEntity
     public DateTime? DeletedAt { get; set; }
     
     public Guid LabId { get; set; }
-    public Lab Lab { get; set; }  = default!;
+    public App.Domain.Entities.Lab Lab { get; set; }  = default!;
     public Guid EquipmentId {get; set;}
 }
