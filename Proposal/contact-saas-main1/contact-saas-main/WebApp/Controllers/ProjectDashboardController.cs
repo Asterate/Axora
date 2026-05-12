@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels;
 
@@ -10,24 +8,21 @@ namespace WebApp.Controllers
     [Authorize(Roles = "admin, employee, owner, instituteadmin")]
     public class ProjectDashboardController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly ExperimentService _experimentService;
+        private readonly ScheduleService _scheduleService;
 
-        public ProjectDashboardController(AppDbContext context)
+        public ProjectDashboardController(ExperimentService experimentService, ScheduleService scheduleService)
         {
-            _context = context;
+            _experimentService = experimentService;
+            _scheduleService = scheduleService;
         }
 
         // GET: ProjectDashboard
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var experiments = _context.Experiments
-                .Include(e => e.ExperimentType)
-                .Where(e => e.DeletedAt == null)
-                .ToList();
+            var experiments = await _experimentService.GetAllAsync();
 
-            var schedules = _context.Schedules
-                .Where(s => s.DeletedAt == null)
-                .ToList();
+            var schedules = await _scheduleService.GetAllAsync();
 
             var viewModel = new ProjectDashboardViewModel
             {

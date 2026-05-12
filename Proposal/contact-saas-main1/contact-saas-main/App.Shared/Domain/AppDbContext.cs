@@ -1,5 +1,4 @@
-﻿using App.Domain.Entities;
-using App.Domain.Identity;
+﻿using System.Reflection.Metadata;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +6,8 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Text.Json;
-using App.Domain;
+using App.Domain.Entities;
+using App.Shared.Domain;
 
 namespace App.DAL.EF;
 public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>

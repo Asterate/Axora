@@ -12,11 +12,14 @@ public static class ProjectTypeMapper
         };
 
     // Entity → Full Response
-    public static ProjectTypeResponse ToResponse(ProjectType entity)
-        => new ProjectTypeResponse
-        {
-            Id = entity.Id,
-        };
+    public static ProjectTypeResponse ToResponse(ProjectType entity) => new()
+    {
+        Id = entity.Id,
+        NameEn = entity.Name.Translate("en"),
+        NameEt = entity.Name.Translate("et"),
+        DescriptionEn = entity.Description?.Translate("en"),
+        DescriptionEt = entity.Description?.Translate("et")
+    };
 
     // Create Request → Entity
     public static ProjectType ToEntity(CreateProjectTypeRequest request)

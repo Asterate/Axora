@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\App.DAL.EF\App.DAL.EF.csproj" />
       <ProjectReference Include="..\App.Shared\App.Shared.csproj" />
     </ItemGroup>
 

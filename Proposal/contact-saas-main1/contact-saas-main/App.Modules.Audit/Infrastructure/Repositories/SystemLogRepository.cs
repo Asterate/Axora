@@ -1,4 +1,5 @@
-﻿using App.Domain.Entities;
+﻿using App.DAL.EF;
+using App.Domain.Entities;
 using App.Modules.Audit.Application.Interface;
 using App.Modules.Equipment.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

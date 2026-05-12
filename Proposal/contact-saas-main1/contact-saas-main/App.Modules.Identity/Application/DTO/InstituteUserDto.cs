@@ -1,5 +1,4 @@
 ﻿using App.Domain.Entities;
-using App.Domain.Identity;
 
 public class InstituteUserListResponse
 {
@@ -24,5 +23,9 @@ public class CreateInstituteUserRequest
 public class UpdateInstituteUserRequest
 {
     public Guid Id { get; set; }
-    public string? Name { get; set; }
+
+    public UpdateInstituteUserRequest(InstituteUser instituteUser)
+    {
+        Id = instituteUser.Id;
+    }
 }

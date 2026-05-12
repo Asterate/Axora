@@ -50,4 +50,14 @@ public class InstituteTypeService
         _instituteTypeRepo.Delete(entity);
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
+    
+    public async Task<List<LookupItem>> GetActivesAsync()
+    {
+        var entities = await _instituteTypeRepo.GetActivesAsync();
+        return entities.Select(i => new LookupItem 
+        { 
+            Id = i.Id, 
+            Name = i.InstituteName 
+        }).ToList();
+    }
 }

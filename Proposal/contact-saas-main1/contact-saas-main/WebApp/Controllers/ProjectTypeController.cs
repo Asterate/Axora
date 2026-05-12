@@ -1,13 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
-using App.Domain;
-using App.Domain.Entities;
+using App.Shared.Domain;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels;
 
@@ -17,17 +9,17 @@ namespace WebApp.Controllers
     [Authorize(Roles = "admin")]
     public class ProjectTypeController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly ProjectTypeService _projectTypeService;
 
-        public ProjectTypeController(AppDbContext context)
+        public ProjectTypeController(ProjectTypeService projectTypeService)
         {
-            _context = context;
+            _projectTypeService = projectTypeService;
         }
 
         // GET: ProjectType
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ProjectTypes.ToListAsync());
+            return View(await _projectTypeService.GetAllAsync());
         }
 
         // GET: ProjectType/Details/5
@@ -38,8 +30,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var projectType = await _context.ProjectTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var projectType = await _projectTypeService.GetByIdAsync(id.Value);
             if (projectType == null)
             {
                 return NotFound();
@@ -69,14 +60,11 @@ namespace WebApp.Controllers
                 description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
                 description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
                 
-                var projectType = new ProjectType
+                var projectType = new CreateProjectTypeRequest
                 {
                     Id = Guid.NewGuid(),
-                    Name = name,
-                    Description = description
                 };
-                _context.Add(projectType);
-                await _context.SaveChangesAsync();
+                await _projectTypeService.CreateAsync(projectType);
                 return RedirectToAction("Index", "LookupData");
             }
             return View(viewModel);
@@ -90,7 +78,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var projectType = await _context.ProjectTypes.FindAsync(id);
+            var projectType = await _projectTypeService.GetByIdAsync(id.Value);
             if (projectType == null)
             {
                 return NotFound();
@@ -100,10 +88,10 @@ namespace WebApp.Controllers
             var viewModel = new ProjectTypeViewModel
             {
                 Id = projectType.Id,
-                NameEn = projectType.Name.Translate("en") ?? string.Empty,
-                NameEt = projectType.Name.Translate("et") ?? string.Empty,
-                DescriptionEn = projectType.Description?.Translate("en"),
-                DescriptionEt = projectType.Description?.Translate("et")
+                NameEn = projectType.NameEn ?? string.Empty,
+                NameEt = projectType.NameEt ?? string.Empty,
+                DescriptionEn = projectType.DescriptionEn,
+                DescriptionEt = projectType.DescriptionEt
             };
             return View(viewModel);
         }
@@ -113,44 +101,24 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, ProjectTypeViewModel viewModel)
         {
-            if (id != viewModel.Id)
-            {
-                return NotFound();
-            }
+            if (id != viewModel.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
-                try
+                var name = new LangStr();
+                name.SetTranslation(viewModel.NameEn, "en");
+                name.SetTranslation(viewModel.NameEt, "et");
+
+                var description = new LangStr();
+                description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
+                description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
+
+                var update = new UpdateProjectTypeRequest
                 {
-                    var projectType = await _context.ProjectTypes.FindAsync(id);
-                    if (projectType == null)
-                    {
-                        return NotFound();
-                    }
-                    projectType.Name.SetTranslation(viewModel.NameEn, "en");
-                    projectType.Name.SetTranslation(viewModel.NameEt, "et");
-                    
-                    if (projectType.Description == null)
-                    {
-                        projectType.Description = new LangStr();
-                    }
-                    projectType.Description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
-                    projectType.Description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
-                    
-                    _context.Update(projectType);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProjectTypeExists(viewModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                    Id = id,
+                    Name = name,
+                };
+                await _projectTypeService.UpdateAsync(id, update);
                 return RedirectToAction("Index", "LookupData");
             }
             return View(viewModel);
@@ -164,8 +132,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var projectType = await _context.ProjectTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var projectType = await _projectTypeService.GetByIdAsync(id.Value);
             if (projectType == null)
             {
                 return NotFound();
@@ -179,19 +146,14 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var projectType = await _context.ProjectTypes.FindAsync(id);
+            var projectType = await _projectTypeService.GetByIdAsync(id);
             if (projectType != null)
             {
-                _context.ProjectTypes.Remove(projectType);
+                await _projectTypeService.DeleteAsync(id);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction("Index", "LookupData");
         }
-
-        private bool ProjectTypeExists(Guid id)
-        {
-            return _context.ProjectTypes.Any(e => e.Id == id);
-        }
+        
     }
 }

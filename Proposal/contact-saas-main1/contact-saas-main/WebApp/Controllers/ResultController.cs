@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
 using App.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 
@@ -15,18 +9,18 @@ namespace WebApp.Controllers
     [Authorize]
     public class ResultController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly ResultService _resultService;
 
-        public ResultController(AppDbContext context)
+        public ResultController(ResultService resultService)
         {
-            _context = context;
+            _resultService = resultService;
         }
 
         // GET: Result
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Results.Include(r => r.Experiment).Include(r => r.ExperimentTask);
-            return View(await appDbContext.ToListAsync());
+            var results = await _resultService.GetAllAsync();
+            return View(results);
         }
 
         // GET: Result/Details/5
@@ -37,10 +31,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var result = await _context.Results
-                .Include(r => r.Experiment)
-                .Include(r => r.ExperimentTask)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var result = await _resultService.GetByIdAsync(id.Value);
             if (result == null)
             {
                 return NotFound();
@@ -52,8 +43,6 @@ namespace WebApp.Controllers
         // GET: Result/Create
         public IActionResult Create()
         {
-            ViewData["ExperimentId"] = new SelectList(_context.Experiments, "Id", "ExperimentName");
-            ViewData["ExperimentTaskId"] = new SelectList(_context.ExperimentTasks, "Id", "TaskName");
             return View();
         }
 
@@ -66,13 +55,13 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                result.Id = Guid.NewGuid();
-                _context.Add(result);
-                await _context.SaveChangesAsync();
+                var create = new CreateResultRequest
+                {
+                    Id = result.Id,
+                };
+                await _resultService.CreateAsync(create);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ExperimentId"] = new SelectList(_context.Experiments, "Id", "ExperimentName", result.ExperimentId);
-            ViewData["ExperimentTaskId"] = new SelectList(_context.ExperimentTasks, "Id", "TaskName", result.ExperimentTaskId);
             return View(result);
         }
 
@@ -84,13 +73,11 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var result = await _context.Results.FindAsync(id);
+            var result = await _resultService.GetByIdAsync(id.Value);
             if (result == null)
             {
                 return NotFound();
             }
-            ViewData["ExperimentId"] = new SelectList(_context.Experiments, "Id", "ExperimentName", result.ExperimentId);
-            ViewData["ExperimentTaskId"] = new SelectList(_context.ExperimentTasks, "Id", "TaskName", result.ExperimentTaskId);
             return View(result);
         }
 
@@ -110,12 +97,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(result);
-                    await _context.SaveChangesAsync();
+                    var update = new UpdateResultRequest(result);
+                    await _resultService.UpdateAsync(id, update);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ResultExists(result.Id))
+                    if (!await ResultExists(result.Id))
                     {
                         return NotFound();
                     }
@@ -126,8 +113,6 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ExperimentId"] = new SelectList(_context.Experiments, "Id", "ExperimentName", result.ExperimentId);
-            ViewData["ExperimentTaskId"] = new SelectList(_context.ExperimentTasks, "Id", "TaskName", result.ExperimentTaskId);
             return View(result);
         }
 
@@ -139,10 +124,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var result = await _context.Results
-                .Include(r => r.Experiment)
-                .Include(r => r.ExperimentTask)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var result = await _resultService.GetByIdAsync(id.Value);
             if (result == null)
             {
                 return NotFound();
@@ -156,19 +138,18 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var result = await _context.Results.FindAsync(id);
+            var result = await _resultService.GetByIdAsync(id);
             if (result != null)
             {
-                _context.Results.Remove(result);
+               await _resultService.DeleteAsync(id);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ResultExists(Guid id)
+        private async Task<bool> ResultExists(Guid id)
         {
-            return _context.Results.Any(e => e.Id == id);
+            return await _resultService.GetByIdAsync(id) != null;
         }
     }
 }

@@ -13,6 +13,10 @@ public class AppRefreshTokenResponse
 public class CreateAppRefreshTokenRequest
 {
     public Guid Id { get; set; }
+    public DateTime Expiration { get; set; } = DateTime.UtcNow.AddDays(7);
+    public string RefreshToken { get; set; } = Guid.NewGuid().ToString();
+    public Guid UserId { get; set; }
+
 }
 
 public class UpdateAppRefreshTokenRequest

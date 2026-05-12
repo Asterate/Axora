@@ -13,6 +13,12 @@ public class SystemLogResponse
 public class CreateSystemLogRequest
 {
     public Guid Id { get; set; }
+    public DateTime Timestamp { get; set; }
+    public string Type { get; set; } = "";
+    public string Message { get; set; } = "";
+    public string? UserName { get; set; }
+    public int? StatusCode { get; set; }
+    public DateTime CreatedAt { get; set; }
 }
 
 public class UpdateSystemLogRequest

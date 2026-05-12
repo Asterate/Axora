@@ -1,51 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using App.Domain.Entities;
-using App.Modules.Equipment.Domain;
-
-namespace WebApp.ViewModels;
+﻿namespace WebApp.ViewModels;
 
 public class LookupDataViewModel
 {
     // Certification Types
-    public List<CertificationType> CertificationTypes { get; set; } = new();
+    public IEnumerable<CertificationTypeListResponse> CertificationTypes { get; set; } = new  List<CertificationTypeListResponse>();
     
     // Document Types
-    public List<DocumentType> DocumentTypes { get; set; } = new();
+    public IEnumerable<DocumentTypeListResponse> DocumentTypes { get; set; } = new   List<DocumentTypeListResponse>();
     
     // Equipment Types
-    public List<EquipmentType> EquipmentTypes { get; set; } = new();
+    public IEnumerable<EquipmentTypeListResponse> EquipmentTypes { get; set; } = new List<EquipmentTypeListResponse>();
     
     // Experiment Types
-    public List<ExperimentType> ExperimentTypes { get; set; } = new();
+    public IEnumerable<ExperimentTypeListResponse> ExperimentTypes { get; set; } = new  List<ExperimentTypeListResponse>();
     
     // Institute Types
-    public List<InstituteType> InstituteTypes { get; set; } = new();
+    public IEnumerable<InstituteTypeListResponse> InstituteTypes { get; set; } = new   List<InstituteTypeListResponse>();
     
     // Lab Types
-    public List<LabType> LabTypes { get; set; } = new();
+    public IEnumerable<LabTypeListResponse> LabTypes { get; set; } = new List<LabTypeListResponse>();
     
     // Project Types
-    public List<ProjectType> ProjectTypes { get; set; } = new();
+    public IEnumerable<ProjectTypeListResponse> ProjectTypes { get; set; } = new   List<ProjectTypeListResponse>();
     
     // Reagent Types
-    public List<ReagentType> ReagentTypes { get; set; } = new();
+    public IEnumerable<ReagentTypeListResponse> ReagentTypes { get; set; } = new   List<ReagentTypeListResponse>();
     
     // Task Types
-    public List<ExperimentTaskType> TaskTypes { get; set; } = new();
-}
-
-public class LookupItemViewModel
-{
-    public Guid Id { get; set; }
-    
-    [Display(Name = "Name")]
-    public string Name { get; set; } = default!;
-    
-    [Display(Name = "Description")]
-    public string? Description { get; set; }
-    
-    public DateTime CreatedAt { get; set; }
-    public DateTime? UpdatedAt { get; set; }
+    public IEnumerable<ExperimentTaskTypeListResponse> TaskTypes { get; set; } = new List<ExperimentTaskTypeListResponse>();
 }

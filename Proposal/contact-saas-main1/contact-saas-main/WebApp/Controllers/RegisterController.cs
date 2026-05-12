@@ -24,45 +24,36 @@ public class RegisterController : Controller
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
     private readonly IConfiguration _configuration;
+    private readonly InstituteService _instituteService;
+    private readonly InstituteTypeService _instituteTypeService;
+    private readonly AppRefreshTokenService _refreshTokenService;
 
     public RegisterController(
         AppDbContext context,
         UserManager<AppUser> userManager,
         SignInManager<AppUser> signInManager,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        InstituteService instituteService,
+        InstituteTypeService instituteTypeService,
+        AppRefreshTokenService refreshTokenService)
     {
         _context = context;
         _userManager = userManager;
         _signInManager = signInManager;
         _configuration = configuration;
+        _instituteService = instituteService;
+        _instituteTypeService = instituteTypeService;
+        _refreshTokenService = refreshTokenService;
     }
 
     [HttpGet]
     public async Task<IActionResult> Index()
     {
         var model = new RegisterViewModel();
-        
-        // Load institutes and institute types directly from EF
-        var institutes = await _context.Institutes
-            .Where(i => i.Active)
-            .OrderBy(i => i.InstituteName)
-            .Select(i => new RegisterViewModel.LookupItem 
-            { 
-                Id = i.Id, 
-                Name = i.InstituteName 
-            })
-            .ToListAsync();
-        
-        model.Institutes = institutes;
-
-        var instituteTypes = await _context.InstituteTypes
-            .ToListAsync();
-        model.InstituteTypes = instituteTypes.Select(t => new RegisterViewModel.LookupItem 
-        { 
-            Id = t.Id, 
-            Name = t.Name?.Translate() ?? "???" 
-        }).OrderBy(x => x.Name).ToList();
-        
+    
+        model.Institutes = await _instituteService.GetActivesAsync();
+        model.InstituteTypes = await _instituteTypeService.GetActivesAsync();
+    
         return View(model);
     }
 
@@ -138,25 +129,8 @@ public class RegisterController : Controller
 
     private async Task LoadDropdowns(RegisterViewModel model)
     {
-        var institutes = await _context.Institutes
-            .Where(i => i.Active)
-            .OrderBy(i => i.InstituteName)
-            .Select(i => new RegisterViewModel.LookupItem 
-            { 
-                Id = i.Id, 
-                Name = i.InstituteName 
-            })
-            .ToListAsync();
-        
-        model.Institutes = institutes;
-
-        var instituteTypes = await _context.InstituteTypes
-            .ToListAsync();
-        model.InstituteTypes = instituteTypes.Select(t => new RegisterViewModel.LookupItem 
-        { 
-            Id = t.Id, 
-            Name = t.Name?.Translate() ?? "???" 
-        }).OrderBy(x => x.Name).ToList();
+        model.Institutes = await _instituteService.GetActivesAsync();
+        model.InstituteTypes = await _instituteTypeService.GetActivesAsync();
     }
 
     private async Task<JWTResponse?> GenerateJwtTokenAsync(AppUser user)
@@ -212,7 +186,7 @@ public class RegisterController : Controller
             var refreshToken = Guid.NewGuid().ToString();
             
             // Store refresh token in database
-            var refreshTokenEntity = new AppRefreshToken
+            var refreshTokenEntity = new CreateAppRefreshTokenRequest()
             {
                 Id = Guid.NewGuid(),
                 RefreshToken = refreshToken,
@@ -220,7 +194,7 @@ public class RegisterController : Controller
                 Expiration = DateTime.UtcNow.AddSeconds(refreshTokenExpiresInSeconds)
             };
             
-            _context.RefreshTokens.Add(refreshTokenEntity);
+            _refreshTokenService.CreateAsync(refreshTokenEntity);
             await _context.SaveChangesAsync();
 
             return new JWTResponse

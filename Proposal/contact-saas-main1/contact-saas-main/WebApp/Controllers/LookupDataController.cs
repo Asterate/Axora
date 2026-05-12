@@ -11,26 +11,60 @@ namespace WebApp.Controllers;
 [Route("LookupData")]
 public class LookupDataController : Controller
 {
-    private readonly AppDbContext _context;
+    private readonly CertificationTypeService _certificationTypeService;
+    private readonly DocumentTypeService _documentTypeService;
+    private readonly EquipmentTypeService _equipmentTypeService;
+    private readonly ExperimentTypeService _experimentTypeService;
+    private readonly InstituteTypeService _instituteTypeService;
+    private readonly LabTypeService _labTypeService;
+    private readonly ProjectTypeService _projectTypeService;
+    private readonly ReagentTypeService _reagentTypeService;
+    private readonly ExperimentTaskTypeService _taskTypeService;
 
-    public LookupDataController(AppDbContext context)
+    public LookupDataController(CertificationTypeService certificationTypeService,
+        DocumentTypeService documentTypeService, EquipmentTypeService equipmentTypeService,
+        ExperimentTypeService experimentTypeService, InstituteTypeService instituteTypeService,
+        LabTypeService labTypeService, ProjectTypeService projectTypeService,
+        ReagentTypeService reagentTypeService, ExperimentTaskTypeService taskTypeService)
     {
-        _context = context;
+        _certificationTypeService = certificationTypeService;
+        _documentTypeService = documentTypeService;
+        _equipmentTypeService = equipmentTypeService;
+        _experimentTypeService = experimentTypeService;
+        _instituteTypeService = instituteTypeService;
+        _labTypeService = labTypeService;
+        _projectTypeService = projectTypeService;
+        _reagentTypeService = reagentTypeService;
+        _taskTypeService = taskTypeService;
     }
 
     public async Task<IActionResult> Index()
     {
+        var certificationTypes = _certificationTypeService.GetAllAsync();
+        var documentTypes = _documentTypeService.GetAllAsync();
+        var equipmentTypes = _equipmentTypeService.GetAllAsync();
+        var experimentTypes = _experimentTypeService.GetAllAsync();
+        var instituteTypes = _instituteTypeService.GetAllAsync();
+        var labTypes = _labTypeService.GetAllAsync();
+        var projectTypes = _projectTypeService.GetAllAsync();
+        var reagentTypes = _reagentTypeService.GetAllAsync();
+        var taskTypes = _taskTypeService.GetAllAsync();
+
+        await Task.WhenAll(certificationTypes, documentTypes, equipmentTypes, 
+            experimentTypes, instituteTypes, labTypes, 
+            projectTypes, reagentTypes, taskTypes);
+
         var model = new LookupDataViewModel
         {
-            CertificationTypes = await _context.CertificationTypes.ToListAsync(),
-            DocumentTypes = await _context.DocumentTypes.ToListAsync(),
-            EquipmentTypes = await _context.EquipmentTypes.ToListAsync(),
-            ExperimentTypes = await _context.ExperimentTypes.ToListAsync(),
-            InstituteTypes = await _context.InstituteTypes.ToListAsync(),
-            LabTypes = await _context.LabTypes.ToListAsync(),
-            ProjectTypes = await _context.ProjectTypes.ToListAsync(),
-            ReagentTypes = await _context.ReagentTypes.ToListAsync(),
-            TaskTypes = await _context.TaskTypes.ToListAsync()
+            CertificationTypes = certificationTypes.Result,
+            DocumentTypes = documentTypes.Result,
+            EquipmentTypes = equipmentTypes.Result,
+            ExperimentTypes = experimentTypes.Result,
+            InstituteTypes = instituteTypes.Result,
+            LabTypes = labTypes.Result,
+            ProjectTypes = projectTypes.Result,
+            ReagentTypes = reagentTypes.Result,
+            TaskTypes = taskTypes.Result
         };
 
         return View(model);

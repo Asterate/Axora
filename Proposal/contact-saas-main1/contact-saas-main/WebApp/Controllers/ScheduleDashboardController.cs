@@ -11,21 +11,16 @@ namespace WebApp.Controllers;
 [Authorize(Roles = "admin,employee,owner,instituteadmin,institutemanager")]
 public class ScheduleDashboardController : Controller
 {
-    private readonly AppDbContext _context;
+    private readonly ScheduleService _scheduleService;
 
-    public ScheduleDashboardController(AppDbContext context)
+    public ScheduleDashboardController(ScheduleService scheduleService)
     {
-        _context = context;
+        _scheduleService = scheduleService;
     }
 
     public async Task<IActionResult> Index()
     {
-        var schedules = await _context.Schedules
-            .Include(s => s.ExperimentTask)
-                .ThenInclude(t => t.Experiment)
-            .Include(s => s.Lab)
-            .Where(s => s.DeletedAt == null)
-            .ToListAsync();
+        var schedules = await _scheduleService.GetAllAsync();
 
         var viewModel = new ScheduleDashboardViewModel
         {
@@ -34,9 +29,4 @@ public class ScheduleDashboardController : Controller
 
         return View(viewModel);
     }
-}
-
-public class ScheduleDashboardViewModel
-{
-    public IEnumerable<ScheduleEntity> Schedules { get; set; } = new List<ScheduleEntity>();
 }

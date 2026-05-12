@@ -7,9 +7,9 @@ namespace App.Modules.Equipment.Infrastructure.Repositories;
 
 internal sealed class AppRefreshTokenRepository : IAppRefreshTokenRepository
 {
-    private readonly IdentityDbContext _context;
+    private readonly IdentityModuleDbContext _context;
 
-    public AppRefreshTokenRepository(IdentityDbContext context)
+    public AppRefreshTokenRepository(IdentityModuleDbContext context)
     {
         _context = context;
     }

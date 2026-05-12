@@ -1,6 +1,5 @@
-using App.Domain;
-using App.Domain.Entities;
 using App.Domain.Identity;
+using App.Modules.Identity.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,14 +7,12 @@ namespace App.DAL.EF.Seeding;
 
 public static class AppDataInit
 {
-   
-
-    public static void MigrateDatabase(AppDbContext context)
+    internal static void MigrateDatabase(IdentityModuleDbContext context)
     {
         context.Database.Migrate();
     }
 
-    public static void DeleteDatabase(AppDbContext context)
+    internal static void DeleteDatabase(IdentityModuleDbContext context)
     {
         context.Database.EnsureDeleted();
     }

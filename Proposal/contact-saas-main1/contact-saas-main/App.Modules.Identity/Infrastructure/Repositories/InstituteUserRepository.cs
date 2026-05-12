@@ -7,9 +7,9 @@ namespace App.Modules.Equipment.Infrastructure.Repositories;
 
 internal sealed class InstituteUserRepository : IInstituteUserRepository
 {
-    private readonly IdentityDbContext _context;
+    private readonly IdentityModuleDbContext _context;
 
-    public InstituteUserRepository(IdentityDbContext context)
+    public InstituteUserRepository(IdentityModuleDbContext context)
     {
         _context = context;
     }

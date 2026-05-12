@@ -27,4 +27,12 @@ internal sealed class InstituteTypeRepository : IInstituteTypeRepository
 
     public void Delete(InstituteType entity)
         => _context.InstituteTypes.Remove(entity);
+    
+    public async Task<List<Domain.Entities.Institute>> GetActivesAsync()
+    {
+        return await _context.Institutes
+            .Where(i => i.Active && i.DeletedAt == null)
+            .OrderBy(i => i.InstituteName)
+            .ToListAsync();
+    }
 }

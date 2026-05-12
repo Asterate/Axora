@@ -1,4 +1,5 @@
-﻿using App.Modules.Equipment.Application.Interfaces;
+﻿using App.DAL.EF;
+using App.Modules.Equipment.Application.Interfaces;
 using App.Modules.Equipment.Domain;
 using App.Modules.Equipment.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ namespace App.Modules.Equipment.Infrastructure.Repositories;
 
 internal sealed class CertificationRepository : ICertificationRepository
 {
-    private readonly EquipmentDbContext _context;
+    private readonly EquipmentDbContext  _context;
 
     public CertificationRepository(EquipmentDbContext context)
     {

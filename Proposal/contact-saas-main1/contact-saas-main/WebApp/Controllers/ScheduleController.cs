@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
 using App.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 
@@ -15,18 +9,18 @@ namespace WebApp.Controllers
     [Authorize]
     public class ScheduleController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly ScheduleService _scheduleService;
 
-        public ScheduleController(AppDbContext context)
+        public ScheduleController(ScheduleService scheduleService)
         {
-            _context = context;
+            _scheduleService = scheduleService;
         }
 
         // GET: Schedule
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Schedules.Include(s => s.Equipment).Include(s => s.ExperimentTask).Include(s => s.InstituteUser).Include(s => s.Lab);
-            return View(await appDbContext.ToListAsync());
+            var schedules = _scheduleService.GetAllAsync();
+            return View(schedules);
         }
 
         // GET: Schedule/Details/5
@@ -37,12 +31,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var schedule = await _context.Schedules
-                .Include(s => s.Equipment)
-                .Include(s => s.ExperimentTask)
-                .Include(s => s.InstituteUser)
-                .Include(s => s.Lab)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var schedule = await _scheduleService.GetByIdAsync(id.Value);
             if (schedule == null)
             {
                 return NotFound();
@@ -54,10 +43,6 @@ namespace WebApp.Controllers
         // GET: Schedule/Create
         public IActionResult Create()
         {
-            ViewData["EquipmentId"] = new SelectList(_context.Equipments, "Id", "EquipmentName");
-            ViewData["ExperimentTaskId"] = new SelectList(_context.ExperimentTasks, "Id", "TaskName");
-            ViewData["InstituteUserId"] = new SelectList(_context.InstituteUsers, "Id", "Id");
-            ViewData["LabId"] = new SelectList(_context.Labs, "Id", "LabAddress");
             return View();
         }
 
@@ -70,15 +55,13 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                schedule.Id = Guid.NewGuid();
-                _context.Add(schedule);
-                await _context.SaveChangesAsync();
+                var create = new CreateScheduleRequest
+                {
+                    Id = schedule.Id,
+                };
+                await _scheduleService.CreateAsync(create);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EquipmentId"] = new SelectList(_context.Equipments, "Id", "EquipmentName", schedule.EquipmentId);
-            ViewData["ExperimentTaskId"] = new SelectList(_context.ExperimentTasks, "Id", "TaskName", schedule.ExperimentTaskId);
-            ViewData["InstituteUserId"] = new SelectList(_context.InstituteUsers, "Id", "Id", schedule.InstituteUserId);
-            ViewData["LabId"] = new SelectList(_context.Labs, "Id", "LabAddress", schedule.LabId);
             return View(schedule);
         }
 
@@ -90,15 +73,11 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var schedule = await _context.Schedules.FindAsync(id);
+            var schedule = await _scheduleService.GetByIdAsync(id.Value);
             if (schedule == null)
             {
                 return NotFound();
             }
-            ViewData["EquipmentId"] = new SelectList(_context.Equipments, "Id", "EquipmentName", schedule.EquipmentId);
-            ViewData["ExperimentTaskId"] = new SelectList(_context.ExperimentTasks, "Id", "TaskName", schedule.ExperimentTaskId);
-            ViewData["InstituteUserId"] = new SelectList(_context.InstituteUsers, "Id", "Id", schedule.InstituteUserId);
-            ViewData["LabId"] = new SelectList(_context.Labs, "Id", "LabAddress", schedule.LabId);
             return View(schedule);
         }
 
@@ -118,12 +97,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(schedule);
-                    await _context.SaveChangesAsync();
+                    var update = new UpdateScheduleRequest(schedule);
+                    await _scheduleService.UpdateAsync(id, update);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ScheduleExists(schedule.Id))
+                    if (!await ScheduleExists(schedule.Id))
                     {
                         return NotFound();
                     }
@@ -134,10 +113,6 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["EquipmentId"] = new SelectList(_context.Equipments, "Id", "EquipmentName", schedule.EquipmentId);
-            ViewData["ExperimentTaskId"] = new SelectList(_context.ExperimentTasks, "Id", "TaskName", schedule.ExperimentTaskId);
-            ViewData["InstituteUserId"] = new SelectList(_context.InstituteUsers, "Id", "Id", schedule.InstituteUserId);
-            ViewData["LabId"] = new SelectList(_context.Labs, "Id", "LabAddress", schedule.LabId);
             return View(schedule);
         }
 
@@ -149,12 +124,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var schedule = await _context.Schedules
-                .Include(s => s.Equipment)
-                .Include(s => s.ExperimentTask)
-                .Include(s => s.InstituteUser)
-                .Include(s => s.Lab)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var schedule = await _scheduleService.GetByIdAsync(id.Value);
             if (schedule == null)
             {
                 return NotFound();
@@ -168,19 +138,18 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var schedule = await _context.Schedules.FindAsync(id);
+            var schedule = await _scheduleService.GetByIdAsync(id);
             if (schedule != null)
             {
-                _context.Schedules.Remove(schedule);
+                await _scheduleService.DeleteAsync(id);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ScheduleExists(Guid id)
+        private async Task<bool> ScheduleExists(Guid id)
         {
-            return _context.Schedules.Any(e => e.Id == id);
+            return await _scheduleService.GetByIdAsync(id) != null;
         }
     }
 }

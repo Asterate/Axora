@@ -1,13 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
-using App.Domain;
-using App.Domain.Entities;
+using App.Shared.Domain;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels;
 
@@ -17,17 +9,17 @@ namespace WebApp.Controllers
     [Authorize(Roles = "admin")]
     public class TaskTypeController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly ExperimentTaskTypeService _experimentTaskTypeService;
 
-        public TaskTypeController(AppDbContext context)
+        public TaskTypeController(ExperimentTaskTypeService experimentTaskTypeService)
         {
-            _context = context;
+            _experimentTaskTypeService = experimentTaskTypeService;
         }
 
         // GET: TaskType
         public async Task<IActionResult> Index()
         {
-            return View(await _context.TaskTypes.ToListAsync());
+            return View(await _experimentTaskTypeService.GetAllAsync());
         }
 
         // GET: TaskType/Details/5
@@ -38,8 +30,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var taskType = await _context.TaskTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var taskType = await _experimentTaskTypeService.GetByIdAsync(id.Value);
             if (taskType == null)
             {
                 return NotFound();
@@ -71,14 +62,11 @@ namespace WebApp.Controllers
                 taskTypeDescription.SetTranslation(viewModel.TaskTypeDescriptionEn ?? string.Empty, "en");
                 taskTypeDescription.SetTranslation(viewModel.TaskTypeDescriptionEt ?? string.Empty, "et");
                 
-                var taskType = new TaskType
+                var taskType = new CreateExperimentTaskTypeRequest()
                 {
                     Id = Guid.NewGuid(),
-                    Name = taskTypeName,
-                    Description = taskTypeDescription
                 };
-                _context.Add(taskType);
-                await _context.SaveChangesAsync();
+                await _experimentTaskTypeService.CreateAsync(taskType);
                 return RedirectToAction("Index", "LookupData");
             }
             return View(viewModel);
@@ -92,7 +80,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var taskType = await _context.TaskTypes.FindAsync(id);
+            var taskType = await _experimentTaskTypeService.GetByIdAsync(id.Value);
             if (taskType == null)
             {
                 return NotFound();
@@ -102,10 +90,8 @@ namespace WebApp.Controllers
             var viewModel = new TaskTypeViewModel
             {
                 Id = taskType.Id,
-                TaskTypeNameEn = taskType.Name.Translate("en") ?? string.Empty,
-                TaskTypeNameEt = taskType.Name.Translate("et") ?? string.Empty,
-                TaskTypeDescriptionEn = taskType.Description?.Translate("en"),
-                TaskTypeDescriptionEt = taskType.Description?.Translate("et")
+                TaskTypeNameEn = taskType.Name ?? string.Empty,
+                TaskTypeNameEt = taskType.Name ?? string.Empty,
             };
             return View(viewModel);
         }
@@ -117,46 +103,24 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, TaskTypeViewModel viewModel)
         {
-            if (id != viewModel.Id)
-            {
-                return NotFound();
-            }
+            if (id != viewModel.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
-                try
+                var name = new LangStr();
+                name.SetTranslation(viewModel.TaskTypeNameEn, "en");
+                name.SetTranslation(viewModel.TaskTypeNameEt, "et");
+
+                var description = new LangStr();
+                description.SetTranslation(viewModel.TaskTypeDescriptionEn ?? string.Empty, "en");
+                description.SetTranslation(viewModel.TaskTypeDescriptionEt ?? string.Empty, "et");
+
+                var update = new UpdateExperimentTaskTypeRequest
                 {
-                    var taskType = await _context.TaskTypes.FindAsync(id);
-                    if (taskType == null)
-                    {
-                        return NotFound();
-                    }
-                    
-                    // Update translations
-                    taskType.Name.SetTranslation(viewModel.TaskTypeNameEn, "en");
-                    taskType.Name.SetTranslation(viewModel.TaskTypeNameEt, "et");
-                    
-                    if (taskType.Description == null)
-                    {
-                        taskType.Description = new LangStr();
-                    }
-                    taskType.Description.SetTranslation(viewModel.TaskTypeDescriptionEn ?? string.Empty, "en");
-                    taskType.Description.SetTranslation(viewModel.TaskTypeDescriptionEt ?? string.Empty, "et");
-                    
-                    _context.Update(taskType);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TaskTypeExists(viewModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                    Id = id,
+                    Name = name,
+                };
+                await _experimentTaskTypeService.UpdateAsync(id, update);
                 return RedirectToAction("Index", "LookupData");
             }
             return View(viewModel);
@@ -170,8 +134,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var taskType = await _context.TaskTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var taskType = await _experimentTaskTypeService.GetByIdAsync(id.Value);
             if (taskType == null)
             {
                 return NotFound();
@@ -185,19 +148,13 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var taskType = await _context.TaskTypes.FindAsync(id);
+            var taskType = await _experimentTaskTypeService.GetByIdAsync(id);
             if (taskType != null)
             {
-                _context.TaskTypes.Remove(taskType);
+                await _experimentTaskTypeService.DeleteAsync(id);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction("Index", "LookupData");
-        }
-
-        private bool TaskTypeExists(Guid id)
-        {
-            return _context.TaskTypes.Any(e => e.Id == id);
         }
     }
 }

@@ -16,6 +16,10 @@ public static class ExperimentTaskMapper
         => new ExperimentTaskResponse
         {
             Id = entity.Id,
+            NameEn = entity.TaskName.Translate("en"),
+            NameEt = entity.TaskName.Translate("et"),
+            DescriptionEn = entity.TaskDescription?.Translate("en"),
+            DescriptionEt = entity.TaskDescription?.Translate("et")
         };
 
     // Create Request → Entity

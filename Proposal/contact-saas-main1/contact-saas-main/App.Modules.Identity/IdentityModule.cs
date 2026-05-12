@@ -12,7 +12,7 @@ public static class IdentityModule
         this IServiceCollection services,
         string connectionString)
     {
-        services.AddDbContext<IdentityDbContext>(options =>
+        services.AddDbContext<IdentityModuleDbContext>(options =>
             options.UseNpgsql(connectionString));
 
         services.AddScoped<InstituteUserRepository>();

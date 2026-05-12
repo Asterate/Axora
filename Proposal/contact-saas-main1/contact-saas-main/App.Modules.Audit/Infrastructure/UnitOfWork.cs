@@ -1,4 +1,5 @@
-﻿using App.Modules.Equipment.Infrastructure.Data;
+﻿using App.DAL.EF;
+using App.Modules.Equipment.Infrastructure.Data;
 using App.Shared.Contracts;
 
 namespace App.Modules.Audit.Infrastructure;

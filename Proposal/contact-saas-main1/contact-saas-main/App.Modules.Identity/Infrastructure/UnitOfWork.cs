@@ -4,9 +4,9 @@ namespace App.Modules.Identity.Infrastructure;
 
 internal sealed class UnitOfWork :  IUnitOfWork
 {
-    private readonly IdentityDbContext _context;
+    private readonly IdentityModuleDbContext _context;
 
-    public UnitOfWork(IdentityDbContext context)
+    public UnitOfWork(IdentityModuleDbContext context)
     {
         _context = context;
     }

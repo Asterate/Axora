@@ -135,7 +135,7 @@ namespace WebApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!InstituteTypeExists(viewModel.Id))
+                    if (!await InstituteTypeExists(viewModel.Id))
                     {
                         return NotFound();
                     }
@@ -157,8 +157,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var instituteType = await _context.InstituteTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var instituteType = await _instituteTypeService.GetByIdAsync(id.Value);
             if (instituteType == null)
             {
                 return NotFound();
@@ -172,19 +171,18 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var instituteType = await _context.InstituteTypes.FindAsync(id);
+            var instituteType = await _instituteTypeService.GetByIdAsync(id);
             if (instituteType != null)
             {
-                _context.InstituteTypes.Remove(instituteType);
+                await _instituteTypeService.DeleteAsync(id);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction("Index", "LookupData");
         }
 
-        private bool InstituteTypeExists(Guid id)
+        private async Task<bool> InstituteTypeExists(Guid id)
         {
-            return _context.InstituteTypes.Any(e => e.Id == id);
+            return await _instituteTypeService.GetByIdAsync(id) != null;
         }
     }
 }

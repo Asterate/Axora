@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,18 +11,18 @@ namespace WebApp.Controllers
     [Authorize]
     public class InstituteUserController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly InstituteUserService _instituteUserService;
 
-        public InstituteUserController(AppDbContext context)
+        public InstituteUserController(InstituteUserService instituteUserService)
         {
-            _context = context;
+            _instituteUserService = instituteUserService;
         }
 
         // GET: InstituteUser
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.InstituteUsers.Include(i => i.Institute);
-            return View(await appDbContext.ToListAsync());
+            var instituteUser = await _instituteUserService.GetAllAsync();
+            return View(instituteUser);
         }
 
         // GET: InstituteUser/Details/5
@@ -37,9 +33,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var instituteUser = await _context.InstituteUsers
-                .Include(i => i.Institute)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var instituteUser = await _instituteUserService.GetByIdAsync(id.Value);
             if (instituteUser == null)
             {
                 return NotFound();
@@ -51,9 +45,7 @@ namespace WebApp.Controllers
         // GET: InstituteUser/Create
         public IActionResult Create()
         {
-            ViewData["InstituteId"] = new SelectList(_context.Institutes, "Id", "InstituteAddress");
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
-            ViewData["Role"] = new SelectList(Enum.GetValues<EInstituteUserRole>());
+            
             return View();
         }
 
@@ -72,13 +64,15 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _context.Add(instituteUser);
-                await _context.SaveChangesAsync();
+                var newInstituteUser = new CreateInstituteUserRequest()
+                {
+                    Id =  instituteUser.Id,
+                    InstituteId = instituteUser.InstituteId,
+                    UserId = instituteUser.UserId,
+                };
+                await _instituteUserService.CreateAsync(newInstituteUser);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["InstituteId"] = new SelectList(_context.Institutes, "Id", "InstituteAddress", instituteUser.InstituteId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", instituteUser.UserId);
-            ViewData["Role"] = new SelectList(Enum.GetValues<EInstituteUserRole>());
             return View(instituteUser);
         }
 
@@ -90,12 +84,11 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var instituteUser = await _context.InstituteUsers.FindAsync(id);
+            var instituteUser = await _instituteUserService.GetByIdAsync(id.Value);
             if (instituteUser == null)
             {
                 return NotFound();
             }
-            ViewData["InstituteId"] = new SelectList(_context.Institutes, "Id", "InstituteAddress", instituteUser.InstituteId);
             return View(instituteUser);
         }
 
@@ -115,12 +108,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(instituteUser);
-                    await _context.SaveChangesAsync();
+                    var update = new UpdateInstituteUserRequest(instituteUser);
+                    await _instituteUserService.UpdateAsync(id, update);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!InstituteUserExists(instituteUser.Id))
+                    if (!await InstituteUserExists(instituteUser.Id))
                     {
                         return NotFound();
                     }
@@ -131,7 +124,6 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["InstituteId"] = new SelectList(_context.Institutes, "Id", "InstituteAddress", instituteUser.InstituteId);
             return View(instituteUser);
         }
 
@@ -143,9 +135,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var instituteUser = await _context.InstituteUsers
-                .Include(i => i.Institute)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var instituteUser = await _instituteUserService.GetByIdAsync(id.Value);
             if (instituteUser == null)
             {
                 return NotFound();
@@ -159,19 +149,18 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var instituteUser = await _context.InstituteUsers.FindAsync(id);
+            var instituteUser = await  _instituteUserService.GetByIdAsync(id);
             if (instituteUser != null)
             {
-                _context.InstituteUsers.Remove(instituteUser);
+                await _instituteUserService.DeleteAsync(id);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool InstituteUserExists(Guid id)
+        private async Task<bool> InstituteUserExists(Guid id)
         {
-            return _context.InstituteUsers.Any(e => e.Id == id);
+            return await _instituteUserService.GetByIdAsync(id) != null;
         }
     }
 }

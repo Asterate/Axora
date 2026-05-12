@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using App.DTO.v1.Identity;
+using App.Shared.Contracts;
 
 namespace WebApp.ViewModels;
 
@@ -47,10 +48,4 @@ public class RegisterViewModel
     // Lists for dropdowns
     public List<LookupItem> Institutes { get; set; } = new();
     public List<LookupItem> InstituteTypes { get; set; } = new();
-
-    public class LookupItem
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; } = default!;
-    }
 }

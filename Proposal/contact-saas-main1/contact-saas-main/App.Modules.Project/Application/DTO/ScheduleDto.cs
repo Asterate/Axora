@@ -1,4 +1,6 @@
-﻿public class ScheduleListResponse
+﻿using App.Domain.Entities;
+
+public class ScheduleListResponse
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }
@@ -19,4 +21,9 @@ public class UpdateScheduleRequest
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }
+
+    public UpdateScheduleRequest(Schedule schedule)
+    {
+        Id = schedule.Id;
+    }
 }

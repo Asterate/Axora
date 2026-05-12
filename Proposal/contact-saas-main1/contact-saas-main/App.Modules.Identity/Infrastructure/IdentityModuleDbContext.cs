@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace App.Modules.Identity.Infrastructure;
 
-internal sealed class IdentityDbContext : IdentityDbContext<AppUser, AppRole, Guid>
+public sealed class IdentityModuleDbContext : IdentityDbContext<AppUser, AppRole, Guid>
 {
-    public IdentityDbContext(DbContextOptions<IdentityDbContext> options, DbSet<InstituteUser> instituteUser, DbSet<AppRefreshToken> appRefreshToken)
+    public IdentityModuleDbContext(DbContextOptions<IdentityModuleDbContext> options, DbSet<InstituteUser> instituteUser, DbSet<AppRefreshToken> appRefreshToken)
         : base(options)
     {
         InstituteUser = instituteUser;
@@ -21,6 +21,6 @@ internal sealed class IdentityDbContext : IdentityDbContext<AppUser, AppRole, Gu
     {
         base.OnModelCreating(builder);
         builder.HasDefaultSchema("identity");
-        builder.ApplyConfigurationsFromAssembly(typeof(IdentityDbContext).Assembly);
+        builder.ApplyConfigurationsFromAssembly(typeof(IdentityModuleDbContext).Assembly);
     }
 }

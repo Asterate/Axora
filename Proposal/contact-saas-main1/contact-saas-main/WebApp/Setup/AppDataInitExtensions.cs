@@ -1,14 +1,9 @@
-using System.Threading;
-using App.DAL.EF;
 using App.DAL.EF.Seeding;
 using App.Domain.Identity;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+using App.Modules.Identity.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+
 
 namespace WebApp.Setup;
 
@@ -21,7 +16,7 @@ public static class AppDataInitExtensions
             .CreateScope();
         var logger = serviceScope.ServiceProvider.GetRequiredService<ILogger<IApplicationBuilder>>();
 
-        using var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
+        using var context = serviceScope.ServiceProvider.GetRequiredService<IdentityModuleDbContext>();
 
         if (context.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory") return;
 
@@ -56,7 +51,7 @@ public static class AppDataInitExtensions
         }
     }
 
-    private static void WaitDbConnection(AppDbContext ctx, ILogger<IApplicationBuilder> logger)
+    private static void WaitDbConnection(IdentityModuleDbContext ctx, ILogger<IApplicationBuilder> logger)
     {
         // TODO: Login failed for user 'sa'. Reason: Failed to open the explicitly specified database 'XYZ'. [CLIENT: 172.18.0.3]
         // could actually log in, but db was not there - migrations where not applied yet
