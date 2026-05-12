@@ -3,19 +3,18 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Tokens;
 using WebApp.Helpers;
 using WebApp.Setup;
-using App.BLL.Services;
-using App.Modules.Experiment;
+using App.Modules.Audit.Infrastructure.Data;
 using App.Modules.Identity;
-using App.Modules.Institute;
+using App.Modules.Identity.Infrastructure;
 using App.Modules.Lab.Infrastructure;
 using App.Modules.Project.Infrastructure;
 using App.Shared.Domain;
+using Microsoft.AspNetCore.DataProtection;
 using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Service registration
-builder.Services.AddAppDatabase(builder.Configuration, builder.Environment);
 builder.Services.AddAppIdentity();
 
 #pragma warning disable CS0618
@@ -65,17 +64,23 @@ builder.Services.AddAppApiVersioning();
 builder.Services.AddAppSwagger();
 builder.Services.AddAppLocalization(builder.Configuration);
 
-//Modular monolith registration
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
+//Modular monolith
+builder.Services.AddModuleDatabase<AuditDbContext>(builder.Configuration, builder.Environment);
+builder.Services.AddAuditModule();
+builder.Services.AddModuleDatabase<IdentityModuleDbContext>(builder.Configuration, builder.Environment);
+builder.Services.AddIdentityDatabase(builder.Configuration, builder.Environment);
+builder.Services.AddModuleDatabase<LabDbContext>(builder.Configuration, builder.Environment);
+builder.Services.AddLabDatabase(builder.Configuration, builder.Environment);
+builder.Services.AddModuleDatabase<ResearchDbContext>(builder.Configuration, builder.Environment);
+builder.Services.AddResearchDatabase(builder.Configuration, builder.Environment);
 
-builder.Services.AddEquipmentModule(connectionString);
-builder.Services.AddAuditModule(connectionString);
-builder.Services.AddExperimentModule(connectionString);
-builder.Services.AddIdentityModule(connectionString);
-builder.Services.AddInstituteModule(connectionString);
-builder.Services.AddLabModule(connectionString);
-builder.Services.AddProjectModule(connectionString);
-builder.Services.AddReagentModule(connectionString);
+builder.Services.AddAuditModule();
+builder.Services.AddIdentityModule();
+builder.Services.AddLabModule();
+builder.Services.AddProjectModule();
+
+builder.Services.AddDataProtection()
+     .PersistKeysToDbContext<IdentityModuleDbContext>();
 
 // Build and configure pipeline
 var app = builder.Build();

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using App.DAL.EF;
+using App.Modules.Identity.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,7 @@ public class CustomWebApplicationFactory<TStartup>
             // find DbContextOptions
             var descriptorDbContextOptions = services.SingleOrDefault(
                 d => d.ServiceType ==
-                     typeof(DbContextOptions<AppDbContext>));
+                     typeof(DbContextOptions<IdentityModuleDbContext>));
 
             // if found - remove
             if (descriptorDbContextOptions != null)
@@ -29,16 +30,16 @@ public class CustomWebApplicationFactory<TStartup>
             }
             // TODO: Use postgres test db in docker, inmemory flacky
             // add new DbContextOptions
-            var contextOptions = new DbContextOptionsBuilder<AppDbContext>()
+            var contextOptions = new DbContextOptionsBuilder<IdentityModuleDbContext>()
                 .UseInMemoryDatabase("InMemoryDbForTesting");
-            services.AddScoped<DbContextOptions<AppDbContext>>(_ => contextOptions.Options);
+            services.AddScoped<DbContextOptions<IdentityModuleDbContext>>(_ => contextOptions.Options);
 
             
             // create db and seed data
             var sp = services.BuildServiceProvider();
             using var scope = sp.CreateScope();
             var scopedServices = scope.ServiceProvider;
-            var db = scopedServices.GetRequiredService<AppDbContext>();
+            var db = scopedServices.GetRequiredService<IdentityModuleDbContext>();
             var logger = scopedServices
                 .GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
 

@@ -10,7 +10,6 @@ namespace App.BLL.Services;
 /// </summary>
 public abstract class BaseService
 {
-    protected readonly AppDbContext _context;
 
     protected BaseService(AppDbContext context)
     {

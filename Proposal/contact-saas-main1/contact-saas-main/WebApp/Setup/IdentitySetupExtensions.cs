@@ -1,5 +1,6 @@
 using App.DAL.EF;
 using App.Domain.Identity;
+using App.Modules.Identity.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,7 +16,7 @@ public static class IdentitySetupExtensions
                 options.SignIn.RequireConfirmedAccount = false;
             })
             .AddDefaultUI()
-            .AddEntityFrameworkStores<AppDbContext>()
+            .AddEntityFrameworkStores<IdentityModuleDbContext>()
             .AddDefaultTokenProviders();
 
         return services;

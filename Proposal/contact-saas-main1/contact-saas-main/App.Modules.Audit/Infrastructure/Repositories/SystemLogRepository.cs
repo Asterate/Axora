@@ -1,10 +1,9 @@
-﻿using App.DAL.EF;
-using App.Domain.Entities;
+﻿using App.Domain.Entities;
 using App.Modules.Audit.Application.Interface;
-using App.Modules.Equipment.Infrastructure.Data;
+using App.Modules.Audit.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.Modules.Equipment.Infrastructure.Repositories;
+namespace App.Modules.Audit.Infrastructure.Repositories;
 
 internal sealed class SystemLogRepository : ISystemLogRepository
 {

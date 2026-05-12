@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using App.Modules.Experiment.Application.Mapper;
 
 namespace WebApp.ApiControllers;
 
@@ -18,12 +19,12 @@ namespace WebApp.ApiControllers;
 public class ExperimentTasksController : ControllerBase
 {
     private readonly IExperimentService _experimentService;
-    private readonly AppDbContext _context;
+    private readonly ExperimentTaskService _experimentTaskService;
 
-    public ExperimentTasksController(IExperimentService experimentService, AppDbContext context)
+    public ExperimentTasksController(IExperimentService experimentService, ExperimentTaskService context)
     {
         _experimentService = experimentService;
-        _context = context;
+        _experimentTaskService = context;
     }
 
     // GET: api/v1.0/experimenttasks
@@ -36,28 +37,9 @@ public class ExperimentTasksController : ControllerBase
         
         // Get all experiments for this user (service handles IDOR protection)
         var experiments = await _experimentService.GetAllAsync(userId.Value);
-        var experimentIds = experiments.Select(e => e.Id).ToList();
-        
-        // Get tasks only for allowed experiments
-        var tasks = await _context.ExperimentTasks
-            .Include(t => t.TaskType)
-            .Where(t => experimentIds.Contains(t.ExperimentId) && t.DeletedAt == null)
-            .Select(t => new ExperimentTaskResponse
-            {
-                Id = t.Id,
-                TaskName = t.TaskName,
-                TaskDescription = t.TaskDescription,
-                CreatedAt = t.CreatedAt,
-                UpdatedAt = t.UpdatedAt,
-                DeletedAt = t.DeletedAt,
-                Status = (int)t.Status,
-                Priority = t.Priority,
-                TaskTypeId = t.TaskTypeId,
-                AssignedUserId = t.AssignedUserId,
-                ExperimentId = t.ExperimentId,
-                TaskTypeName = t.TaskType.Name
-            })
-            .ToListAsync();
+        var experimentIds = experiments.Select(e => e.Id);
+        var tasks = await _experimentTaskService.GetAllByExperimentIdsAsync(experimentIds);
+        return Ok(tasks);
             
         return Ok(tasks);
     }
@@ -71,77 +53,27 @@ public class ExperimentTasksController : ControllerBase
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
         
-        // First get the task
-        var task = await _context.ExperimentTasks
-            .Include(t => t.TaskType)
-            .FirstOrDefaultAsync(t => t.Id == id && t.DeletedAt == null);
-
+        var task = await _experimentTaskService.GetByIdAsync(id);
         if (task == null) return NotFound();
-        
-        // Verify user has access to this experiment via the service
         var experiment = await _experimentService.GetByIdAsync(task.ExperimentId, userId.Value);
         if (experiment == null) return NotFound();
-
-        return Ok(new ExperimentTaskResponse
-        {
-            Id = task.Id,
-            TaskName = task.TaskName,
-            TaskDescription = task.TaskDescription,
-            CreatedAt = task.CreatedAt,
-            UpdatedAt = task.UpdatedAt,
-            DeletedAt = task.DeletedAt,
-            Status = (int)task.Status,
-            Priority = task.Priority,
-            TaskTypeId = task.TaskTypeId,
-            AssignedUserId = task.AssignedUserId,
-            ExperimentId = task.ExperimentId,
-            TaskTypeName = task.TaskType.Name
-        });
+        return Ok(task);
     }
 
     // POST: api/v1.0/experimenttasks
     [HttpPost]
     [ProducesResponseType(typeof(ExperimentTaskResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ExperimentTaskResponse>> CreateExperimentTask([FromBody] CreateTaskRequest dto)
+    public async Task<ActionResult<ExperimentTaskResponse>> CreateExperimentTask([FromBody] CreateExperimentTaskRequest dto)
     {
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
         
         // Verify user has access to the experiment via the service
         var experiment = await _experimentService.GetByIdAsync(dto.ExperimentId, userId.Value);
-        if (experiment == null) return BadRequest("You don't have access to this experiment");
-
-        var experimentTask = new ExperimentTask
-        {
-            Id = Guid.NewGuid(),
-            TaskName = new App.Domain.LangStr(dto.TaskName),
-            TaskDescription = !string.IsNullOrEmpty(dto.TaskDescription) ? new App.Domain.LangStr(dto.TaskDescription) : null,
-            TaskTypeId = dto.TaskTypeId,
-            ExperimentId = dto.ExperimentId,
-            AssignedUserId = dto.AssignedUserId,
-            Priority = dto.Priority,
-            Status = EExperimentTaskStatus.Pending,
-            CreatedAt = DateTime.UtcNow
-        };
-        
-        _context.ExperimentTasks.Add(experimentTask);
-        await _context.SaveChangesAsync();
-
-        var result = new ExperimentTaskResponse
-        {
-            Id = experimentTask.Id,
-            TaskName = experimentTask.TaskName,
-            TaskDescription = experimentTask.TaskDescription,
-            CreatedAt = experimentTask.CreatedAt,
-            Status = (int)experimentTask.Status,
-            Priority = experimentTask.Priority,
-            TaskTypeId = experimentTask.TaskTypeId,
-            AssignedUserId = experimentTask.AssignedUserId,
-            ExperimentId = experimentTask.ExperimentId
-        };
-
-        return CreatedAtAction(nameof(GetExperimentTask), new { id = result.Id }, result);
+        if (experiment == null) return BadRequest("No access to this experiment");
+        var created = await _experimentTaskService.CreateAndReturnAsync(dto);
+        return CreatedAtAction(nameof(GetExperimentTask), new { id = created.Id }, ExperimentTaskMapper.ToResponse(created));
     }
 
     // PUT: api/v1.0/experimenttasks/{id}
@@ -149,47 +81,19 @@ public class ExperimentTasksController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateExperimentTask(Guid id, [FromBody] UpdateTaskRequest dto)
+    public async Task<IActionResult> UpdateExperimentTask(Guid id, [FromBody] UpdateExperimentTaskRequest dto)
     {
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
-        
-        var task = await _context.ExperimentTasks.FirstOrDefaultAsync(t => t.Id == id);
+
+        var task = await _experimentTaskService.GetByIdAsync(id);
         if (task == null) return NotFound();
-        
-        // Verify user has access to this experiment via the service
+
         var experiment = await _experimentService.GetByIdAsync(task.ExperimentId, userId.Value);
         if (experiment == null) return NotFound();
 
-        _context.Entry(task).State = EntityState.Modified;
-        
-        task.TaskName.SetTranslation(dto.TaskName);
-        if (!string.IsNullOrEmpty(dto.TaskDescription))
-        {
-            if (task.TaskDescription == null)
-                task.TaskDescription = new App.Domain.LangStr(dto.TaskDescription);
-            else
-                task.TaskDescription.SetTranslation(dto.TaskDescription);
-        }
-        task.TaskTypeId = dto.TaskTypeId;
-        task.ExperimentId = dto.ExperimentId;
-        task.AssignedUserId = dto.AssignedUserId;
-        task.Priority = dto.Priority;
-        task.UpdatedAt = DateTime.UtcNow;
+        await _experimentTaskService.UpdateAsync(id, dto);
 
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!await _context.ExperimentTasks.AnyAsync(t => t.Id == id))
-            {
-                return NotFound();
-            }
-            throw;
-        }
-        
         return NoContent();
     }
 
@@ -202,7 +106,7 @@ public class ExperimentTasksController : ControllerBase
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
         
-        var task = await _context.ExperimentTasks.FirstOrDefaultAsync(t => t.Id == id);
+        var task = await _experimentTaskService.GetByIdAsync(id);
         if (task == null) return NotFound();
         
         // Verify user has access to this experiment via the service
@@ -211,7 +115,6 @@ public class ExperimentTasksController : ControllerBase
 
         // Soft delete
         task.DeletedAt = DateTime.UtcNow;
-        await _context.SaveChangesAsync();
         
         return NoContent();
     }

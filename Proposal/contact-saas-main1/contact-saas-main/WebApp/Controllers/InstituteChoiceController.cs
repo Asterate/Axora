@@ -21,24 +21,24 @@ namespace WebApp.Controllers;
 
 public class InstituteChoiceController : Controller
 {
-    private readonly AppDbContext _context;
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
     private readonly InstituteService _instituteService;
     private readonly InstituteUserService _instituteUserService;
+    private readonly InstituteTypeService _instituteTypeService;
 
     public InstituteChoiceController(
-        AppDbContext context, 
         UserManager<AppUser> userManager,
         SignInManager<AppUser> signInManager,
         InstituteService instituteService,
-        InstituteUserService instituteUserService)
+        InstituteUserService instituteUserService,
+        InstituteTypeService instituteTypeService)
     {
-        _context = context;
         _userManager = userManager;
         _signInManager = signInManager;
         _instituteService = instituteService;
         _instituteUserService = instituteUserService;
+        _instituteTypeService = instituteTypeService;
     }
 
     [HttpGet]
@@ -51,13 +51,8 @@ public class InstituteChoiceController : Controller
         model.Institutes = institutes;
 
         // Load institute types directly from database
-        var types = await _context.InstituteTypes
-            .ToListAsync();
-        model.InstituteTypes = types.Select(t => new LookupItem 
-        { 
-            Id = t.Id, 
-            Name = t.Name?.Translate() ?? "???" 
-        }).ToList();
+        var types = await _instituteTypeService.GetAllAsync();
+        model.InstituteTypes = await _instituteTypeService.GetActivesAsync();
 
         return View(model);
     }
@@ -92,7 +87,7 @@ public class InstituteChoiceController : Controller
             // Handle selecting existing institute
             if (model.InstituteSelection == 0 && model.InstituteId.HasValue)
             {
-                var institute = await _context.Institutes.FindAsync(model.InstituteId);
+                var institute = await _instituteService.GetEntityByIdAsync(model.InstituteId.Value);
                 if (institute == null || !institute.Active || institute.DeletedAt != null)
                 {
                     ModelState.AddModelError("InstituteId", "Institute not found or inactive");
@@ -101,13 +96,12 @@ public class InstituteChoiceController : Controller
                 }
 
                 // Check if user already has an institute user record
-                var existingUser = await _context.InstituteUsers
-                    .FirstOrDefaultAsync(u => u.UserId == userId);
+                var existingUser = await _instituteUserService.GetByIdAsync(userId);
 
                 if (existingUser != null)
                 {
                     // Update existing user's institute
-                    existingUser.InstituteId = model.InstituteId.Value;
+                    existingUser.Id = model.InstituteId.Value;
                 }
                 else
                 {
@@ -121,14 +115,12 @@ public class InstituteChoiceController : Controller
                     await _instituteUserService.CreateAsync(newInstituteUser);
                 }
 
-                await _context.SaveChangesAsync();
 
                 // Sync roles to Identity
                 var appUser = await _userManager.FindByIdAsync(userId.ToString());
                 if (appUser != null)
                 {
-                    var userInstitute = await _context.InstituteUsers
-                        .FirstOrDefaultAsync(u => u.UserId == userId);
+                    var userInstitute = await _instituteUserService.GetByIdAsync(userId);
                     if (userInstitute != null)
                     {
                         await UserRoleHelper.SyncCompanyUserRolesToIdentityAsync(_userManager, appUser, userInstitute.Role);
@@ -167,7 +159,6 @@ public class InstituteChoiceController : Controller
                     Role = EInstituteUserRole.Owner
                 };
                 await _instituteUserService.CreateAsync(newInstituteUser);
-                await _context.SaveChangesAsync();
 
                 // Sync roles to Identity
                 var appUser = await _userManager.FindByIdAsync(userId.ToString());
@@ -194,12 +185,7 @@ public class InstituteChoiceController : Controller
         model.Institutes = await _instituteService.GetActivesAsync();
 
         // Load institute types directly from database
-        var types = await _context.InstituteTypes
-            .ToListAsync();
-        model.InstituteTypes = types.Select(t => new LookupItem 
-        { 
-            Id = t.Id, 
-            Name = t.Name?.Translate() ?? "???" 
-        }).ToList();
+        var types = await _instituteTypeService.GetAllAsync();
+        model.InstituteTypes = await _instituteTypeService.GetActivesAsync();
     }
 }

@@ -50,4 +50,10 @@ public class InstituteUserService
         _instituteUserRepo.Delete(entity);
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
+    public async Task<bool> HasInstituteAsync(Guid userId)
+    {
+        var entities = await _instituteUserRepo.GetAllAsync();
+        return entities.Any(iu => iu.UserId == userId);
+    }
+    
 }

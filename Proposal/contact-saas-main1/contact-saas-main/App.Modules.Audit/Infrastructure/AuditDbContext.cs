@@ -1,8 +1,10 @@
 ﻿using App.Domain.Entities;
+using App.Shared.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.Modules.Equipment.Infrastructure.Data;
-internal sealed class AuditDbContext : DbContext
+namespace App.Modules.Audit.Infrastructure.Data;
+
+public sealed class AuditDbContext : DbContext
 {
     public AuditDbContext(DbContextOptions<AuditDbContext> options) 
         : base(options) { }
@@ -13,6 +15,7 @@ internal sealed class AuditDbContext : DbContext
     {
         base.OnModelCreating(builder);
         builder.HasDefaultSchema("audit"); // keeps tables organized in DB
+        builder.ApplyAppConventions();
         builder.ApplyConfigurationsFromAssembly(typeof(AuditDbContext).Assembly);
     }
 }

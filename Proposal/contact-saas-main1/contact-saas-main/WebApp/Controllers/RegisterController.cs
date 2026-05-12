@@ -20,7 +20,6 @@ namespace WebApp.Controllers;
 [ApiExplorerSettings(IgnoreApi = true)]
 public class RegisterController : Controller
 {
-    private readonly AppDbContext _context;
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
     private readonly IConfiguration _configuration;
@@ -29,7 +28,6 @@ public class RegisterController : Controller
     private readonly AppRefreshTokenService _refreshTokenService;
 
     public RegisterController(
-        AppDbContext context,
         UserManager<AppUser> userManager,
         SignInManager<AppUser> signInManager,
         IConfiguration configuration,
@@ -37,7 +35,6 @@ public class RegisterController : Controller
         InstituteTypeService instituteTypeService,
         AppRefreshTokenService refreshTokenService)
     {
-        _context = context;
         _userManager = userManager;
         _signInManager = signInManager;
         _configuration = configuration;
@@ -194,8 +191,7 @@ public class RegisterController : Controller
                 Expiration = DateTime.UtcNow.AddSeconds(refreshTokenExpiresInSeconds)
             };
             
-            _refreshTokenService.CreateAsync(refreshTokenEntity);
-            await _context.SaveChangesAsync();
+            await _refreshTokenService.CreateAsync(refreshTokenEntity);
 
             return new JWTResponse
             {

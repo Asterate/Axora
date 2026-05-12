@@ -1,34 +1,37 @@
-﻿using App.Domain.Entities;
-using App.Modules.Equipment.Domain;
+﻿// App.Modules.Equipment/Application/Mapper/EquipmentMapper.cs
 
-namespace App.Modules.Lab.Application.Mapper;
+using App.Shared.Domain;
 
-public static class EquipmentLabMapper
+namespace App.Modules.Equipment.Application.Mapper;
+
+public static class EquipmentMapper
 {
     // Entity → List Response
-    public static EquipmentLabListResponse ToEquipmentLabResponse(EquipmentLab entity)
-        => new EquipmentLabListResponse
+    public static EquipmentListResponse ToListResponse(Domain.Equipment entity)
+        => new EquipmentListResponse
         {
             Id = entity.Id,
+            Name = entity.EquipmentName.ToString()
         };
 
     // Entity → Full Response
-    public static EquipmentLabResponse ToResponse(EquipmentLab entity)
-        => new EquipmentLabResponse
+    public static EquipmentResponse ToResponse(Domain.Equipment entity)
+        => new EquipmentResponse
         {
             Id = entity.Id,
+            Name = entity.EquipmentName.ToString(),
         };
 
     // Create Request → Entity
-    public static EquipmentLab ToEntity(CreateEquipmentLabRequest request)
-        => new EquipmentLab
+    public static Domain.Equipment ToEntity(CreateEquipmentRequest request)
+        => new Domain.Equipment
         {
-            Id = request.Id,
+            EquipmentName = new LangStr { ["en"] = request.Name ?? "" },
         };
 
     // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(EquipmentLab entity, UpdateEquipmentLabRequest request)
+    public static void UpdateEntity(Domain.Equipment entity, UpdateEquipmentRequest request)
     {
-        entity.Id = request.Id;
+        entity.EquipmentName = new LangStr { ["en"] = request.Name ?? "" };
     }
 }

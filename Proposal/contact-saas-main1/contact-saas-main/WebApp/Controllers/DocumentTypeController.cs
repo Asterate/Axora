@@ -12,19 +12,17 @@ namespace WebApp.Controllers
     [Authorize(Roles = "admin")]
     public class DocumentTypeController : Controller
     {
-        private readonly AppDbContext _context;
         private readonly DocumentTypeService _documentType;
 
-        public DocumentTypeController(AppDbContext context, DocumentTypeService documentType)
+        public DocumentTypeController(DocumentTypeService documentType)
         {
-            _context = context;
             _documentType = documentType;
         }
 
         // GET: DocumentType
         public async Task<IActionResult> Index()
         {
-            return View(await _context.DocumentTypes.ToListAsync());
+            return View(await _documentType.GetAllAsync());
         }
 
         // GET: DocumentType/Details/5
@@ -35,8 +33,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var documentType = await _context.DocumentTypes
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var documentType = await _documentType.GetByIdAsync(id.Value);
             if (documentType == null)
             {
                 return NotFound();
@@ -68,14 +65,12 @@ namespace WebApp.Controllers
                 description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
                 description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
         
-                var documentType = new DocumentType
+                var documentType = new CreateDocumentTypeRequest
                 {
-                    Name = name,
-                    Description = description
+                    Id = Guid.NewGuid(),
                 };
         
-                _context.Add(documentType);
-                await _context.SaveChangesAsync();
+                await _documentType.CreateAsync(documentType);
                 return RedirectToAction("Index", "LookupData");
             }
             return View(viewModel);
@@ -114,8 +109,8 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(documentType);
-                    await _context.SaveChangesAsync();
+                    var update = new UpdateDocumentTypeRequest(documentType);
+                    await _documentType.UpdateAsync(id, update);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -155,13 +150,12 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var documentType = await _context.DocumentTypes.FindAsync(id);
+            var documentType = await _documentType.GetByIdAsync(id);
             if (documentType != null)
             {
-                _context.DocumentTypes.Remove(documentType);
+                await _documentType.DeleteAsync(id);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction("Index", "LookupData");
         }
 

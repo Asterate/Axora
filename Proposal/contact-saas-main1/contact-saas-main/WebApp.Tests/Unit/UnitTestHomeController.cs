@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using App.DAL.EF;
 using App.Domain.Identity;
+using App.Modules.Identity.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,19 +18,20 @@ public class UnitTestHomeController
 {
     private readonly ITestOutputHelper _testOutputHelper;
     private readonly HomeController _homeController;
-    private readonly AppDbContext _ctx;
+    private readonly IdentityModuleDbContext _ctx;
     private readonly UserManager<AppUser> _userManager;
+    
 
     public UnitTestHomeController(ITestOutputHelper testOutputHelper)
     {
         _testOutputHelper = testOutputHelper;
 
         // set up mock database - inmemory
-        var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+        var optionsBuilder = new DbContextOptionsBuilder<IdentityModuleDbContext>();
             
         // use random guid as db instance id
         optionsBuilder.UseInMemoryDatabase(Guid.NewGuid().ToString());
-        _ctx = new AppDbContext(optionsBuilder.Options);
+        _ctx = new IdentityModuleDbContext(optionsBuilder.Options);
 
         // reset db
         _ctx.Database.EnsureDeleted();

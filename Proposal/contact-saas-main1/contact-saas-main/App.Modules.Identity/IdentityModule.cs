@@ -9,12 +9,8 @@ namespace App.Modules.Identity;
 public static class IdentityModule
 {
     public static IServiceCollection AddIdentityModule(
-        this IServiceCollection services,
-        string connectionString)
+        this IServiceCollection services)
     {
-        services.AddDbContext<IdentityModuleDbContext>(options =>
-            options.UseNpgsql(connectionString));
-
         services.AddScoped<InstituteUserRepository>();
         services.AddScoped<AppRefreshTokenRepository>();
 

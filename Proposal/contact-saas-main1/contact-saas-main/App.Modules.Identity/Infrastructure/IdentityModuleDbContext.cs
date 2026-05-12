@@ -1,26 +1,30 @@
 ﻿using App.Domain.Entities;
 using App.Domain.Identity;
+using App.Shared.Persistence;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Modules.Identity.Infrastructure;
 
-public sealed class IdentityModuleDbContext : IdentityDbContext<AppUser, AppRole, Guid>
+public sealed class IdentityModuleDbContext
+    : IdentityDbContext<AppUser, AppRole, Guid>, IDataProtectionKeyContext
 {
-    public IdentityModuleDbContext(DbContextOptions<IdentityModuleDbContext> options, DbSet<InstituteUser> instituteUser, DbSet<AppRefreshToken> appRefreshToken)
+    public IdentityModuleDbContext(DbContextOptions<IdentityModuleDbContext> options)
         : base(options)
     {
-        InstituteUser = instituteUser;
-        AppRefreshToken = appRefreshToken;
     }
 
-    public DbSet<InstituteUser> InstituteUser { get; set; }
-    public DbSet<AppRefreshToken> AppRefreshToken { get; set; }
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = default!;
+    public DbSet<InstituteUser> InstituteUsers { get; set; } = default!;
+    public DbSet<AppRefreshToken> AppRefreshTokens { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
         builder.HasDefaultSchema("identity");
+        builder.ApplyAppConventions();
         builder.ApplyConfigurationsFromAssembly(typeof(IdentityModuleDbContext).Assembly);
     }
 }

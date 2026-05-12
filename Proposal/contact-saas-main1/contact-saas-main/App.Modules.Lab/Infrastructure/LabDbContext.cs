@@ -1,10 +1,11 @@
 ﻿using App.Domain.Entities;
 using App.Modules.Equipment.Domain;
+using App.Shared.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Modules.Lab.Infrastructure;
 
-internal sealed class LabDbContext : DbContext
+public sealed class LabDbContext : DbContext
 {
     public LabDbContext(DbContextOptions<LabDbContext> options) 
         : base(options) { }
@@ -14,11 +15,19 @@ internal sealed class LabDbContext : DbContext
     public DbSet<ReagentLab> ReagentLabs { get; set; }
     public DbSet<EquipmentLab> EquipmentLabs { get; set; }
     public DbSet<InstituteLab> InstituteLabs { get; set; }
+    public DbSet<Equipment.Domain.Equipment> Equipments { get; set; }
+    public DbSet<EquipmentType> EquipmentTypes { get; set; }
+    public DbSet<Certification> Certifications { get; set; }
+    public DbSet<CertificationType> CertificationTypes { get; set; }
+    public DbSet<EquipmentCertificationType> EquipmentCertificationTypes { get; set; }
+    public DbSet<Domain.Entities.Reagent> Reagents { get; set; }
+    public DbSet<ReagentType> ReagentTypes { get; set; }
    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
         builder.HasDefaultSchema("lab"); // keeps tables organized in DB
+        builder.ApplyAppConventions();
         builder.ApplyConfigurationsFromAssembly(typeof(LabDbContext).Assembly);
     }
 }

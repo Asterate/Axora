@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.Domain.Entities;
+using App.Modules.Equipment.Application.Mapper;
 using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers

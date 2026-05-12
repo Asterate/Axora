@@ -2,13 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using App.BLL.Services;
-using App.DAL.EF;
-using App.Domain.Entities;
+using App.DTO.v1;
 using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
@@ -17,12 +14,10 @@ namespace WebApp.Controllers
     [Authorize]
     public class ProjectController : Controller
     {
-        private readonly AppDbContext _context;
         private readonly IProjectService _projectService;
 
-        public ProjectController(AppDbContext context, IProjectService projectService)
+        public ProjectController(IProjectService projectService)
         {
-            _context = context;
             _projectService = projectService;
         }
 
@@ -67,14 +62,13 @@ namespace WebApp.Controllers
         // GET: Project/Create
         public IActionResult Create()
         {
-            ViewBag.ProjectTypeId = new SelectList(_context.ProjectTypes, "Id", "Name");
             return View();
         }
 
         // POST: Project/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProjectName,Funding,Requirements,RequirementsFilePath,PublicTypeId")] App.DTO.v1.CreateProjectDto dto)
+        public async Task<IActionResult> Create([Bind("ProjectName,Funding,Requirements,RequirementsFilePath,PublicTypeId")] CreateProjectDto dto)
         {
             var userId = GetCurrentUserId();
             if (!userId.HasValue)

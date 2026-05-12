@@ -10,6 +10,7 @@ public class InstituteUserResponse
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }
+    public EInstituteUserRole Role { get; set; }
 }
 
 public class CreateInstituteUserRequest

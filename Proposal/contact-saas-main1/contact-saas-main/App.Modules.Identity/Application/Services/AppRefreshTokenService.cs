@@ -50,4 +50,10 @@ public class AppRefreshTokenService
         _appRefreshToken.Delete(entity);
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
+    public async Task<int> DeleteExpiredByUserIdAsync(Guid userId)
+    {
+        var deleted = await _appRefreshToken.DeleteExpiredByUserIdAsync(userId);
+        await _uow.SaveChangesAsync();
+        return deleted;
+    }
 }

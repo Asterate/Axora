@@ -21,12 +21,10 @@ namespace WebApp.Controllers;
 [Authorize]
 public class HomeDashboardController : Controller
 {
-    private readonly AppDbContext _context;
     private readonly IProjectService _projectService;
     
-    public HomeDashboardController(AppDbContext context, IProjectService projectService)
+    public HomeDashboardController(IProjectService projectService)
     {
-        _context = context;
         _projectService = projectService;
     }
 
@@ -47,7 +45,6 @@ public class HomeDashboardController : Controller
     // GET: HomeDashboard/Create
     public IActionResult Create()
     {
-        ViewData["ProjectTypeId"] = new SelectList(_context.ProjectTypes, "Id", "Name");
         return View();
     }
 
@@ -67,7 +64,6 @@ public class HomeDashboardController : Controller
             await _projectService.CreateAsync(dto, userId.Value);
             return RedirectToAction(nameof(Index));
         }
-        ViewData["ProjectTypeId"] = new SelectList(_context.ProjectTypes, "Id", "Name", dto.ProjectTypeId);
         return View(dto);
     }
 

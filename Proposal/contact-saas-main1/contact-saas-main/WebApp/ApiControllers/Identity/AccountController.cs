@@ -9,6 +9,7 @@ using App.Domain.Entities;
 using App.Domain.Identity;
 using App.DTO.v1;
 using App.DTO.v1.Identity;
+using App.Modules.Identity.Infrastructure;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -35,7 +36,11 @@ public class AccountController : ControllerBase
     private readonly ILogger<AccountController> _logger;
     private readonly SignInManager<AppUser> _signInManager;
     private readonly Random _random = new Random();
-    private readonly AppDbContext _context;
+    private readonly IdentityModuleDbContext _context;
+    private readonly AppRefreshTokenService _refreshTokenService;
+    private readonly InstituteTypeService _instituteTypeService;
+    private readonly InstituteService _instituteService;
+    private readonly InstituteUserService _instituteUserService;
 
     private const string UserPassProblem = "User/Password problem";
     private const int RandomDelayMin = 500;
@@ -53,13 +58,19 @@ public class AccountController : ControllerBase
     /// Constructor
     /// </summary>
     public AccountController(IConfiguration configuration, UserManager<AppUser> userManager,
-        SignInManager<AppUser> signInManager, ILogger<AccountController> logger, AppDbContext context)
+        SignInManager<AppUser> signInManager, ILogger<AccountController> logger, IdentityModuleDbContext context,
+        AppRefreshTokenService refreshTokenService, InstituteTypeService instituteTypeService, InstituteService instituteService,
+        InstituteUserService instituteUserService)
     {
         _configuration = configuration;
         _userManager = userManager;
         _signInManager = signInManager;
         _logger = logger;
         _context = context;
+        _refreshTokenService = refreshTokenService;
+        _instituteTypeService = instituteTypeService;
+        _instituteService = instituteService;
+        _instituteUserService = instituteUserService;
     }
 
     /// <summary>
@@ -106,10 +117,7 @@ public class AccountController : ControllerBase
         var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
         if (!_context.Database.ProviderName!.Contains("InMemory"))
         {
-            var deletedRows = await _context
-                .RefreshTokens
-                .Where(t => t.UserId == appUser.Id && t.Expiration < DateTime.UtcNow)
-                .ExecuteDeleteAsync();
+            var deletedRows = await _refreshTokenService.DeleteExpiredByUserIdAsync(appUser.Id);
             _logger.LogInformation("Deleted {} refresh tokens", deletedRows);
         }
         else
@@ -117,12 +125,12 @@ public class AccountController : ControllerBase
             //TODO: inMemory delete for testing
         }
 
-        var refreshToken = new AppRefreshToken()
+        var refreshToken = new CreateAppRefreshTokenRequest
         {
             UserId = appUser.Id,
             Expiration = GetExpirationDateTime(refreshTokenExpiresInSeconds, SettingsJWTRefreshTokenExpiresInSeconds)
         };
-        _context.RefreshTokens.Add(refreshToken);
+        await _refreshTokenService.CreateAsync(refreshToken);
         await _context.SaveChangesAsync();
 
 
@@ -206,13 +214,13 @@ public class AccountController : ControllerBase
                 }
                 
                 // Get institute type
-                var instituteType = await _context.InstituteTypes.FindAsync(registerModel.NewInstitute.InstituteTypeId);
+                var instituteType = await _instituteTypeService.GetByIdAsync(registerModel.NewInstitute.InstituteTypeId);
                 if (instituteType == null)
                 {
                     return BadRequest(new App.Dto.v1.Message("Invalid institute type"));
                 }
                 
-                institute = new App.Domain.Entities.Institute
+                var instituteCreate = new CreateInstituteRequest
                 {
                     Id = Guid.NewGuid(),
                     InstituteName = registerModel.NewInstitute.InstituteName,
@@ -220,12 +228,11 @@ public class AccountController : ControllerBase
                     InstituteAddress = registerModel.NewInstitute.InstituteAddress,
                     InstitutePhoneNumber = registerModel.NewInstitute.InstitutePhoneNumber,
                     InstituteTypeId = registerModel.NewInstitute.InstituteTypeId,
-                    InstituteType = instituteType,
                     CreatedAt = DateTime.UtcNow,
                     Active = true
                 };
-                _context.Institutes.Add(institute);
-                _logger.LogInformation("New institute {InstituteName} created for {Email}", institute.InstituteName, appUser.Email);
+                await _instituteService.CreateAsync(instituteCreate);
+                _logger.LogInformation("New institute {InstituteName} created for {Email}", instituteCreate.InstituteName, appUser.Email);
             }
             else if (registerModel.InstituteSelection == App.DTO.v1.Identity.InstituteSelectionType.SelectExisting)
             {
@@ -235,7 +242,7 @@ public class AccountController : ControllerBase
                     return BadRequest(new App.Dto.v1.Message("Institute ID is required when selecting an existing institute"));
                 }
                 
-                institute = await _context.Institutes.FindAsync(registerModel.InstituteId);
+                institute = await _instituteService.GetByIdAsync(registerModel.InstituteId.Value);
                 if (institute == null)
                 {
                     return BadRequest(new App.Dto.v1.Message("Institute not found"));
@@ -245,23 +252,22 @@ public class AccountController : ControllerBase
             else
             {
                 // Fallback: use default institute
-                institute = _context.Institutes.FirstOrDefault();
-                if (institute == null)
+                var instituteAll = _instituteService.GetAllAsync();
+                if (instituteAll == null)
                 {
                     return BadRequest(new App.Dto.v1.Message("No institutes available. Please create one first."));
                 }
             }
 
             // Create InstituteUser linking user to institute
-            var instituteUser = new App.Domain.Entities.InstituteUser
+            var instituteUser = new CreateInstituteUserRequest
             {
                 Id = Guid.NewGuid(),
                 InstituteId = institute.Id,
-                User = appUser,
+                UserId = appUser.Id,
                 Role = App.Domain.Entities.EInstituteUserRole.Employee
             };
-            _context.InstituteUsers.Add(instituteUser);
-            await _context.SaveChangesAsync();
+            await _instituteUserService.CreateAsync(instituteUser);
             
             // Sync user roles based on InstituteUser role
             await App.Helpers.UserRoleHelper.SyncCompanyUserRolesToIdentityAsync(_userManager, appUser, instituteUser.Role);
@@ -446,7 +452,7 @@ public class AccountController : ControllerBase
 
         foreach (var appRefreshToken in appUser.RefreshTokens!)
         {
-            _context.RefreshTokens.Remove(appRefreshToken);
+            await _refreshTokenService.DeleteAsync(appRefreshToken.Id);
         }
 
         var deleteCount = await _context.SaveChangesAsync();
@@ -476,7 +482,7 @@ public class AccountController : ControllerBase
                 ? null
                 : Guid.Parse(setInstitute.NewInstitute.InstituteTypeId);
 
-            institute = new Institute
+            institute = new CreateInstituteRequest
             {
                 Id = Guid.NewGuid(),
                 InstituteName = setInstitute.NewInstitute!.InstituteName,
@@ -488,7 +494,7 @@ public class AccountController : ControllerBase
                 CreatedAt = DateTime.UtcNow
             };
 
-            _context.Institutes.Add(institute);
+            await _instituteService.CreateAsync(institute);
             await _context.SaveChangesAsync();
         }
         else

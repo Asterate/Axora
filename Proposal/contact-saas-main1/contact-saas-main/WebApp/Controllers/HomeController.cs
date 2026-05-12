@@ -1,17 +1,11 @@
-using System;
 using System.Diagnostics;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using App.DAL.EF;
-using App.Domain.Entities;
 using App.Domain.Identity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using WebApp.Helpers;
 using WebApp.ViewModels;
 
 namespace WebApp.Controllers;
@@ -20,23 +14,26 @@ namespace WebApp.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly AppDbContext _context;
     private readonly UserManager<AppUser> _userManager;
-    public HomeController(AppDbContext context, ILogger<HomeController> logger , UserManager<AppUser> userManager)
+    private readonly ProjectService _projectService;
+    private readonly InstituteUserService _instituteUserService;
+    public HomeController(ILogger<HomeController> logger , UserManager<AppUser> userManager, ProjectService projectService,
+        InstituteUserService instituteUserService)
     {
         _logger = logger;
-        _context = context;
         _userManager = userManager;
+        _projectService = projectService;
+        _instituteUserService = instituteUserService;
     }
 
     public async Task<IActionResult> Index()
     {
         if (User.Identity?.IsAuthenticated == true)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var hasInstitute = await _context.InstituteUsers
-                .AnyAsync(iu => iu.User.Id.ToString() == userId);
-            var user = await _userManager.FindByIdAsync(userId!);
+            var userName = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.UserId();
+            var hasInstitute = await _instituteUserService.HasInstituteAsync(userId);
+            var user = await _userManager.FindByIdAsync(userName!);
             if (user != null)
             {
                 user.LastSeen = DateTimeOffset.UtcNow;
@@ -51,9 +48,9 @@ public class HomeController : Controller
     }
 
 
-    public IActionResult HomeDashboard()
+    public async Task<IActionResult> HomeDashboard()
     {
-        var projects = _context.Projects.ToList() ?? new List<Project>(); // never null
+        var projects = await _projectService.GetAllAsync(); // never null
         return View("Views/AppPages/HomeDashboard/HomeDashboard.cshtml", projects);
     }
 
