@@ -59,7 +59,7 @@ public class LabTypeService
             .Select(t => new LookupItem
             {
                 Id = t.Id,
-                Name = t.Name?.Translate(culture) ?? "???"
+                Name = t.GetName(culture) ?? "???"
             }).ToList();
     }
 }

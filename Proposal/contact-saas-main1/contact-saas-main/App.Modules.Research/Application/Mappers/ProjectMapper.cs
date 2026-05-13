@@ -21,6 +21,11 @@ public static class ProjectMapper
         => new Domain.Entities.Project
         {
             Id = request.Id,
+            ProjectTypeId = request.ProjectTypeId,  // ← Missing!
+            ProjectName = request.ProjectName ?? string.Empty,
+            Funding = request.Funding,
+            Requirements = request.Requirements,
+            RequirementsFilePath = request.RequirementsFilePath
         };
 
     // Update Request → existing Entity (modifies in place)

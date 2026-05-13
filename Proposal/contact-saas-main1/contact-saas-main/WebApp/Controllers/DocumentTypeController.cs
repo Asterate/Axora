@@ -68,6 +68,10 @@ namespace WebApp.Controllers
                 var documentType = new CreateDocumentTypeRequest
                 {
                     Id = Guid.NewGuid(),
+                    NameEn = viewModel.NameEn,
+                    NameEt = viewModel.NameEt,
+                    DescriptionEn = viewModel.DescriptionEn,
+                    DescriptionEt = viewModel.DescriptionEt
                 };
         
                 await _documentType.CreateAsync(documentType);

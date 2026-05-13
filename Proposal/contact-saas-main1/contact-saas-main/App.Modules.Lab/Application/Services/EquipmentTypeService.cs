@@ -58,7 +58,7 @@ public class EquipmentTypeService
             .Select(t => new LookupItem
             {
                 Id = t.Id,
-                Name = t.Name?.Translate(culture) ?? "???"
+                Name = t.GetName(culture) ?? "???"
             }).ToList();
     }
 }

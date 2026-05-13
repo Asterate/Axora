@@ -46,25 +46,19 @@ namespace WebApp.Controllers
         }
 
         // POST: TaskType/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TaskTypeViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                var taskTypeName = new LangStr();
-                taskTypeName.SetTranslation(viewModel.TaskTypeNameEn, "en");
-                taskTypeName.SetTranslation(viewModel.TaskTypeNameEt, "et");
-                
-                var taskTypeDescription = new LangStr();
-                taskTypeDescription.SetTranslation(viewModel.TaskTypeDescriptionEn ?? string.Empty, "en");
-                taskTypeDescription.SetTranslation(viewModel.TaskTypeDescriptionEt ?? string.Empty, "et");
-                
-                var taskType = new CreateExperimentTaskTypeRequest()
+                var taskType = new CreateExperimentTaskTypeRequest
                 {
                     Id = Guid.NewGuid(),
+                    NameEn = viewModel.TaskTypeNameEn,
+                    NameEt = viewModel.TaskTypeNameEt,
+                    DescriptionEn = viewModel.TaskTypeDescriptionEn,
+                    DescriptionEt = viewModel.TaskTypeDescriptionEt
                 };
                 await _experimentTaskTypeService.CreateAsync(taskType);
                 return RedirectToAction("Index", "LookupData");
@@ -90,15 +84,15 @@ namespace WebApp.Controllers
             var viewModel = new TaskTypeViewModel
             {
                 Id = taskType.Id,
-                TaskTypeNameEn = taskType.Name ?? string.Empty,
-                TaskTypeNameEt = taskType.Name ?? string.Empty,
+                TaskTypeNameEn = taskType.NameEn ?? string.Empty,
+                TaskTypeNameEt = taskType.NameEt ?? string.Empty,
+                TaskTypeDescriptionEn = taskType.DescriptionEn,
+                TaskTypeDescriptionEt = taskType.DescriptionEt
             };
             return View(viewModel);
         }
 
         // POST: TaskType/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, TaskTypeViewModel viewModel)
@@ -107,18 +101,13 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                var name = new LangStr();
-                name.SetTranslation(viewModel.TaskTypeNameEn, "en");
-                name.SetTranslation(viewModel.TaskTypeNameEt, "et");
-
-                var description = new LangStr();
-                description.SetTranslation(viewModel.TaskTypeDescriptionEn ?? string.Empty, "en");
-                description.SetTranslation(viewModel.TaskTypeDescriptionEt ?? string.Empty, "et");
-
                 var update = new UpdateExperimentTaskTypeRequest
                 {
                     Id = id,
-                    Name = name,
+                    NameEn = viewModel.TaskTypeNameEn,
+                    NameEt = viewModel.TaskTypeNameEt,
+                    DescriptionEn = viewModel.TaskTypeDescriptionEn,
+                    DescriptionEt = viewModel.TaskTypeDescriptionEt
                 };
                 await _experimentTaskTypeService.UpdateAsync(id, update);
                 return RedirectToAction("Index", "LookupData");

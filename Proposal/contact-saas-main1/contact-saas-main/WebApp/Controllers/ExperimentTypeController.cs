@@ -66,7 +66,11 @@ namespace WebApp.Controllers
                 
                 var experimentType = new CreateExperimentTypeRequest()
                 {
-                    Name = name,
+                    Id = Guid.NewGuid(),
+                    NameEn = viewModel.NameEn,
+                    NameEt = viewModel.NameEt,
+                    DescriptionEn = viewModel.DescriptionEn,
+                    DescriptionEt = viewModel.DescriptionEt
                 };
                 
                 await _experimentTypeService.CreateAsync(experimentType);

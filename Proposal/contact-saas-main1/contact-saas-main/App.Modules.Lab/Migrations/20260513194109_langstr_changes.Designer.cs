@@ -3,6 +3,7 @@ using System;
 using App.Modules.Lab.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace App.Modules.Lab.Migrations
 {
     [DbContext(typeof(LabDbContext))]
-    partial class LabDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260513194109_langstr_changes")]
+    partial class langstr_changes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
