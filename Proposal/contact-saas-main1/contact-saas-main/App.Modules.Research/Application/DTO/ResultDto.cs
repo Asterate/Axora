@@ -3,7 +3,9 @@
 public class ResultListResponse
 {
     public Guid Id { get; set; }
-    public string? Name { get; set; }
+    public string? ResultName { get; set; }
+    public string? ResultDescription { get; set; }
+    public DateTime CreatedAt { get; set; }
 }
 
 public class ResultResponse

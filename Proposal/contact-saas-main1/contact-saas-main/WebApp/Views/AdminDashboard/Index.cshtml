@@ -83,7 +83,7 @@
                     </td>
                     <td>@log.Message</td>
                     <td>@(log.UserName ?? "-")</td>
-                    <td>@(log.StatusCode?.ToString() ?? "-")</td>
+                    <td>@(log.StatusCode.ToString() ?? "-")</td>
                 </tr>
             }
         }

@@ -1,4 +1,5 @@
 ﻿using App.Modules.Equipment.Domain;
+using App.Modules.Lab.Domain;
 using App.Shared.Contracts;
 namespace App.Modules.Equipment.Application.Interfaces;
 

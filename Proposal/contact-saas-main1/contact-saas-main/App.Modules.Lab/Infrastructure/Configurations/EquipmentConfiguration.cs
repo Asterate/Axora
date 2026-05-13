@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace App.Modules.Equipment.Infrastructure.Configurations;
 
-internal sealed class EquipmentConfiguration : IEntityTypeConfiguration<Domain.Equipment>
+internal sealed class EquipmentConfiguration : IEntityTypeConfiguration<Lab.Domain.Equipment>
 {
-    public void Configure(EntityTypeBuilder<Domain.Equipment> builder)
+    public void Configure(EntityTypeBuilder<Lab.Domain.Equipment> builder)
     {
         builder.Property(c => c.EquipmentName)
             .HasMaxLength(128);

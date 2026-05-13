@@ -1,5 +1,6 @@
 ﻿using App.Modules.Equipment.Application.Interfaces;
 using App.Modules.Equipment.Domain;
+using App.Modules.Lab.Domain;
 using App.Modules.Lab.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 

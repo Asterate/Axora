@@ -2,7 +2,7 @@
 
 namespace App.Modules.Lab.Application.Interfaces;
 
-public interface ILabRepository : IBaseRepository<Domain.Entities.Lab>
+public interface ILabRepository : IBaseRepository<App.Domain.Entities.Lab>
 {
     
 }

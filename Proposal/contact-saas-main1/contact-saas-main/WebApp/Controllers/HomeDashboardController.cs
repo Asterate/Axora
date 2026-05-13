@@ -10,6 +10,7 @@ using App.BLL.Services;
 using App.DAL.EF;
 using App.Domain.Entities;
 using App.DTO.v1;
+using App.Modules.Research;
 using WebApp.ViewModels;
 using InstituteEntity = App.Domain.Entities.Institute;
 using Lab = App.Domain.Entities.Lab;
@@ -38,7 +39,7 @@ public class HomeDashboardController : Controller
         }
 
         var projectDtos = await _projectService.GetAllAsync(userId.Value);
-        var projects = projectDtos.Select(p => new Project { Id = p.Id, ProjectName = p.ProjectName, Funding = p.Funding, Requirements = p.Requirements ?? string.Empty, RequirementsFilePath = p.RequirementsFilePath, ProjectTypeId = p.ProjectTypeId }).ToList();
+        var projects = projectDtos.Select(p => new Project { Id = p.Id}).ToList();
         return View("HomeDashboard", projects);
     }
 
@@ -51,7 +52,7 @@ public class HomeDashboardController : Controller
     // POST: HomeDashboard/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CreateProjectDto dto)
+    public async Task<IActionResult> Create(CreateProjectRequest dto)
     {
         var userId = GetCurrentUserId();
         if (!userId.HasValue)

@@ -5,6 +5,8 @@ public class DocumentListResponse
     public Guid Id { get; set; }
     public string? DocumentName { get; set; }
     public string? DocumentType { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public string? Description { get; set; }
 }
 
 public class DocumentResponse

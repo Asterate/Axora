@@ -3,7 +3,12 @@
 public class ScheduleListResponse
 {
     public Guid Id { get; set; }
-    public string? Name { get; set; }
+    public string? ScheduleName { get; set; }
+    public string? Status { get; set; }
+    public DateTime StartTime { get; set; }
+    public DateTime EndTime { get; set; }
+    public string? ExperimentTask { get; set; }
+    public string? Lab { get; set; }
 }
 
 public class ScheduleResponse

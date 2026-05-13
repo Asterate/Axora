@@ -1,4 +1,4 @@
-@model WebApp.Controllers.ScheduleDashboardViewModel
+@model WebApp.ViewModels.ScheduleDashboardViewModel
 @using App.Resources.Views.ScheduleDashboard
 
 @{
@@ -39,8 +39,6 @@
                                 <td>@schedule.Status</td>
                                 <td>@schedule.StartTime.ToShortDateString()</td>
                                 <td>@schedule.EndTime.ToShortDateString()</td>
-                                <td>@schedule.ExperimentTask?.TaskName</td>
-                                <td>@schedule.Lab?.LabName</td>
                                 <td>
                                     <a asp-controller="Schedule" asp-action="Edit" asp-route-id="@schedule.Id">@ScheduleDashboardIndex.Edit</a> |
                                     <a asp-controller="Schedule" asp-action="Details" asp-route-id="@schedule.Id">@ScheduleDashboardIndex.Details</a> |

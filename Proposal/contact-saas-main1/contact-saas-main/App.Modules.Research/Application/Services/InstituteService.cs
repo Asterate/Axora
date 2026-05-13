@@ -101,6 +101,11 @@ public class InstituteService
     {
         var entities = await _instituteRepo.GetAllAsync();
         return entities.FirstOrDefault(i => i.Active && i.DeletedAt == null);
+    } 
+    public async Task<Institute?> GetFirstActiveByIdAsync(Guid id)
+    {
+        var entities = await _instituteRepo.GetAllAsync();
+        return entities.FirstOrDefault(i => i.Id == id && i.DeletedAt == null && i.Active);
     }
     public async Task<List<LookupItem>> GetActivesAsync(string? culture = null)
     {

@@ -59,18 +59,6 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Experiment.ExperimentName)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TaskType)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TaskType.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AssignedUser)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AssignedUser!.Id)
-        </dd>
     </dl>
     
     <form asp-action="Delete">

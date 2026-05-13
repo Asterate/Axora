@@ -35,7 +35,7 @@
                         {
                             <tr>
                                 <td>@experiment.ExperimentName</td>
-                                <td>@experiment.ExperimentType?.Name</td>
+                                <td>@experiment.ExperimentType?</td>
                                 <td>@experiment.CreatedAt.ToShortDateString()</td>
                                 <td>
                                     <a asp-controller="Experiment" asp-action="Edit" asp-route-id="@experiment.Id">@ProjectDashboardIndex.Edit</a> |

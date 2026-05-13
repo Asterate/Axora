@@ -4,12 +4,16 @@ public class ExperimentListResponse
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }
+    public string? ExperimentName { get; set; }
+    public string? ExperimentType { get; set; }
+    public DateTime CreatedAt { get; set; }
 }
 
 public class ExperimentResponse
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }
+    
 }
 
 public class CreateExperimentRequest

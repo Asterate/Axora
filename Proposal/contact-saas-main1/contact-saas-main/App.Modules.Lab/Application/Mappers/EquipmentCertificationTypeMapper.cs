@@ -1,6 +1,7 @@
 ﻿// App.Modules.Equipment/Application/Mapper/EquipmentMapper.cs
 
 using App.Modules.Equipment.Domain;
+using App.Modules.Lab.Domain;
 using App.Shared.Domain;
 
 namespace App.Modules.Equipment.Application.Mapper;

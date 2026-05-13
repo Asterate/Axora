@@ -242,7 +242,7 @@ public class AccountController : ControllerBase
                     return BadRequest(new App.Dto.v1.Message("Institute ID is required when selecting an existing institute"));
                 }
                 
-                institute = await _instituteService.GetByIdAsync(registerModel.InstituteId.Value);
+                institute = await _instituteService.GetEntityByIdAsync(registerModel.InstituteId.Value);
                 if (institute == null)
                 {
                     return BadRequest(new App.Dto.v1.Message("Institute not found"));
@@ -260,12 +260,16 @@ public class AccountController : ControllerBase
             }
 
             // Create InstituteUser linking user to institute
+            if (institute == null)
+            {
+                return BadRequest(new App.Dto.v1.Message("Institute could not be resolved"));
+            }
             var instituteUser = new CreateInstituteUserRequest
             {
                 Id = Guid.NewGuid(),
                 InstituteId = institute.Id,
                 UserId = appUser.Id,
-                Role = App.Domain.Entities.EInstituteUserRole.Employee
+                Role = EInstituteUserRole.Employee
             };
             await _instituteUserService.CreateAsync(instituteUser);
             
@@ -482,7 +486,7 @@ public class AccountController : ControllerBase
                 ? null
                 : Guid.Parse(setInstitute.NewInstitute.InstituteTypeId);
 
-            institute = new CreateInstituteRequest
+            var instituteCreate  = new CreateInstituteRequest
             {
                 Id = Guid.NewGuid(),
                 InstituteName = setInstitute.NewInstitute!.InstituteName,
@@ -494,7 +498,7 @@ public class AccountController : ControllerBase
                 CreatedAt = DateTime.UtcNow
             };
 
-            await _instituteService.CreateAsync(institute);
+            institute = await _instituteService.CreateAndReturnAsync(instituteCreate);
             await _context.SaveChangesAsync();
         }
         else
@@ -510,9 +514,7 @@ public class AccountController : ControllerBase
                 return BadRequest(new App.Dto.v1.Message("Invalid institute ID format"));
             }
             
-            institute = await _context.Institutes
-                .Where(i => i.Id == instituteGuid && i.Active)
-                .FirstOrDefaultAsync();
+            institute = await _instituteService.GetFirstActiveByIdAsync(instituteGuid);
             
             if (institute == null)
             {

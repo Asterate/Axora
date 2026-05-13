@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using App.Domain;
 using App.Domain.Entities;
 using App.Modules.Equipment.Domain;
+using App.Modules.Lab.Domain;
 using App.Shared.Domain;
 
 namespace WebApp.ViewModels;

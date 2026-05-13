@@ -30,7 +30,7 @@
         {
             <tr>
                 <td>@document.DocumentName</td>
-                <td>@document.DocumentType?.Description</td>
+                <td>@document.DocumentType?</td>
                 <td>@document.CreatedAt.ToShortDateString()</td>
                 <td>
                     <a asp-controller="Document" asp-action="Edit" asp-route-id="@document.Id">@Index.Edit</a> |

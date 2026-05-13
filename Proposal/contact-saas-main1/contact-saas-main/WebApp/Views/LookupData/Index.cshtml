@@ -172,9 +172,8 @@
             {
                 @foreach (var item in Model.TaskTypes)
                 {
-                    <tr data-name="@($"{item.Name} {item.Description}".ToLower())">
+                    <tr data-name="@($"{item.Name}".ToLower())">
                         <td>@item.Name</td>
-                        <td>@item.Description</td>
                         <td>
                             <a asp-controller="TaskType" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">@LookupDataIndex.Edit</a>
                             <a asp-controller="TaskType" asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">@LookupDataIndex.Details</a>

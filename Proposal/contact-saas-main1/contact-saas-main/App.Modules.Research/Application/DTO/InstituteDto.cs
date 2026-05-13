@@ -5,6 +5,11 @@ public class InstituteListResponse
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }
+    public string? InstituteName { get; set; }
+    public string? InstituteAddress { get; set; }
+    public string? InstituteCountry { get; set; }
+    public string? InstitutePhoneNumber { get; set; }
+    public bool Active { get; set; }
 }
 
 public class InstituteResponse

@@ -7,7 +7,7 @@ namespace App.Modules.Equipment.Application.Mapper;
 public static class EquipmentMapper
 {
     // Entity → List Response
-    public static EquipmentListResponse ToListResponse(Domain.Equipment entity)
+    public static EquipmentListResponse ToListResponse(Lab.Domain.Equipment entity)
         => new EquipmentListResponse
         {
             Id = entity.Id,
@@ -15,7 +15,7 @@ public static class EquipmentMapper
         };
 
     // Entity → Full Response
-    public static EquipmentResponse ToResponse(Domain.Equipment entity)
+    public static EquipmentResponse ToResponse(Lab.Domain.Equipment entity)
         => new EquipmentResponse
         {
             Id = entity.Id,
@@ -23,14 +23,14 @@ public static class EquipmentMapper
         };
 
     // Create Request → Entity
-    public static Domain.Equipment ToEntity(CreateEquipmentRequest request)
-        => new Domain.Equipment
+    public static Lab.Domain.Equipment ToEntity(CreateEquipmentRequest request)
+        => new Lab.Domain.Equipment
         {
             EquipmentName = new LangStr { ["en"] = request.Name ?? "" },
         };
 
     // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(Domain.Equipment entity, UpdateEquipmentRequest request)
+    public static void UpdateEntity(Lab.Domain.Equipment entity, UpdateEquipmentRequest request)
     {
         entity.EquipmentName = new LangStr { ["en"] = request.Name ?? "" };
     }

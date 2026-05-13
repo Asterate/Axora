@@ -1,4 +1,4 @@
-﻿namespace App.BLL.Services;
+﻿namespace App.Modules.Research;
 // TODO: Replace AppDbContext with IUnitOfWork after repositories are implemented
 
 

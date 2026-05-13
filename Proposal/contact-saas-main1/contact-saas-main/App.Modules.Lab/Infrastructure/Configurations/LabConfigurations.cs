@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace App.Modules.Lab.Infrastructure.Configurations;
 
-internal sealed class LabConfiguration : IEntityTypeConfiguration<Domain.Entities.Lab> 
+internal sealed class LabConfiguration : IEntityTypeConfiguration<App.Domain.Entities.Lab> 
 {
-    public void Configure(EntityTypeBuilder<Domain.Entities.Lab> builder)
+    public void Configure(EntityTypeBuilder<App.Domain.Entities.Lab> builder)
     {
         builder.Property(x => x.Id)
             .IsRequired();

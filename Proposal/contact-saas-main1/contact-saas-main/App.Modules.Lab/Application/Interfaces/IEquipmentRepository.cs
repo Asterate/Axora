@@ -1,11 +1,10 @@
 ﻿using App.Shared.Contracts;
-using EquipmentEntity = App.Modules.Equipment.Domain.Equipment;
 
 namespace App.Modules.Equipment.Application.Interfaces;
 //TODO: Figure out the stupid Domain.Equipment thing
-public interface IEquipmentRepository : IBaseRepository<EquipmentEntity>
+public interface IEquipmentRepository : IBaseRepository<Lab.Domain.Equipment>
 {
-    Task<IEnumerable<EquipmentEntity>> GetAllWithTypeAsync();
-    Task<EquipmentEntity?> GetByIdWithTypeAsync(Guid id);
+    Task<IEnumerable<Lab.Domain.Equipment>> GetAllWithTypeAsync();
+    Task<Lab.Domain.Equipment?> GetByIdWithTypeAsync(Guid id);
     
 }

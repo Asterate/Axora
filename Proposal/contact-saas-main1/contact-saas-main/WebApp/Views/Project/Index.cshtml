@@ -1,9 +1,6 @@
-@using App.DTO.v1
-@model IEnumerable<App.DTO.v1.ProjectDto>
-
+@model IEnumerable<ProjectResponse>
 @{
     ViewData["Title"] = "Projects";
-    var items = Model == null ? new List<ProjectDto>() : Model.ToList();
 }
 
 <!-- Recent News Section -->
@@ -13,18 +10,10 @@
     </div>
     <div class="card-body">
         <ul class="list-unstyled mb-0">
-            <li class="mb-2">
-                <strong>April 15, 2026</strong> - New research grant approved for Climate Change Analysis project
-            </li>
-            <li class="mb-2">
-                <strong>April 10, 2026</strong> - Team Alpha completes Milestone 1 ahead of schedule
-            </li>
-            <li class="mb-2">
-                <strong>April 5, 2026</strong> - Annual project review meeting scheduled for April 20th
-            </li>
-            <li class="mb-0">
-                <strong>March 28, 2026</strong> - Bioinformatics Initiative project receives additional funding
-            </li>
+            <li class="mb-2"><strong>April 15, 2026</strong> - New research grant approved</li>
+            <li class="mb-2"><strong>April 10, 2026</strong> - Team Alpha completes Milestone 1</li>
+            <li class="mb-2"><strong>April 5, 2026</strong> - Annual project review meeting scheduled</li>
+            <li class="mb-0"><strong>March 28, 2026</strong> - Bioinformatics Initiative receives additional funding</li>
         </ul>
     </div>
 </div>
@@ -43,14 +32,11 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in items) {
+    @foreach (var item in Model)
+    {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProjectName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Requirements)
-            </td>
+            <td>@Html.DisplayFor(modelItem => item.ProjectName)</td>
+            <td>@Html.DisplayFor(modelItem => item.Requirements)</td>
             <td>
                 @if (item.Funding.HasValue)
                 {

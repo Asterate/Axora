@@ -1,6 +1,7 @@
-﻿using App.Shared.Domain;
+﻿using App.Modules.Equipment.Domain;
+using App.Shared.Domain;
 
-namespace App.Modules.Equipment.Domain;
+namespace App.Modules.Lab.Domain;
 
 public class EquipmentCertificationType : BaseEntity
 {

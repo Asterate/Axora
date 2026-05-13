@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using App.BLL.Services;
 using App.DTO.v1;
+using App.Modules.Research;
 using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
@@ -68,7 +69,7 @@ namespace WebApp.Controllers
         // POST: Project/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProjectName,Funding,Requirements,RequirementsFilePath,PublicTypeId")] CreateProjectDto dto)
+        public async Task<IActionResult> Create([Bind("ProjectName,Funding,Requirements,RequirementsFilePath,PublicTypeId")] CreateProjectRequest dto)
         {
             var userId = GetCurrentUserId();
             if (!userId.HasValue)
@@ -114,7 +115,7 @@ namespace WebApp.Controllers
         // POST: Project/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("ProjectName,Funding,Requirements,RequirementsFilePath,ProjectTypeId")] App.DTO.v1.UpdateProjectRequest dto)
+        public async Task<IActionResult> Edit(Guid id, [Bind("ProjectName,Funding,Requirements,RequirementsFilePath,ProjectTypeId")] UpdateProjectRequest dto)
         {
             // Note: id comes from route, dto doesn't have Id (as per CreateProjectDto definition)
             // The service will validate ownership using the route id parameter

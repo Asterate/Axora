@@ -1,5 +1,6 @@
 ﻿using App.Modules.Experiment.Application.Interfaces;
 using App.Modules.Experiment.Infrastructure.Repositories;
+using App.Modules.Institute.Application.Interfaces;
 using App.Modules.Institute.Infrastructure.Repositories;
 using App.Modules.Lab.Infrastructure;
 using App.Modules.Lab.Infrastructure.Repositories;
@@ -23,9 +24,9 @@ public static class ProjectDbModule
         services.AddScoped<IDocumentResultRepository, DocumentResultRepository>();
         services.AddScoped<IResultRepository, ResultRepository>();
         services.AddScoped<IScheduleRepository, ScheduleRepository>();
-        services.AddScoped<InstituteRepository>();
-        services.AddScoped<InstituteProjectRepository>();
-        services.AddScoped<InstituteTypeRepository>();
+        services.AddScoped<IInstituteRepository, InstituteRepository>();
+        services.AddScoped<IInstituteProjectRepository, InstituteProjectRepository>();
+        services.AddScoped<IInstituteTypeRepository, InstituteTypeRepository>();
         services.AddScoped<IExperimentRepository, ExperimentRepository>();
         services.AddScoped<IExperimentTypeRepository, ExperimentTypeRepository>();
         services.AddScoped<IExperimentTaskRepository, ExperimentTaskRepository>();
