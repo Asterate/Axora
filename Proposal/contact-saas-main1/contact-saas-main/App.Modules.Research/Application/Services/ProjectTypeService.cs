@@ -52,14 +52,14 @@ public class ProjectTypeService
     }
     // ExperimentTypeService
     public async Task<List<LookupItem>> GetActivesAsync(string? culture = null)
-    {
-        var entities = await _projectType.GetAllAsync();
-        return entities
-            .Where(t => t.DeletedAt == null)
-            .Select(t => new LookupItem
-            {
-                Id = t.Id,
-                Name = t.Name?.Translate(culture) ?? "???"
-            }).ToList();
-    }
+     {
+         var entities = await _projectType.GetAllAsync();
+         return entities
+             .Where(t => t.DeletedAt == null)
+             .Select(t => new LookupItem
+             {
+                 Id = t.Id,
+                 Name = t.GetName(culture) ?? "???"
+             }).ToList();
+     }
 }

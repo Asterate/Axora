@@ -10,12 +10,12 @@ public static class DocumentMapper
         {
             Id = entity.Id,
             DocumentName = entity.DocumentName,
-            DocumentType = entity.DocumentType?.Name.ToString()
+            DocumentType = entity.DocumentType?.Name
         };
 
     // Entity → Full Response
     public static DocumentResponse ToResponse(Document entity)
-        => new DocumentResponse
+        => new ()
         {
             Id = entity.Id,
         };

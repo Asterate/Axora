@@ -74,7 +74,7 @@ public class ExperimentTaskService
             .Select(t => new LookupItem
             {
                 Id = t.Id,
-                Name = t.TaskName?.Translate(culture) ?? "???"
+                Name = t.GetTaskName(culture) ?? "???"
             }).ToList();
     }
     public async Task DeleteAsync(Guid id)

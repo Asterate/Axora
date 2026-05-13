@@ -1,4 +1,5 @@
-﻿using App.Domain.Entities;
+﻿using System.Text.Json;
+using App.Domain.Entities;
 using App.Shared.Domain;
 
 namespace App.Modules.Institute.Application.Mapper;
@@ -10,7 +11,7 @@ public static class InstituteTypeMapper
         => new InstituteTypeListResponse
         {
             Id = entity.Id,
-            Name = entity.Name.ToString()
+            Name = entity.GetName()
         };
 
     // Entity → Full Response
@@ -18,19 +19,19 @@ public static class InstituteTypeMapper
         => new InstituteTypeResponse
         {
             Id = entity.Id,
-            Name = entity.Name.ToString(),
+            Name = entity.GetName(),
         };
 
     // Create Request → Entity
     public static InstituteType ToEntity(CreateInstituteTypeRequest request)
         => new InstituteType
         {
-            Name = new LangStr { ["en"] = request.Name ?? "" },
+            Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.Name ?? "" }),
         };
 
     // Update Request → existing Entity (modifies in place)
     public static void UpdateEntity(InstituteType entity, UpdateInstituteTypeRequest request)
     {
-        entity.Name = new LangStr { ["en"] = request.Name ?? "" };
+        entity.Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.Name ?? "" });
     }
 }

@@ -73,7 +73,7 @@ public class ProjectService
             .Select(t => new LookupItem
             {
                 Id = t.Id,
-                Name = t.ProjectName?.Translate(culture) ?? "???"
+                Name = t.GetProjectName(culture) ?? "???"
             }).ToList();
     }
 }

@@ -1,4 +1,5 @@
-﻿using App.Domain.Entities;
+﻿using System.Text.Json;
+using App.Domain.Entities;
 using App.Shared.Domain;
 
 namespace App.Modules.Project.Application.Mapper;
@@ -10,18 +11,18 @@ public static class ProjectTypeMapper
         => new()
         {
             Id = entity.Id,
-            Name = entity.Name.Translate(),
-            Description = entity.Description?.Translate()
+            Name = entity.GetName(),
+            Description = entity.GetDescription()
         };
 
     // Entity → Full Response
     public static ProjectTypeResponse ToResponse(ProjectType entity) => new()
     {
         Id = entity.Id,
-        NameEn = entity.Name.Translate("en"),
-        NameEt = entity.Name.Translate("et"),
-        DescriptionEn = entity.Description?.Translate("en"),
-        DescriptionEt = entity.Description?.Translate("et")
+        NameEn = entity.GetName("en"),
+        NameEt = entity.GetName("et"),
+        DescriptionEn = entity.GetDescription("en"),
+        DescriptionEt = entity.GetDescription("et")
     };
 
     // Create Request → Entity
@@ -29,22 +30,19 @@ public static class ProjectTypeMapper
         => new ()
         {
             Id = request.Id,
-            Name = new LangStr { ["en"] = request.NameEn ?? "", ["et"] = request.NameEt ?? "" },
-            Description = request.DescriptionEn == null && request.DescriptionEt == null ? null 
-                : new LangStr { ["en"] = request.DescriptionEn ?? "", ["et"] = request.DescriptionEt ?? "" }
+            Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.NameEn ?? "", ["et"] = request.NameEt ?? "" }),
+            Description = request.DescriptionEn == null && request.DescriptionEt == null ? null
+                : JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.DescriptionEn ?? "", ["et"] = request.DescriptionEt ?? "" })
         };
 
     // Update Request → existing Entity (modifies in place)
     public static void UpdateEntity(ProjectType entity, UpdateProjectTypeRequest request)
     {
         entity.Id = request.Id;
-        entity.Name["en"] = request.NameEn ?? "";
-        entity.Name["et"] = request.NameEt ?? "";
+        entity.Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.NameEn ?? "", ["et"] = request.NameEt ?? "" });
         if (request.DescriptionEn != null || request.DescriptionEt != null)
         {
-            entity.Description ??= new LangStr();
-            entity.Description["en"] = request.DescriptionEn ?? "";
-            entity.Description["et"] = request.DescriptionEt ?? "";
+            entity.Description = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.DescriptionEn ?? "", ["et"] = request.DescriptionEt ?? "" });
         }
     }
 }

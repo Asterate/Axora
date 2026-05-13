@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
 using App.Shared.Domain;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels;
 
@@ -52,14 +52,6 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var name = new LangStr();
-                name.SetTranslation(viewModel.NameEn, "en");
-                name.SetTranslation(viewModel.NameEt, "et");
-                
-                var description = new LangStr();
-                description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
-                description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
-                
                 var projectType = new CreateProjectTypeRequest
                 {
                     Id = Guid.NewGuid(),
