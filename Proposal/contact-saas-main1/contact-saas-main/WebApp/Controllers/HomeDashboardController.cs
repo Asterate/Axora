@@ -11,6 +11,7 @@ using App.DAL.EF;
 using App.Domain.Entities;
 using App.DTO.v1;
 using App.Modules.Research;
+using App.Shared.Contracts;
 using WebApp.ViewModels;
 using InstituteEntity = App.Domain.Entities.Institute;
 using Lab = App.Domain.Entities.Lab;
@@ -22,11 +23,13 @@ namespace WebApp.Controllers;
 [Authorize]
 public class HomeDashboardController : Controller
 {
-    private readonly IProjectService _projectService;
+    private readonly ProjectService _projectService;
+    private readonly ProjectTypeService _projectTypeService;
     
-    public HomeDashboardController(IProjectService projectService)
+    public HomeDashboardController(ProjectService projectService, ProjectTypeService projectTypeService)
     {
         _projectService = projectService;
+        _projectTypeService = projectTypeService;
     }
 
     // GET: HomeDashboard
@@ -38,33 +41,44 @@ public class HomeDashboardController : Controller
             return Challenge();
         }
 
-        var projectDtos = await _projectService.GetAllAsync(userId.Value);
+        var projectDtos = await _projectService.GetAllAsync();
         var projects = projectDtos.Select(p => new Project { Id = p.Id}).ToList();
         return View("HomeDashboard", projects);
     }
 
     // GET: HomeDashboard/Create
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
-        return View();
+        var model = new HomeDashboardViewModel
+        {
+            ProjectTypes = await _projectTypeService.GetActivesAsync()
+        };
+        return View(model);
     }
 
     // POST: HomeDashboard/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CreateProjectRequest dto)
+    public async Task<IActionResult> Create(HomeDashboardViewModel dto)
     {
         var userId = GetCurrentUserId();
-        if (!userId.HasValue)
-        {
-            return Challenge();
-        }
-        
+        if (!userId.HasValue) return Challenge();
+    
         if (ModelState.IsValid)
         {
-            await _projectService.CreateAsync(dto, userId.Value);
+            var request = new CreateProjectRequest
+            {
+                ProjectName = dto.ProjectName,
+                Funding = dto.Funding,
+                Requirements = dto.Requirements,
+                RequirementsFilePath = dto.RequirementsFilePath,
+                ProjectTypeId = dto.ProjectTypeId
+            };
+            await _projectService.CreateAsync(request);
             return RedirectToAction(nameof(Index));
         }
+
+        dto.ProjectTypes = await _projectTypeService.GetActivesAsync();
         return View(dto);
     }
 

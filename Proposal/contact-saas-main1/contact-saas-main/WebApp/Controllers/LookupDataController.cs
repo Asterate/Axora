@@ -40,31 +40,17 @@ public class LookupDataController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var certificationTypes = _certificationTypeService.GetAllAsync();
-        var documentTypes = _documentTypeService.GetAllAsync();
-        var equipmentTypes = _equipmentTypeService.GetAllAsync();
-        var experimentTypes = _experimentTypeService.GetAllAsync();
-        var instituteTypes = _instituteTypeService.GetAllAsync();
-        var labTypes = _labTypeService.GetAllAsync();
-        var projectTypes = _projectTypeService.GetAllAsync();
-        var reagentTypes = _reagentTypeService.GetAllAsync();
-        var taskTypes = _taskTypeService.GetAllAsync();
-
-        await Task.WhenAll(certificationTypes, documentTypes, equipmentTypes, 
-            experimentTypes, instituteTypes, labTypes, 
-            projectTypes, reagentTypes, taskTypes);
-
         var model = new LookupDataViewModel
         {
-            CertificationTypes = certificationTypes.Result,
-            DocumentTypes = documentTypes.Result,
-            EquipmentTypes = equipmentTypes.Result,
-            ExperimentTypes = experimentTypes.Result,
-            InstituteTypes = instituteTypes.Result,
-            LabTypes = labTypes.Result,
-            ProjectTypes = projectTypes.Result,
-            ReagentTypes = reagentTypes.Result,
-            TaskTypes = taskTypes.Result
+            CertificationTypes = await _certificationTypeService.GetAllAsync(),
+            DocumentTypes = await _documentTypeService.GetAllAsync(),
+            EquipmentTypes = await _equipmentTypeService.GetAllAsync(),
+            ExperimentTypes = await _experimentTypeService.GetAllAsync(),
+            InstituteTypes = await _instituteTypeService.GetAllAsync(),
+            LabTypes = await _labTypeService.GetAllAsync(),
+            ProjectTypes = await _projectTypeService.GetAllAsync(),
+            ReagentTypes = await _reagentTypeService.GetAllAsync(),
+            TaskTypes = await _taskTypeService.GetAllAsync()
         };
 
         return View(model);

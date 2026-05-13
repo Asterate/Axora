@@ -61,6 +61,17 @@ public static class ModelBuilderExtensions
             (left, right) => LangStrComparerEquals(left, right),
             obj => LangStrComparerHash(obj),
             obj => LangStrComparerClone(obj));
+        
+        var langStrNullableConverter = new ValueConverter<LangStr?, string?>(
+            v => v == null ? null : JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+            v => string.IsNullOrWhiteSpace(v)
+                ? null
+                : JsonSerializer.Deserialize<LangStr>(v, (JsonSerializerOptions?)null) ?? new LangStr());
+
+        var langStrNullableComparer = new ValueComparer<LangStr?>(
+            (left, right) => left == null && right == null || (left != null && right != null && left.SequenceEqual(right)),
+            obj => obj == null ? 0 : LangStrComparerHash(obj),
+            obj => obj == null ? null : LangStrComparerClone(obj));
 
         foreach (var entityType in builder.Model.GetEntityTypes())
         {
@@ -68,9 +79,13 @@ public static class ModelBuilderExtensions
             {
                 if (property.ClrType == typeof(LangStr))
                 {
-                    property.SetValueConverter(langStrConverter);
-                    property.SetValueComparer(langStrComparer);
+                    if (property.ClrType == typeof(LangStr))
+                    {
+                        property.SetValueConverter(langStrConverter);
+                        property.SetValueComparer(langStrComparer);
+                    }
                 }
+                
             }
         }
     }

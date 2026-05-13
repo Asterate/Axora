@@ -63,6 +63,10 @@ namespace WebApp.Controllers
                 var projectType = new CreateProjectTypeRequest
                 {
                     Id = Guid.NewGuid(),
+                    NameEn = viewModel.NameEn,
+                    NameEt = viewModel.NameEt,
+                    DescriptionEn = viewModel.DescriptionEn,
+                    DescriptionEt = viewModel.DescriptionEt
                 };
                 await _projectTypeService.CreateAsync(projectType);
                 return RedirectToAction("Index", "LookupData");
@@ -115,8 +119,11 @@ namespace WebApp.Controllers
 
                 var update = new UpdateProjectTypeRequest
                 {
-                    Id = id,
-                    Name = name,
+                    Id = Guid.NewGuid(),
+                    NameEn = viewModel.NameEn,
+                    NameEt = viewModel.NameEt,
+                    DescriptionEn = viewModel.DescriptionEn,
+                    DescriptionEt = viewModel.DescriptionEt
                 };
                 await _projectTypeService.UpdateAsync(id, update);
                 return RedirectToAction("Index", "LookupData");

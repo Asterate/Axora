@@ -30,6 +30,7 @@ dotnet ef migrations --project App.DAL.EF --startup-project WebApp remove
 dotnet ef database   --project App.DAL.EF --startup-project WebApp update
 
 dotnet ef migrations add InitialCreate --project App.Modules.Identity --startup-project WebApp --context IdentityModuleDbContext
+dotnet ef database update --project App.Modules.Lab --startup-project WebApp --context LabDbContext  
 ~~~
 
 ## Generate identity UI

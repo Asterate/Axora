@@ -27,15 +27,15 @@ public class LangStr : Dictionary<string, string>
 
     public LangStr(string value, string culture)
     {
-        if (string.IsNullOrEmpty(culture)) culture = DefaultCulture;
+        if (culture.Length < 1) throw new ApplicationException("Culture is required!");
 
         var neutralCulture = culture.Split('-')[0];
-        this[neutralCulture] = value ?? string.Empty;
+        this[neutralCulture] = value;
         
         // check for default culture also. if not set - do so
         if (!ContainsKey(DefaultCulture))
         {
-            this[DefaultCulture] = value ?? string.Empty;
+            this[DefaultCulture] = value;
         }
     }
 
@@ -79,5 +79,5 @@ public class LangStr : Dictionary<string, string>
     public static implicit operator string(LangStr? langStr) => langStr?.ToString() ?? "null";
 
     // LangStr xxx = "foobar";
-    public static implicit operator LangStr(string value) => new LangStr(value);
+    public static implicit operator LangStr(string value) => new (value);
 }

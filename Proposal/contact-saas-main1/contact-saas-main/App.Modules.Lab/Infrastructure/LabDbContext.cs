@@ -1,6 +1,8 @@
-﻿using App.Domain.Entities;
+﻿using System.Text.Json;
+using App.Domain.Entities;
 using App.Modules.Equipment.Domain;
 using App.Modules.Lab.Domain;
+using App.Shared.Domain;
 using App.Shared.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,6 +32,16 @@ public sealed class LabDbContext : DbContext
         builder.HasDefaultSchema("lab"); // keeps tables organized in DB
         builder.ApplyAppConventions();
         builder.ApplyConfigurationsFromAssembly(typeof(LabDbContext).Assembly);
-        builder.ApplyConfigurationsFromAssembly(typeof(Domain.Equipment).Assembly);
+        builder.Entity<Domain.Equipment>()
+            .Property(e => e.EquipmentName)
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                v => string.IsNullOrWhiteSpace(v) ? new LangStr() : JsonSerializer.Deserialize<LangStr>(v, (JsonSerializerOptions?)null) ?? new LangStr());
+        
+        builder.Entity<EquipmentType>()
+            .Property(e => e.Description)
+            .HasConversion(
+                v => v == null ? null : JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                v => string.IsNullOrWhiteSpace(v) ? null : JsonSerializer.Deserialize<LangStr>(v, (JsonSerializerOptions?)null));
     }
 }
