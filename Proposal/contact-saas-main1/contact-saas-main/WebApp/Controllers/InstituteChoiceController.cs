@@ -44,15 +44,11 @@ public class InstituteChoiceController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var model = new InstituteChoiceViewModel();
-        
-        // Load institutes directly from database
-        var institutes = await _instituteService.GetActivesAsync();
-        model.Institutes = institutes;
-
-        // Load institute types directly from database
-        var types = await _instituteTypeService.GetAllAsync();
-        model.InstituteTypes = await _instituteTypeService.GetActivesAsync();
+        var model = new InstituteChoiceViewModel
+        {
+            Institutes = await _instituteService.GetActivesAsync(),
+            InstituteTypes = await _instituteTypeService.GetActivesAsync()
+        };
 
         return View(model);
     }
@@ -118,6 +114,7 @@ public class InstituteChoiceController : Controller
 
                 // Sync roles to Identity
                 var appUser = await _userManager.FindByIdAsync(userId.ToString());
+          
                 if (appUser != null)
                 {
                     var userInstitute = await _instituteUserService.GetByIdAsync(userId);
@@ -139,7 +136,7 @@ public class InstituteChoiceController : Controller
                 // Create new institute
                 var newInstitute = new CreateInstituteRequest
                 {
-                    Id =  userId,
+                    Id =  Guid.NewGuid(),
                     InstituteName = model.InstituteName ?? "",
                     InstituteCountry = model.InstituteCountry ?? "",
                     InstituteAddress = model.InstituteAddress ?? "",
@@ -172,7 +169,9 @@ public class InstituteChoiceController : Controller
         }
         catch (Exception ex)
         {
-            ModelState.AddModelError(string.Empty, "An error occurred: " + ex.Message);
+            Console.WriteLine(ex.InnerException?.Message ?? ex.Message);
+            ModelState.AddModelError(string.Empty, ex.InnerException?.Message ?? ex.Message);
+            return View(model);
         }
 
         await LoadDropdowns(model);

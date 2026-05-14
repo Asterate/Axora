@@ -5,5 +5,5 @@ namespace App.Modules.Institute.Application.Interfaces;
 
 public interface IInstituteTypeRepository : IBaseRepository<InstituteType>
 {
-    Task<List<Domain.Entities.Institute>> GetActivesAsync();
+    Task<List<InstituteType>> GetActivesAsync();
 }

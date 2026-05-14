@@ -28,7 +28,7 @@ public static class InstituteTypeMapper
 
     // Create Request → Entity
     public static InstituteType ToEntity(CreateInstituteTypeRequest request)
-        => new InstituteType
+        => new ()
         {
             Id = request.Id,
             Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.NameEn ?? "", ["et"] = request.NameEt ?? "" }),

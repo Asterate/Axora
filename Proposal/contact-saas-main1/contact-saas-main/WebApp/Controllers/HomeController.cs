@@ -40,7 +40,7 @@ public class HomeController : Controller
                 await _userManager.UpdateAsync(user);
             }
 
-            // if (!hasInstitute) return RedirectToAction("Index", "InstituteChoice");
+            if (!hasInstitute) return RedirectToAction("Index", "InstituteChoice");
 
             return RedirectToAction("Index", "HomeDashboard");
         }

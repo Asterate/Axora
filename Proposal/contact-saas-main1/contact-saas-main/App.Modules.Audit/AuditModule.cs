@@ -1,4 +1,5 @@
 ﻿using App.Modules.Audit.Application.Interface;
+using App.Modules.Audit.Application.Services;
 using App.Modules.Audit.Infrastructure;
 using App.Modules.Audit.Infrastructure.Repositories;
 using App.Shared.Contracts;

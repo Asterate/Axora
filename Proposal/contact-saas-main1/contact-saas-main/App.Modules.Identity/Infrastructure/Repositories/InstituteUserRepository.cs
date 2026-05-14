@@ -1,5 +1,6 @@
 ﻿using App.Domain.Entities;
 using App.Modules.Identity.Applications.Interfaces;
+using App.Modules.Identity.Domain;
 using App.Modules.Identity.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 

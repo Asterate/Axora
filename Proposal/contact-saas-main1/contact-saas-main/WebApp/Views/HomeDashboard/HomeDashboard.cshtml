@@ -1,13 +1,13 @@
 @using App.Resources.Views.HomeDashboard
-@model IEnumerable<App.Domain.Entities.Project>
+@model IEnumerable<ProjectResponse>
 
 @{
     Layout = "_Layout";
-    var items = Model == null ? new List<App.Domain.Entities.Project>() : Model.ToList();
+    var items = Model?.ToList() ?? new List<ProjectResponse>();
 }
 
 <!DOCTYPE html>
-<html>
+<html >
 <head>
     <title>Institute name</title>
 </head>

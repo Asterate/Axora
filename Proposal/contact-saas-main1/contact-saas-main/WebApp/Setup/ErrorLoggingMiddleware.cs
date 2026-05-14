@@ -1,4 +1,7 @@
 ﻿
+using App.Modules.Audit.Application.DTO;
+using App.Modules.Audit.Application.Services;
+
 public class ErrorLoggingMiddleware
 {
     private readonly RequestDelegate _next;
@@ -16,7 +19,6 @@ public class ErrorLoggingMiddleware
         {
             await systemLogService.CreateAsync(new CreateSystemLogRequest
             {
-                Id = Guid.NewGuid(),
                 Timestamp = DateTime.UtcNow,
                 Type = "error",
                 Message = $"{context.Request.Method} {context.Request.Path}",

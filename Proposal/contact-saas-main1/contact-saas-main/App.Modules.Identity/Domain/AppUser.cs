@@ -1,3 +1,4 @@
+using App.Modules.Identity.Domain;
 using App.Shared.Domain;
 using Microsoft.AspNetCore.Identity;
 

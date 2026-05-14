@@ -1,45 +1,40 @@
-﻿using App.Domain.Entities;
+﻿// CreateDocumentRequest — user submits these
 
+using System.ComponentModel.DataAnnotations;
+// DocumentResponse — what the view receives
 public class DocumentListResponse
 {
     public Guid Id { get; set; }
-    public string? DocumentName { get; set; }
+    public string DocumentName { get; set; } = default!;
     public string? DocumentType { get; set; }
     public DateTime CreatedAt { get; set; }
-    public string? Description { get; set; }
 }
-
 public class DocumentResponse
 {
     public Guid Id { get; set; }
-    public string? DocumentName { get; set; }
+    public string DocumentName { get; set; } = default!;
+    public string? Description { get; set; }
     public string? DocumentType { get; set; }
+    public string? FilePath { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public DateTime DeletedAt { get; set; }
+    [Required]
+    public Guid DocumentTypeId { get; set; }
 }
-
 public class CreateDocumentRequest
 {
+    [Required]
     public Guid Id { get; set; }
-    public string? DocumentName { get; set; }
+    public string DocumentName { get; set; } = default!;
+    public string? Description { get; set; }  // add this, it's on the entity
     public string? FilePath { get; set; }
+    [Required]
     public Guid DocumentTypeId { get; set; }
 }
 
-public class UpdateDocumentRequest
+// UpdateDocumentRequest — user can change these
+public class UpdateDocumentRequest :  CreateDocumentRequest
 {
-    public Guid Id { get; set; }
-    public string? Name { get; set; }
-    public string? DocumentName { get; set; }
-    public string? FilePath { get; set; }
-    public ICollection<DocumentResult> DocumentResults { get; set; } = new List<DocumentResult>();
-    public Guid DocumentTypeId { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; } = DateTime.Now;
-    
-    public UpdateDocumentRequest(Document document)
-    {
-        Id = document.Id;
-        DocumentName = document.DocumentName;
-        FilePath = document.FilePath;
-        DocumentTypeId = document.DocumentTypeId;
-    }
+   
 }

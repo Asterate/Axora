@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.Domain.Identity;
+using App.Modules.Audit.Application.Services;
 using Microsoft.AspNetCore.Identity;
 using WebApp.ViewModels;
 

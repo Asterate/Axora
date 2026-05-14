@@ -1,4 +1,4 @@
-@model App.Domain.Entities.Document
+@model DocumentResponse
 
 @{
     ViewData["Title"] = "Details";
@@ -44,7 +44,7 @@
             @Html.DisplayNameFor(model => model.DocumentType)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DocumentType.Name)
+            @Html.DisplayFor(model => model.DocumentType)
         </dd>
     </dl>
 </div>

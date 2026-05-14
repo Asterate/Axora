@@ -1,9 +1,10 @@
 ﻿using App.Domain.Entities;
 using App.Modules.Institute.Application.Interfaces;
 using App.Modules.Institute.Application.Mapper;
+using App.Modules.Project.Application.Interfaces;
 using App.Shared.Contracts;
 
-public class InstituteService
+public class InstituteService : IInstituteService
 {
     private readonly IInstituteRepository _instituteRepo;
     private readonly IUnitOfWork _uow;

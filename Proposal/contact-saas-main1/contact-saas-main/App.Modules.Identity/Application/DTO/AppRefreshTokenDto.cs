@@ -1,25 +1,19 @@
-﻿public class AppRefreshTokenListResponse
-{
-    public Guid Id { get; set; }
-    public string? Name { get; set; }
-}
+﻿namespace App.Modules.Identity.Application.DTO;
 
 public class AppRefreshTokenResponse
 {
     public Guid Id { get; set; }
-    public string? Name { get; set; }
+    public DateTime ExpiresAt { get; set; }
+    public string RefreshToken { get; set; } = default!;
+    public Guid UserId { get; set; }
 }
 
 public class CreateAppRefreshTokenRequest
 {
-    public Guid Id { get; set; }
-    public DateTime Expiration { get; set; } = DateTime.UtcNow.AddDays(7);
-    public string RefreshToken { get; set; } = Guid.NewGuid().ToString();
     public Guid UserId { get; set; }
-
+    public string? DeviceInfo { get; set; }
+    public string? IpAddress { get; set; }
+    public string? UserAgent { get; set; }
+    public DateTime? ExpiresAt { get; set; }
 }
 
-public class UpdateAppRefreshTokenRequest
-{
-    public Guid Id { get; set; }
-}

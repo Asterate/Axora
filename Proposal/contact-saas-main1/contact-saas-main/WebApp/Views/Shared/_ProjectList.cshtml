@@ -1,31 +1,24 @@
-﻿@using App.Domain.Entities
-@model IEnumerable<App.Domain.Entities.Project>
+﻿@model IEnumerable<ProjectResponse>
 
-    @{
-        var items = Model == null ? new List<Project>() : Model;
-    }
+@{
+    var items = Model;
+}
 
 <table class="table">
     <thead>
     <tr>
-        <th>@Html.DisplayNameFor(m => m.ProjectName)</th>
-        <th>@Html.DisplayNameFor(m => m.Funding)</th>
-        <th>@Html.DisplayNameFor(m => m.Requirements)</th>
+        <th>@Html.DisplayNameFor(m => m.First().ProjectName)</th>
+        <th>@Html.DisplayNameFor(m => m.First().Funding)</th>
+        <th>@Html.DisplayNameFor(m => m.First().Requirements)</th>
         <th></th>
     </tr>
     </thead>
-    <tbody> 
+    <tbody>
     @foreach (var item in items) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProjectName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Funding)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Requirements)
-            </td>
+            <td>@Html.DisplayFor(_ => item.ProjectName)</td>
+            <td>@Html.DisplayFor(_ => item.Funding)</td>
+            <td>@Html.DisplayFor(_ => item.Requirements)</td>
             <td>
                 <a asp-controller="Project" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-controller="Project" asp-action="Details" asp-route-id="@item.Id">Details</a> |

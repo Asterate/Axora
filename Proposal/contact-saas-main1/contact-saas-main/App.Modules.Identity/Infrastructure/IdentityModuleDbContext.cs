@@ -1,5 +1,6 @@
 ﻿using App.Domain.Entities;
 using App.Domain.Identity;
+using App.Modules.Identity.Domain;
 using App.Shared.Persistence;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

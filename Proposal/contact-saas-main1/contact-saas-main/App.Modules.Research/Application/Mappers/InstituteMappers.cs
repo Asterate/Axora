@@ -25,7 +25,12 @@ public static class InstituteMapper
     public static Domain.Entities.Institute ToEntity(CreateInstituteRequest request)
         => new Domain.Entities.Institute
         {
+            Id =  request.Id,
             InstituteName = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.InstituteName?.ToString() ?? "" }),
+            InstituteCountry =  request.InstituteCountry,
+            InstituteAddress = request.InstituteAddress ?? String.Empty,
+            InstitutePhoneNumber =  request.InstitutePhoneNumber,
+            InstituteTypeId =  request.InstituteTypeId,
         };
 
     // Update Request → existing Entity (modifies in place)

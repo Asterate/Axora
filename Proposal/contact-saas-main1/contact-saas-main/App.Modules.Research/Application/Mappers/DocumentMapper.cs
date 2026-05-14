@@ -4,20 +4,22 @@ namespace App.Modules.Project.Application.Mapper;
 
 public static class DocumentMapper
 {
-    // Entity → List Response
     public static DocumentListResponse ToListResponse(Document entity)
         => new DocumentListResponse
         {
             Id = entity.Id,
             DocumentName = entity.DocumentName,
-            DocumentType = entity.DocumentType?.Name
+            DocumentType = entity.DocumentType?.Name,
+            CreatedAt = entity.CreatedAt
         };
-
-    // Entity → Full Response
     public static DocumentResponse ToResponse(Document entity)
         => new ()
         {
             Id = entity.Id,
+            DocumentName = entity.DocumentName,
+            DocumentType = entity.DocumentType?.Name,
+            Description = entity.Description,
+            CreatedAt = entity.CreatedAt
         };
 
     // Create Request → Entity
@@ -25,11 +27,16 @@ public static class DocumentMapper
         => new Document
         {
             Id = request.Id,
+            DocumentName = request.DocumentName ?? "Document",
+            FilePath = request.FilePath ?? "None",
+            DocumentTypeId = request.DocumentTypeId
         };
 
     // Update Request → existing Entity (modifies in place)
     public static void UpdateEntity(Document entity, UpdateDocumentRequest request)
     {
-        entity.Id = request.Id;
+        entity.DocumentName = request.DocumentName ?? "Document";
+        entity.FilePath = request.FilePath ?? "None";
+        entity.DocumentTypeId = request.DocumentTypeId;
     }
 }

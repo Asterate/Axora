@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using App.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
+using WebApp.ViewModels;
 
 namespace WebApp.Controllers
 {
@@ -10,40 +9,48 @@ namespace WebApp.Controllers
     public class DocumentController : Controller
     {
         private readonly DocumentService _document;
+        private readonly DocumentTypeService _documentTypeService;
 
-        public DocumentController(DocumentService documentService)
+        public DocumentController(DocumentService documentService, DocumentTypeService documentTypeService)
         {
             _document = documentService;
+            _documentTypeService = documentTypeService;
         }
 
         // GET: Document
         public async Task<IActionResult> Index()
         {
-            var documents = _document.GetAllAsync();
-            return View(documents);
+            var documents = await _document.GetAllAsync();
+            return View("~/Views/DocumentDashboard/Index.cshtml",documents);
         }
 
         // GET: Document/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var document = await _document.GetByIdAsync(id);
+            if (document == null) return NotFound();
 
-            var document = await _document.GetByIdAsync(id.Value);
-            if (document == null)
+            var response = new DocumentResponse
             {
-                return NotFound();
-            }
+                Id = document.Id,
+                DocumentName = document.DocumentName,
+                Description = document.Description,
+                DocumentType = document.DocumentType,
+                FilePath = document.FilePath,
+                DocumentTypeId = document.DocumentTypeId
+            };
 
-            return View(document);
+            return View(response);
         }
 
         // GET: Document/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var model = new DocumentationViewModel
+            {
+                DocumentTypes = await _documentTypeService.GetActivesAsync()
+            };
+            return View(model);
         }
 
         // POST: Document/Create
@@ -51,37 +58,42 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DocumentName,CreatedAt,UpdatedAt,DeletedAt,FilePath,DocumentTypeId,Id")] Document document)
+        public async Task<IActionResult> Create(DocumentationViewModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                await _document.CreateAsync(new CreateDocumentRequest
-                {
-                    DocumentName = document.DocumentName,
-                    FilePath = document.FilePath,
-                    DocumentTypeId = document.DocumentTypeId
-                });
+                await _document.CreateAsync(model.Request);
+                return RedirectToAction(nameof(Index));
             }
-            return View(document);
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.InnerException?.Message ?? ex.Message);
+                ModelState.AddModelError(string.Empty, ex.InnerException?.Message ?? ex.Message);
+                model.DocumentTypes = await _documentTypeService.GetActivesAsync();
+                return View(model);
+            }
         }
 
         // GET: Document/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit(Guid id)
         {
-            if (id == null || id == Guid.Empty)
-            {
-                TempData["Error"] = "Document not found";
-                return NotFound();
-            }
+            var document = await _document.GetByIdAsync(id);
+            if (document == null) return NotFound();
 
-            var document = await _document.GetByIdAsync(id.Value);
-            if (document == null)
+            var model = new DocumentationViewModel
             {
-                TempData["Error"] = "Document not found";
-                return NotFound();
-            }
+                Request = new UpdateDocumentRequest
+                {
+                    Id = document.Id,
+                    DocumentName = document.DocumentName,
+                    Description = document.Description,
+                    FilePath = document.FilePath,
+                    DocumentTypeId = document.DocumentTypeId,
+                },
+                DocumentTypes = await _document.GetActivesAsync()
+            };
 
-            return View(document);
+            return View(model);
         }
 
         // POST: Document/Edit/5
@@ -89,33 +101,12 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("DocumentName,CreatedAt,UpdatedAt,FilePath,DocumentTypeId,Id")] Document document)
+        public async Task<IActionResult> Edit(Guid id, DocumentationViewModel model)
         {
-            if (id != document.Id)
-            {
-                TempData["Error"] = "Document not found";
-                return NotFound();
-            }
+            if (!ModelState.IsValid) return View(model);
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var update = new UpdateDocumentRequest(document);
-                    await _document.UpdateAsync(id, update);
-                    TempData["Success"] = "Document edited";
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await DocumentExists(document.Id))
-                    {
-                        TempData["Error"] = "Document not found";
-                        return NotFound();
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(document);
+            await _document.UpdateAsync(id, model.Request);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Document/Delete/5
@@ -145,7 +136,7 @@ namespace WebApp.Controllers
             var document = await _document.GetByIdAsync(id);
             if (document != null)
             {
-                TempData["Error"] = "Document not found";
+                TempData["Success"] = "Document found";
                 await _document.DeleteAsync(id);
             }
             TempData["Success"] = "Document deleted";

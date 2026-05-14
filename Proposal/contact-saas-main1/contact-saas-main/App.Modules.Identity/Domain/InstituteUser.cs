@@ -1,7 +1,8 @@
-﻿using App.Domain.Identity;
+﻿using App.Domain.Entities;
+using App.Domain.Identity;
 using App.Shared.Domain;
 
-namespace App.Domain.Entities;
+namespace App.Modules.Identity.Domain;
 
 public class InstituteUser : BaseEntity
 {

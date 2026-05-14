@@ -1,34 +1,24 @@
-﻿using App.Domain.Identity;
-using App.Shared.Domain;
+﻿using App.Modules.Identity.Application.DTO;
+using App.Modules.Identity.Domain;
 
-namespace App.Modules.Equipment.Application.Mapper;
+namespace App.Modules.Identity.Application.Mappers;
 
 public static class AppRefreshTokenMapper
 {
-    // Entity → List Response
-    public static AppRefreshTokenListResponse ToListResponse(AppRefreshToken entity)
-        => new AppRefreshTokenListResponse
-        {
-            Id = entity.Id,
-        };
-
-    // Entity → Full Response
     public static AppRefreshTokenResponse ToResponse(AppRefreshToken entity)
-        => new AppRefreshTokenResponse
+        => new()
         {
             Id = entity.Id,
+            ExpiresAt = entity.ExpiresAt,
+            UserId = entity.UserId
         };
 
-    // Create Request → Entity
     public static AppRefreshToken ToEntity(CreateAppRefreshTokenRequest request)
-        => new AppRefreshToken
+        => new()
         {
-            Id = request.Id,
+            UserId = request.UserId,
+            DeviceInfo = request.DeviceInfo,
+            IpAddress = request.IpAddress,
+            UserAgent = request.UserAgent
         };
-
-    // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(AppRefreshToken entity, UpdateAppRefreshTokenRequest request)
-    {
-        entity.Id = request.Id;
-    }
 }

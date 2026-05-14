@@ -77,7 +77,7 @@ public static class IdentityExtensions
             ValidAudience = audience,
             ValidateAudience = true,
 
-            ValidateLifetime = false
+            ValidateLifetime = true
         };
 
         try

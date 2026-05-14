@@ -150,8 +150,11 @@ Under api button in footer there is swagger part where can currently do in clien
 - Map UX/Views to backend endponts - “Button X → Calls Endpoint Y → Affects Entity Z”
 - Write down things idk ask AI and document so later ik what I learned and to refer it for defence
 
-
-## REMINDERS FOR LATER TO DO
-- When repos done, remove DAL reference from BLL and use repo and interface
-- DAL should reference BLL, DTO, DOMAIN
-- Need to fix DTO and services based on what I want to do on client
+### Adminview
+- Needs to have logs: - needs testing
+  - The AdminDashboard is logging HTTP requests that result in error status codes (4xx and 5xx) via the ErrorLoggingMiddleware. Specifically, it logs:
+    - Timestamp: UTC time of the error
+    - Type: "error"
+    - Message: HTTP method and path (e.g., "GET /api/projects")
+    - UserName: Authenticated user's name (if available)
+    - StatusCode: The HTTP status code (e.g., 404, 500)

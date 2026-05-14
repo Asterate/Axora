@@ -1,6 +1,5 @@
-﻿using App.Domain.Entities;
-using App.Modules.Audit.Application.Interface;
-using App.Modules.Audit.Infrastructure.Data;
+﻿using App.Modules.Audit.Application.Interface;
+using App.Modules.Audit.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Modules.Audit.Infrastructure.Repositories;

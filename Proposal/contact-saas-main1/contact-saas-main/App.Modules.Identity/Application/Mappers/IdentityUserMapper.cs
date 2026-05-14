@@ -1,4 +1,5 @@
 ﻿using App.Domain.Entities;
+using App.Modules.Identity.Domain;
 
 namespace App.Modules.Equipment.Application.Mapper;
 
@@ -23,6 +24,9 @@ public static class InstituteUserMapper
         => new InstituteUser
         {
             Id = request.Id,
+            UserId = request.UserId,
+            InstituteId = request.InstituteId,
+            Role = request.Role
         };
 
     // Update Request → existing Entity (modifies in place)

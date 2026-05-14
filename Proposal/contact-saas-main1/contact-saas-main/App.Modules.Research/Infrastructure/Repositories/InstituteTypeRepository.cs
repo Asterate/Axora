@@ -1,9 +1,8 @@
 ﻿using App.Domain.Entities;
 using App.Modules.Institute.Application.Interfaces;
-using App.Modules.Project.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.Modules.Institute.Infrastructure.Repositories;
+namespace App.Modules.Project.Infrastructure.Repositories;
 
 internal sealed class InstituteTypeRepository : IInstituteTypeRepository
 {
@@ -29,11 +28,8 @@ internal sealed class InstituteTypeRepository : IInstituteTypeRepository
     public void Delete(InstituteType entity)
         => _context.InstituteTypes.Remove(entity);
     
-    public async Task<List<Domain.Entities.Institute>> GetActivesAsync()
+    public async Task<List<InstituteType>> GetActivesAsync()
     {
-        return await _context.Institutes
-            .Where(i => i.Active && i.DeletedAt == null)
-            .OrderBy(i => i.InstituteName)
-            .ToListAsync();
+        return await _context.InstituteTypes.ToListAsync();
     }
 }

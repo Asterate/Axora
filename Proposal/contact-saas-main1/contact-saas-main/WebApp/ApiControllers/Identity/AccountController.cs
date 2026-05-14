@@ -1,24 +1,18 @@
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using App.DAL.EF;
 using App.Domain.Entities;
 using App.Domain.Identity;
-using App.DTO.v1;
 using App.DTO.v1.Identity;
+using App.Helpers;
+using App.Modules.Identity.Application.DTO;
+using App.Modules.Identity.Application.Interfaces;
+using App.Modules.Identity.Domain;
 using App.Modules.Identity.Infrastructure;
 using Asp.Versioning;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using WebApp.Helpers;
 
 namespace WebApp.ApiControllers.Identity;
@@ -35,16 +29,12 @@ public class AccountController : ControllerBase
     private readonly UserManager<AppUser> _userManager;
     private readonly ILogger<AccountController> _logger;
     private readonly SignInManager<AppUser> _signInManager;
-    private readonly Random _random = new Random();
     private readonly IdentityModuleDbContext _context;
-    private readonly AppRefreshTokenService _refreshTokenService;
+    private readonly IAppRefreshTokenService _refreshTokenService;
     private readonly InstituteTypeService _instituteTypeService;
     private readonly InstituteService _instituteService;
     private readonly InstituteUserService _instituteUserService;
-
-    private const string UserPassProblem = "User/Password problem";
-    private const int RandomDelayMin = 500;
-    private const int RandomDelayMax = 5000;
+    private readonly IAccountService _accountService;
 
     private const string SettingsJWTPrefix = "JWT";
     private const string SettingsJWTKey = SettingsJWTPrefix + ":Key";
@@ -59,8 +49,8 @@ public class AccountController : ControllerBase
     /// </summary>
     public AccountController(IConfiguration configuration, UserManager<AppUser> userManager,
         SignInManager<AppUser> signInManager, ILogger<AccountController> logger, IdentityModuleDbContext context,
-        AppRefreshTokenService refreshTokenService, InstituteTypeService instituteTypeService, InstituteService instituteService,
-        InstituteUserService instituteUserService)
+        IAppRefreshTokenService refreshTokenService, InstituteTypeService instituteTypeService, InstituteService instituteService,
+        InstituteUserService instituteUserService, IAccountService accountService)
     {
         _configuration = configuration;
         _userManager = userManager;
@@ -71,6 +61,7 @@ public class AccountController : ControllerBase
         _instituteTypeService = instituteTypeService;
         _instituteService = instituteService;
         _instituteUserService = instituteUserService;
+        _accountService = accountService;
     }
 
     /// <summary>
@@ -80,75 +71,31 @@ public class AccountController : ControllerBase
     /// <param name="jwtExpiresInSeconds">Optional, use custom jwt expiration</param>
     /// <param name="refreshTokenExpiresInSeconds">Optional, use custom refresh token expiration</param>
     /// <returns>JWT and refresh token</returns>
-    [Produces("application/json")]
-    [Consumes("application/json")]
-    [ProducesResponseType(typeof(JWTResponse), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(App.Dto.v1.Message), StatusCodes.Status404NotFound)]
-    [AllowAnonymous]
     [HttpPost]
+    [AllowAnonymous]
     public async Task<ActionResult<JWTResponse>> Login(
-        [FromBody]
-        Login loginInfo,
-        [FromQuery]
-        int? jwtExpiresInSeconds,
-        [FromQuery]
-        int? refreshTokenExpiresInSeconds
-    )
+        [FromBody] Login loginInfo,
+        [FromQuery] int? jwtExpiresInSeconds,
+        [FromQuery] int? refreshTokenExpiresInSeconds)
     {
-        // verify user
-        var appUser = await _userManager.FindByEmailAsync(loginInfo.Email);
-        if (appUser == null)
-        {
-            _logger.LogWarning("WebApi login failed, email {} not found", loginInfo.Email);
-            await Task.Delay(_random.Next(RandomDelayMin, RandomDelayMax));
-            return NotFound(new App.Dto.v1.Message(UserPassProblem));
-        }
+        var result = await _accountService.Login(loginInfo, jwtExpiresInSeconds, refreshTokenExpiresInSeconds);
 
-        // verify password
-        var result = await _signInManager.CheckPasswordSignInAsync(appUser, loginInfo.Password, false);
-        if (!result.Succeeded)
-        {
-            _logger.LogWarning("WebApi login failed, password {} for email {} was wrong", loginInfo.Password,
-                loginInfo.Email);
-            await Task.Delay(_random.Next(RandomDelayMin, RandomDelayMax));
-            return NotFound(new App.Dto.v1.Message(UserPassProblem));
-        }
-
-        var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
-        if (!_context.Database.ProviderName!.Contains("InMemory"))
-        {
-            var deletedRows = await _refreshTokenService.DeleteExpiredByUserIdAsync(appUser.Id);
-            _logger.LogInformation("Deleted {} refresh tokens", deletedRows);
-        }
-        else
-        {
-            //TODO: inMemory delete for testing
-        }
-
-        var refreshToken = new CreateAppRefreshTokenRequest
-        {
-            UserId = appUser.Id,
-            Expiration = GetExpirationDateTime(refreshTokenExpiresInSeconds, SettingsJWTRefreshTokenExpiresInSeconds)
-        };
-        await _refreshTokenService.CreateAsync(refreshToken);
-        await _context.SaveChangesAsync();
-
+        if (!result.Success)
+            return Unauthorized(new App.Dto.v1.Message(result.Error!));
 
         var jwt = IdentityExtensions.GenerateJwt(
-            claimsPrincipal.Claims,
+            result.ClaimsPrincipal!.Claims,
             _configuration.GetValue<string>(SettingsJWTKey)!,
             _configuration.GetValue<string>(SettingsJWTIssuer)!,
             _configuration.GetValue<string>(SettingsJWTAudience)!,
-            GetExpirationDateTime(jwtExpiresInSeconds, SettingsJWTExpiresInSeconds)
+            DateTime.UtcNow.AddSeconds(_configuration.GetValue<int>(SettingsJWTExpiresInSeconds))
         );
 
-        var responseData = new JWTResponse()
+        return Ok(new JWTResponse
         {
             JWT = jwt,
-            RefreshToken = refreshToken.RefreshToken
-        };
-
-        return Ok(responseData);
+            RefreshToken = result.RefreshToken!
+        });
     }
 
 
@@ -166,137 +113,109 @@ public class AccountController : ControllerBase
     [AllowAnonymous]
     [HttpPost]
     public async Task<ActionResult<JWTResponse>> Register(
-        [FromBody]
-        Register registerModel,
-        [FromQuery]
-        int? jwtExpiresInSeconds,
-        [FromQuery]
-        int? refreshTokenExpiresInSeconds
-    )
+    [FromBody] Register registerModel,
+    [FromQuery] int? jwtExpiresInSeconds,
+    [FromQuery] int? refreshTokenExpiresInSeconds)
+{
+    var appUser = await _userManager.FindByEmailAsync(registerModel.Email);
+    if (appUser != null)
     {
-        var appUser = await _userManager.FindByEmailAsync(registerModel.Email);
-        if (appUser != null)
-        {
-            _logger.LogWarning(" User {User} already registered", registerModel.Email);
-            return BadRequest(new App.Dto.v1.Message("User already registered"));
-        }
-
-        var refreshToken = new AppRefreshToken()
-        {
-            Expiration = GetExpirationDateTime(refreshTokenExpiresInSeconds, SettingsJWTRefreshTokenExpiresInSeconds)
-        };
-
-        appUser = new AppUser()
-        {
-            Email = registerModel.Email,
-            UserName = registerModel.Email,
-
-            RefreshTokens = new List<AppRefreshToken>()
-            {
-                refreshToken
-            }
-        };
-        var result = await _userManager.CreateAsync(appUser, registerModel.Password);
-
-        if (result.Succeeded)
-        {
-            _logger.LogInformation("User {Email} created a new account with password", appUser.Email);
-
-            // Handle institute selection
-            Institute? institute = null;
-            
-            if (registerModel.InstituteSelection == App.DTO.v1.Identity.InstituteSelectionType.CreateNew)
-            {
-                // Create new institute
-                if (registerModel.NewInstitute == null)
-                {
-                    return BadRequest(new App.Dto.v1.Message("New institute details are required when creating a new institute"));
-                }
-                
-                // Get institute type
-                var instituteType = await _instituteTypeService.GetByIdAsync(registerModel.NewInstitute.InstituteTypeId);
-                if (instituteType == null)
-                {
-                    return BadRequest(new App.Dto.v1.Message("Invalid institute type"));
-                }
-                
-                var instituteCreate = new CreateInstituteRequest
-                {
-                    Id = Guid.NewGuid(),
-                    InstituteName = registerModel.NewInstitute.InstituteName,
-                    InstituteCountry = registerModel.NewInstitute.InstituteCountry,
-                    InstituteAddress = registerModel.NewInstitute.InstituteAddress,
-                    InstitutePhoneNumber = registerModel.NewInstitute.InstitutePhoneNumber,
-                    InstituteTypeId = registerModel.NewInstitute.InstituteTypeId,
-                    CreatedAt = DateTime.UtcNow,
-                    Active = true
-                };
-                await _instituteService.CreateAsync(instituteCreate);
-                _logger.LogInformation("New institute {InstituteName} created for {Email}", instituteCreate.InstituteName, appUser.Email);
-            }
-            else if (registerModel.InstituteSelection == App.DTO.v1.Identity.InstituteSelectionType.SelectExisting)
-            {
-                // Use existing institute
-                if (registerModel.InstituteId == null)
-                {
-                    return BadRequest(new App.Dto.v1.Message("Institute ID is required when selecting an existing institute"));
-                }
-                
-                institute = await _instituteService.GetEntityByIdAsync(registerModel.InstituteId.Value);
-                if (institute == null)
-                {
-                    return BadRequest(new App.Dto.v1.Message("Institute not found"));
-                }
-                _logger.LogInformation("User {Email} joining existing institute {InstituteId}", appUser.Email, registerModel.InstituteId);
-            }
-            else
-            {
-                // Fallback: use default institute
-                var instituteAll = _instituteService.GetAllAsync();
-                if (instituteAll == null)
-                {
-                    return BadRequest(new App.Dto.v1.Message("No institutes available. Please create one first."));
-                }
-            }
-
-            // Create InstituteUser linking user to institute
-            if (institute == null)
-            {
-                return BadRequest(new App.Dto.v1.Message("Institute could not be resolved"));
-            }
-            var instituteUser = new CreateInstituteUserRequest
-            {
-                Id = Guid.NewGuid(),
-                InstituteId = institute.Id,
-                UserId = appUser.Id,
-                Role = EInstituteUserRole.Employee
-            };
-            await _instituteUserService.CreateAsync(instituteUser);
-            
-            // Sync user roles based on InstituteUser role
-            await App.Helpers.UserRoleHelper.SyncCompanyUserRolesToIdentityAsync(_userManager, appUser, instituteUser.Role);
-            
-            _logger.LogInformation("InstituteUser created for {Email} with institute {InstituteName} and role {Role}", appUser.Email, institute.InstituteName, instituteUser.Role);
-
-            var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
-            var jwt = IdentityExtensions.GenerateJwt(
-                claimsPrincipal.Claims,
-                _configuration.GetValue<string>(SettingsJWTKey)!,
-                _configuration.GetValue<string>(SettingsJWTIssuer)!,
-                _configuration.GetValue<string>(SettingsJWTAudience)!,
-                GetExpirationDateTime(jwtExpiresInSeconds, SettingsJWTExpiresInSeconds)
-            );
-            _logger.LogInformation("WebApi login. User {User}", registerModel.Email);
-            return Ok(new JWTResponse()
-            {
-                JWT = jwt,
-                RefreshToken = refreshToken.RefreshToken,
-            });
-        }
-
-        var errors = result.Errors.Select(error => error.Description).ToList();
-        return BadRequest(new App.Dto.v1.Message() { Messages = errors });
+        _logger.LogWarning("User {User} already registered", registerModel.Email);
+        return BadRequest(new App.Dto.v1.Message("User already registered"));
     }
+
+    appUser = new AppUser
+    {
+        Email = registerModel.Email,
+        UserName = registerModel.Email
+    };
+
+    var result = await _userManager.CreateAsync(appUser, registerModel.Password);
+    if (!result.Succeeded)
+    {
+        var errors = result.Errors.Select(e => e.Description).ToList();
+        return BadRequest(new App.Dto.v1.Message { Messages = errors });
+    }
+
+    _logger.LogInformation("User {Email} created a new account", appUser.Email);
+
+    // Handle institute
+    Institute? institute = null;
+
+    if (registerModel.InstituteSelection == InstituteSelectionType.CreateNew)
+    {
+        if (registerModel.NewInstitute == null)
+            return BadRequest(new App.Dto.v1.Message("New institute details are required"));
+
+        var instituteType = await _instituteTypeService.GetByIdAsync(registerModel.NewInstitute.InstituteTypeId);
+        if (instituteType == null)
+            return BadRequest(new App.Dto.v1.Message("Invalid institute type"));
+
+        institute = await _instituteService.CreateAndReturnAsync(new CreateInstituteRequest
+        {
+            Id = Guid.NewGuid(),
+            InstituteName = registerModel.NewInstitute.InstituteName,
+            InstituteCountry = registerModel.NewInstitute.InstituteCountry,
+            InstituteAddress = registerModel.NewInstitute.InstituteAddress,
+            InstitutePhoneNumber = registerModel.NewInstitute.InstitutePhoneNumber,
+            InstituteTypeId = registerModel.NewInstitute.InstituteTypeId,
+            CreatedAt = DateTime.UtcNow,
+            Active = true
+        });
+
+        _logger.LogInformation("New institute {Name} created for {Email}", institute.InstituteName, appUser.Email);
+    }
+    else if (registerModel.InstituteSelection == InstituteSelectionType.SelectExisting)
+    {
+        if (registerModel.InstituteId == null)
+            return BadRequest(new App.Dto.v1.Message("Institute ID is required"));
+
+        institute = await _instituteService.GetEntityByIdAsync(registerModel.InstituteId.Value);
+        if (institute == null)
+            return BadRequest(new App.Dto.v1.Message("Institute not found"));
+
+        _logger.LogInformation("User {Email} joining institute {Id}", appUser.Email, institute.Id);
+    }
+    else
+    {
+        return BadRequest(new App.Dto.v1.Message("Invalid institute selection"));
+    }
+
+    // Link user to institute
+    var instituteUser = new CreateInstituteUserRequest
+    {
+        Id = Guid.NewGuid(),
+        InstituteId = institute.Id,
+        UserId = appUser.Id,
+        Role = EInstituteUserRole.Employee
+    };
+    await _instituteUserService.CreateAsync(instituteUser);
+    await UserRoleHelper.SyncCompanyUserRolesToIdentityAsync(_userManager, appUser, instituteUser.Role);
+
+    _logger.LogInformation("InstituteUser created for {Email} with role {Role}", appUser.Email, instituteUser.Role);
+
+    // Create refresh token through service
+    var tokenResponse = await _refreshTokenService.CreateAsync(new CreateAppRefreshTokenRequest
+    {
+        UserId = appUser.Id,
+        ExpiresAt = GetExpirationDateTime(refreshTokenExpiresInSeconds, SettingsJWTRefreshTokenExpiresInSeconds)
+    });
+
+    var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
+    var jwt = IdentityExtensions.GenerateJwt(
+        claimsPrincipal.Claims,
+        _configuration.GetValue<string>(SettingsJWTKey)!,
+        _configuration.GetValue<string>(SettingsJWTIssuer)!,
+        _configuration.GetValue<string>(SettingsJWTAudience)!,
+        GetExpirationDateTime(jwtExpiresInSeconds, SettingsJWTExpiresInSeconds)
+    );
+
+    return Ok(new JWTResponse
+    {
+        JWT = jwt,
+        RefreshToken = tokenResponse.RefreshToken
+    });
+}
 
     /// <summary>
     /// Renew JWT using refresh token
@@ -313,116 +232,81 @@ public class AccountController : ControllerBase
     [AllowAnonymous]
     [HttpPost]
     public async Task<ActionResult<JWTResponse>> RenewRefreshToken(
-        [FromBody]
-        RefreshTokenModel refreshTokenModel,
-        [FromQuery]
-        int? jwtExpiresInSeconds,
-        [FromQuery]
-        int? refreshTokenExpiresInSeconds
-    )
+    [FromBody] RefreshTokenModel refreshTokenModel,
+    [FromQuery] int? jwtExpiresInSeconds,
+    [FromQuery] int? refreshTokenExpiresInSeconds)
+{
+    if (refreshTokenModel == null)
+        return BadRequest(new App.Dto.v1.Message("Request body is required"));
+
+    if (string.IsNullOrWhiteSpace(refreshTokenModel.Jwt))
+        return BadRequest(new App.Dto.v1.Message("JWT is required"));
+
+    if (string.IsNullOrWhiteSpace(refreshTokenModel.RefreshToken))
+        return BadRequest(new App.Dto.v1.Message("Refresh token is required"));
+
+    // Parse JWT
+    JwtSecurityToken jwtToken;
+    try
     {
-        JwtSecurityToken jwtToken;
-        // get user info from jwt
-        try
-        {
-            jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(refreshTokenModel.Jwt);
-            if (jwtToken == null)
-            {
-                return BadRequest(new App.Dto.v1.Message("No token"));
-            }
-        }
-        catch (Exception e)
-        {
-            return BadRequest(new App.Dto.v1.Message($"Cant parse the token, {e.Message}"));
-        }
+        jwtToken = new JwtSecurityTokenHandler().ReadJwtToken(refreshTokenModel.Jwt);
+    }
+    catch (Exception e)
+    {
+        return BadRequest(new App.Dto.v1.Message($"Cannot parse token: {e.Message}"));
+    }
 
-        // validate jwt, ignore expiration date
-        if (!IdentityExtensions.ValidateJwt(
-                refreshTokenModel.Jwt,
-                _configuration.GetValue<string>(SettingsJWTKey)!,
-                _configuration.GetValue<string>(SettingsJWTIssuer)!,
-                _configuration.GetValue<string>(SettingsJWTAudience)!
-            ))
-        {
-            return BadRequest("JWT validation fail");
-        }
-
-        var userEmail = jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-        if (userEmail == null)
-        {
-            return BadRequest(new App.Dto.v1.Message("No email in jwt"));
-        }
-
-        // get user and tokens
-        var appUser = await _userManager.FindByEmailAsync(userEmail);
-        if (appUser == null)
-        {
-            return NotFound($"User with email {userEmail} not found");
-        }
-
-
-        // load and compare refresh tokens
-
-        await _context.Entry(appUser).Collection(u => u.RefreshTokens!)
-            .Query()
-            .Where(x =>
-                (x.RefreshToken == refreshTokenModel.RefreshToken && x.Expiration > DateTime.UtcNow) ||
-                (x.PreviousRefreshToken == refreshTokenModel.RefreshToken &&
-                 x.PreviousExpiration > DateTime.UtcNow)
-            )
-            .ToListAsync();
-
-        if (appUser.RefreshTokens == null)
-        {
-            return Problem("RefreshTokens collection is null");
-        }
-
-        if (appUser.RefreshTokens.Count == 0)
-        {
-            return Problem("RefreshTokens collection is empty, no valid refresh tokens found");
-        }
-
-        if (appUser.RefreshTokens.Count != 1)
-        {
-            return Problem("More than one valid refresh token found.");
-        }
-
-        // generate new jwt
-
-        // get claims based user
-        var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
-
-        // generate jwt
-        var jwt = IdentityExtensions.GenerateJwt(
-            claimsPrincipal.Claims,
+    // Validate signature, issuer, audience, etc. Ignore expiration for refresh flow.
+    if (!IdentityExtensions.ValidateJwt(
+            refreshTokenModel.Jwt,
             _configuration.GetValue<string>(SettingsJWTKey)!,
             _configuration.GetValue<string>(SettingsJWTIssuer)!,
-            _configuration.GetValue<string>(SettingsJWTAudience)!,
-            GetExpirationDateTime(jwtExpiresInSeconds, SettingsJWTExpiresInSeconds)
-        );
-
-        // make new refresh token, obsolete old ones
-        var refreshToken = appUser.RefreshTokens.First();
-        if (refreshToken.RefreshToken == refreshTokenModel.RefreshToken)
-        {
-            refreshToken.PreviousRefreshToken = refreshToken.RefreshToken;
-            refreshToken.PreviousExpiration = DateTime.UtcNow.AddMinutes(1);
-
-            refreshToken.RefreshToken = Guid.NewGuid().ToString();
-            refreshToken.Expiration =
-                GetExpirationDateTime(refreshTokenExpiresInSeconds, SettingsJWTRefreshTokenExpiresInSeconds);
-
-            await _context.SaveChangesAsync();
-        }
-
-        var res = new JWTResponse()
-        {
-            JWT = jwt,
-            RefreshToken = refreshToken.RefreshToken,
-        };
-
-        return Ok(res);
+            _configuration.GetValue<string>(SettingsJWTAudience)!))
+    {
+        return BadRequest(new App.Dto.v1.Message("JWT validation failed"));
     }
+
+    // Prefer stable user id claim over email
+    var userIdValue =
+        jwtToken.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value ??
+        jwtToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+    if (string.IsNullOrWhiteSpace(userIdValue) || !Guid.TryParse(userIdValue, out var userId))
+        return BadRequest(new App.Dto.v1.Message("No valid user id in JWT"));
+
+    var appUser = await _userManager.FindByIdAsync(userId.ToString());
+    if (appUser == null)
+        return NotFound(new App.Dto.v1.Message("User not found"));
+
+    var newRefreshTokenExpiresAt = GetExpirationDateTime(
+        refreshTokenExpiresInSeconds,
+        SettingsJWTRefreshTokenExpiresInSeconds);
+
+    // Validate old refresh token and rotate it
+    var tokenResponse = await _refreshTokenService.ValidateAndRotateAsync(
+        refreshTokenModel.RefreshToken,
+        appUser.Id,
+        newRefreshTokenExpiresAt);
+
+    if (tokenResponse == null)
+        return BadRequest(new App.Dto.v1.Message("Invalid or expired refresh token"));
+
+    var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(appUser);
+
+    var jwt = IdentityExtensions.GenerateJwt(
+        claimsPrincipal.Claims,
+        _configuration.GetValue<string>(SettingsJWTKey)!,
+        _configuration.GetValue<string>(SettingsJWTIssuer)!,
+        _configuration.GetValue<string>(SettingsJWTAudience)!,
+        GetExpirationDateTime(jwtExpiresInSeconds, SettingsJWTExpiresInSeconds)
+    );
+
+    return Ok(new JWTResponse
+    {
+        JWT = jwt,
+        RefreshToken = tokenResponse.RefreshToken
+    });
+}
 
     [Produces("application/json")]
     [Consumes("application/json")]
@@ -431,120 +315,99 @@ public class AccountController : ControllerBase
     [HttpPost]
     public async Task<ActionResult> Logout([FromBody] LogoutInfo logout)
     {
-        // delete the refresh token - so user is kicked out after jwt expiration
-        // We do not invalidate the jwt on serverside - that would require pipeline modification and checking against db on every request
-        // so client can actually continue to use the jwt until it expires (keep the jwt expiration time short ~1 min)
-
-        var appUser = await _context.Users
-            .Where(u => u.Id == User.UserId())
-            .SingleOrDefaultAsync();
-        if (appUser == null)
-        {
-            return NotFound(
-                new App.Dto.v1.Message(UserPassProblem)
-            );
-        }
-
-        await _context.Entry(appUser)
-            .Collection(u => u.RefreshTokens!)
-            .Query()
-            .Where(x =>
-                (x.RefreshToken == logout.RefreshToken) ||
-                (x.PreviousRefreshToken == logout.RefreshToken)
-            )
-            .ToListAsync();
-
-        foreach (var appRefreshToken in appUser.RefreshTokens!)
-        {
-            await _refreshTokenService.DeleteAsync(appRefreshToken.Id);
-        }
-
-        var deleteCount = await _context.SaveChangesAsync();
-
-        return Ok(new { TokenDeleteCount = deleteCount });
-    }
-
-    [HttpPost("set-institute")]
-    public async Task<ActionResult> SetInstitute([FromBody] App.DTO.v1.Identity.SetInstituteDto setInstitute)
-    {
         var userId = User.UserId();
-        var appUser = await _context.Users
-            .Where(u => u.Id == userId)
-            .SingleOrDefaultAsync();
+    
+        if (string.IsNullOrWhiteSpace(logout.RefreshToken))
+            return BadRequest(new App.Dto.v1.Message("Refresh token is required"));
 
-        if (appUser == null)
+        await _refreshTokenService.RevokeAsync(logout.RefreshToken, userId, "logout");
+
+        return Ok();
+    }
+    
+    [Authorize(AuthenticationSchemes = "Bearer")]
+[HttpPost("set-institute")]
+public async Task<ActionResult> SetInstitute([FromBody] SetInstituteDto setInstitute)
+{
+    var userId = User.UserId();
+
+    Institute? institute = null;
+    if (!Enum.IsDefined(typeof(InstituteSelectionType), setInstitute.InstituteSelection))
+        return BadRequest(new App.Dto.v1.Message("Invalid institute selection"));
+    var selection = (InstituteSelectionType)setInstitute.InstituteSelection;
+
+    if (selection == InstituteSelectionType.CreateNew)
+    {
+        if (setInstitute.NewInstitute == null)
+            return BadRequest(new App.Dto.v1.Message("New institute details are required"));
+
+        if (string.IsNullOrWhiteSpace(setInstitute.NewInstitute.InstituteName))
+            return BadRequest(new App.Dto.v1.Message("Institute name is required"));
+
+        Guid? instituteTypeId = string.IsNullOrEmpty(setInstitute.NewInstitute.InstituteTypeId)
+            ? null
+            : Guid.TryParse(setInstitute.NewInstitute.InstituteTypeId, out var parsed) ? parsed : null;
+
+        if (instituteTypeId == null)
+            return BadRequest(new App.Dto.v1.Message("Invalid institute type ID"));
+
+        institute = await _instituteService.CreateAndReturnAsync(new CreateInstituteRequest
         {
-            return NotFound(new App.Dto.v1.Message("User not found"));
-        }
+            Id = Guid.NewGuid(),
+            InstituteName = setInstitute.NewInstitute.InstituteName,
+            InstituteCountry = setInstitute.NewInstitute.InstituteCountry ?? string.Empty,
+            InstituteAddress = setInstitute.NewInstitute.InstituteAddress ?? string.Empty,
+            InstitutePhoneNumber = setInstitute.NewInstitute.InstitutePhoneNumber ?? string.Empty,
+            InstituteTypeId = instituteTypeId.Value,
+            Active = true,
+            CreatedAt = DateTime.UtcNow
+        });
 
-        Institute? institute;
+        _logger.LogInformation("New institute {Name} created by user {UserId}", institute.InstituteName, userId);
+    }
+    else if (selection == InstituteSelectionType.SelectExisting)
+    {
+        if (string.IsNullOrWhiteSpace(setInstitute.InstituteId))
+            return BadRequest(new App.Dto.v1.Message("Institute ID is required"));
 
-        if (setInstitute.InstituteSelection == 1)
-        {
-            // Create new institute
-            Guid? instituteTypeId = string.IsNullOrEmpty(setInstitute.NewInstitute?.InstituteTypeId)
-                ? null
-                : Guid.Parse(setInstitute.NewInstitute.InstituteTypeId);
+        if (!Guid.TryParse(setInstitute.InstituteId, out var instituteGuid))
+            return BadRequest(new App.Dto.v1.Message("Invalid institute ID format"));
 
-            var instituteCreate  = new CreateInstituteRequest
-            {
-                Id = Guid.NewGuid(),
-                InstituteName = setInstitute.NewInstitute!.InstituteName,
-                InstituteCountry = setInstitute.NewInstitute!.InstituteCountry ?? string.Empty,
-                InstituteAddress = setInstitute.NewInstitute!.InstituteAddress ?? string.Empty,
-                InstitutePhoneNumber = setInstitute.NewInstitute!.InstitutePhoneNumber ?? string.Empty,
-                InstituteTypeId = instituteTypeId ?? Guid.Empty,
-                Active = true,
-                CreatedAt = DateTime.UtcNow
-            };
+        institute = await _instituteService.GetFirstActiveByIdAsync(instituteGuid);
+        if (institute == null)
+            return BadRequest(new App.Dto.v1.Message("Institute not found or inactive"));
 
-            institute = await _instituteService.CreateAndReturnAsync(instituteCreate);
-            await _context.SaveChangesAsync();
-        }
-        else
-        {
-            // Select existing institute - verify it exists and is active
-            if (string.IsNullOrEmpty(setInstitute.InstituteId))
-            {
-                return BadRequest(new App.Dto.v1.Message("Institute ID is required when selecting existing institute"));
-            }
-
-            if (!Guid.TryParse(setInstitute.InstituteId, out var instituteGuid))
-            {
-                return BadRequest(new App.Dto.v1.Message("Invalid institute ID format"));
-            }
-            
-            institute = await _instituteService.GetFirstActiveByIdAsync(instituteGuid);
-            
-            if (institute == null)
-            {
-                return BadRequest(new App.Dto.v1.Message("Institute not found or inactive"));
-            }
-        }
-
-        // Check if user already has an InstituteUser record for this institute
-        var existingLink = await _context.InstituteUsers
-            .Where(iu => iu.UserId == userId && iu.InstituteId == institute.Id)
-            .FirstOrDefaultAsync();
-
-        if (existingLink == null)
-        {
-            // Create new InstituteUser link
-            var instituteUser = new InstituteUser
-            {
-                Id = Guid.NewGuid(),
-                UserId = userId,
-                InstituteId = institute.Id,
-                Role = EInstituteUserRole.Employee
-            };
-
-            _context.InstituteUsers.Add(instituteUser);
-            await _context.SaveChangesAsync();
-        }
-
-        return Ok(new { InstituteId = institute.Id, InstituteName = institute.InstituteName });
+        _logger.LogInformation("User {UserId} joining institute {InstituteId}", userId, instituteGuid);
+    }
+    else
+    {
+        return BadRequest(new App.Dto.v1.Message("Invalid institute selection"));
     }
 
+    // Check if link already exists
+    var existingLink = await _context.InstituteUsers
+        .Where(iu => iu.UserId == userId && iu.InstituteId == institute.Id)
+        .FirstOrDefaultAsync();
+
+    if (existingLink != null)
+        return BadRequest(new App.Dto.v1.Message("User is already linked to this institute"));
+
+    var instituteUser = new InstituteUser
+    {
+        Id = Guid.NewGuid(),
+        UserId = userId,
+        InstituteId = institute.Id,
+        Role = EInstituteUserRole.Employee
+    };
+
+    _context.InstituteUsers.Add(instituteUser);
+    await _context.SaveChangesAsync();
+
+    _logger.LogInformation("User {UserId} linked to institute {InstituteId} with role {Role}",
+        userId, institute.Id, instituteUser.Role);
+
+    return Ok(new { InstituteId = institute.Id, InstituteName = institute.InstituteName });
+}
     private DateTime GetExpirationDateTime(int? expiresInSeconds, string settingsKey)
     {
         if (expiresInSeconds <= 0) expiresInSeconds = int.MaxValue;

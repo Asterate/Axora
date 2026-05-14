@@ -1,21 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using App.BLL.Services;
-using App.DAL.EF;
-using App.Domain.Entities;
-using App.DTO.v1;
-using App.Modules.Research;
-using App.Shared.Contracts;
 using WebApp.ViewModels;
-using InstituteEntity = App.Domain.Entities.Institute;
-using Lab = App.Domain.Entities.Lab;
-using Project = App.Domain.Entities.Project;
 
 namespace WebApp.Controllers;
 
@@ -32,7 +18,6 @@ public class HomeDashboardController : Controller
         _projectTypeService = projectTypeService;
     }
 
-    // GET: HomeDashboard
     public async Task<IActionResult> Index()
     {
         var userId = GetCurrentUserId();
@@ -42,7 +27,14 @@ public class HomeDashboardController : Controller
         }
 
         var projectDtos = await _projectService.GetAllAsync();
-        var projects = projectDtos.Select(p => new Project { Id = p.Id}).ToList();
+        var projects = projectDtos.Select(p => new ProjectResponse
+        {
+            Id = p.Id,
+            ProjectName = p.ProjectName,
+            Funding = p.Funding,
+            Requirements = p.Requirements
+        }).ToList();
+
         return View("HomeDashboard", projects);
     }
 

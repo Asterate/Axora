@@ -1,33 +1,30 @@
-﻿using App.Domain.Entities;
+﻿using App.Modules.Audit.Application.DTO;
+using App.Modules.Audit.Domain;
 
-namespace App.Modules.Experiment.Application.Mapper;
+namespace App.Modules.Audit.Application.Mappers;
 
 public static class SystemLogMapper
 {
     // Entity → List Response
-    public static SystemLogListResponse ToListResponse(SystemLog entity)
-        => new SystemLogListResponse
-        {
-            Id = entity.Id,
-        };
-
-    // Entity → Full Response
     public static SystemLogResponse ToResponse(SystemLog entity)
-        => new SystemLogResponse
+        => new ()
         {
             Id = entity.Id,
+            Timestamp = entity.Timestamp,
+            Type = entity.Type,
+            Message = entity.Message,
+            StatusCode = entity.StatusCode,
+            UserName = entity.UserName,
         };
 
     // Create Request → Entity
     public static SystemLog ToEntity(CreateSystemLogRequest request)
-        => new SystemLog
+        => new ()
         {
-            Id = request.Id,
+            Timestamp = request.Timestamp,
+            Type = request.Type,
+            Message = request.Message,
+            StatusCode = request.StatusCode,
+            UserName = request.UserName,
         };
-
-    // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(SystemLog entity, UpdateSystemLogRequest request)
-    {
-        request.Id = entity.Id;
-    }
 }

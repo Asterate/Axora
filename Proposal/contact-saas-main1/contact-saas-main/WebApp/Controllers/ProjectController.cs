@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using App.BLL.Services;
-using App.DTO.v1;
-using App.Modules.Research;
 using Microsoft.AspNetCore.Authorization;
+using WebApp.ViewModels;
 
 namespace WebApp.Controllers
 {
@@ -15,11 +9,13 @@ namespace WebApp.Controllers
     [Authorize]
     public class ProjectController : Controller
     {
-        private readonly IProjectService _projectService;
+        private readonly ProjectService _projectService;
+        private readonly ProjectTypeService _projectTypeService;
 
-        public ProjectController(IProjectService projectService)
+        public ProjectController(ProjectService projectService, ProjectTypeService projectTypeService)
         {
             _projectService = projectService;
+            _projectTypeService = projectTypeService;
         }
 
         // GET: Project
@@ -32,114 +28,93 @@ namespace WebApp.Controllers
             }
 
             // Get projects filtered by user's institute
-            var projects = await _projectService.GetAllAsync(userId.Value);
-            return View(projects);
+            var projects = await _projectService.GetAllAsync();
+            return View("~/Views/HomeDashboard/HomeDashboard.cshtml", projects);
         }
 
         // GET: Project/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var project = await _projectService.GetByIdAsync(id);
+            if (project == null) return NotFound();
 
-            var userId = GetCurrentUserId();
-            if (!userId.HasValue)
+            var response = new ProjectResponse
             {
-                return Challenge();
-            }
+                Id = project.Id,
+                ProjectName = project.ProjectName,
+                Funding = project.Funding,
+                Requirements = project.Requirements,
+                RequirementsFilePath = project.RequirementsFilePath,
+                ProjectTypeId = project.ProjectTypeId
+            };
 
-            // only returns project if it belongs to user's institute
-            var project = await _projectService.GetByIdAsync(id.Value, userId.Value);
-            if (project == null)
-            {
-                return NotFound();
-            }
-
-            return View(project);
+            return View(response);
         }
 
         // GET: Project/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var model = new ProjectViewModel
+            {
+                ProjectTypes = await _projectTypeService.GetActivesAsync()
+            };
+            return View(model);
         }
 
         // POST: Project/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProjectName,Funding,Requirements,RequirementsFilePath,PublicTypeId")] CreateProjectRequest dto)
+        public async Task<IActionResult> Create(ProjectViewModel model)
         {
             var userId = GetCurrentUserId();
-            if (!userId.HasValue)
-            {
-                return Challenge();
-            }
+            if (!userId.HasValue) return Challenge();
 
             try
             {
-                await _projectService.CreateAsync(dto, userId.Value);
+                await _projectService.CreateAsync(model.Request);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, ex.Message);
-                return View(dto);
+                model.ProjectTypes = await _projectTypeService.GetActivesAsync();
+                return View(model);
             }
         }
 
         // GET: Project/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+        // GET
+        public async Task<IActionResult> Edit(Guid id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var project = await _projectService.GetByIdAsync(id);
+            if (project == null) return NotFound();
 
-            var userId = GetCurrentUserId();
-            if (!userId.HasValue)
+            var model = new ProjectViewModel
             {
-                return Challenge();
-            }
-            
-            var project = await _projectService.GetByIdAsync(id.Value, userId.Value);
-            if (project == null)
-            {
-                return NotFound();
-            }
+                Request = new UpdateProjectRequest
+                {
+                    Id = project.Id,
+                    ProjectName = project.ProjectName,
+                    Funding = project.Funding,
+                    Requirements = project.Requirements,
+                    RequirementsFilePath = project.RequirementsFilePath,
+                    ProjectTypeId = project.ProjectTypeId
+                },
+                ProjectTypes = await _projectTypeService.GetActivesAsync()
+            };
 
-            return View(project);
+            return View(model);
         }
 
-        // POST: Project/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("ProjectName,Funding,Requirements,RequirementsFilePath,ProjectTypeId")] UpdateProjectRequest dto)
+        public async Task<IActionResult> Edit(Guid id, ProjectViewModel model)
         {
-            // Note: id comes from route, dto doesn't have Id (as per CreateProjectDto definition)
-            // The service will validate ownership using the route id parameter
+            
+            if (!ModelState.IsValid) return View(model);
 
-            var userId = GetCurrentUserId();
-            if (!userId.HasValue)
-            {
-                return Challenge();
-            }
-
-            try
-            {
-                var success = await _projectService.UpdateAsync(id, dto, userId.Value);
-                if (!success)
-                {
-                    return NotFound();
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, ex.Message);
-                return View(dto);
-            }
+            await _projectService.UpdateAsync(id, model.Request);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Project/Delete/5
@@ -156,7 +131,7 @@ namespace WebApp.Controllers
                 return Challenge();
             }
             
-            var project = await _projectService.GetByIdAsync(id.Value, userId.Value);
+            var project = await _projectService.GetByIdAsync(id.Value);
             if (project == null)
             {
                 return NotFound();
@@ -177,12 +152,7 @@ namespace WebApp.Controllers
             }
 
             // IDOR protected
-            var success = await _projectService.DeleteAsync(id, userId.Value);
-            if (!success)
-            {
-                return NotFound();
-            }
-
+            await _projectService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 

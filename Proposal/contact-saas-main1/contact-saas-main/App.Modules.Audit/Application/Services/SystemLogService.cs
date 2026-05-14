@@ -1,6 +1,9 @@
-﻿using App.Modules.Audit.Application.Interface;
-using App.Modules.Experiment.Application.Mapper;
+﻿using App.Modules.Audit.Application.DTO;
+using App.Modules.Audit.Application.Interface;
+using App.Modules.Audit.Application.Mappers;
 using App.Shared.Contracts;
+
+namespace App.Modules.Audit.Application.Services;
 
 public class SystemLogService
 {
@@ -14,17 +17,10 @@ public class SystemLogService
         _systemLogRepo = systemLogRepo;
         _uow = uow;
     }
-    public async Task<IEnumerable<SystemLogListResponse>> GetAllAsync()
+    public async Task<IEnumerable<SystemLogResponse>> GetAllAsync()
     {
         var entities = await _systemLogRepo.GetAllAsync();
-        return entities.Select(SystemLogMapper.ToListResponse);
-    }
-
-    public async Task<SystemLogResponse?> GetByIdAsync(Guid id)
-    {
-        var entity = await _systemLogRepo.GetByIdAsync(id);
-        if (entity == null) return null;
-        return SystemLogMapper.ToResponse(entity);
+        return entities.Select(SystemLogMapper.ToResponse);
     }
 
     public async Task CreateAsync(CreateSystemLogRequest request)
@@ -33,30 +29,13 @@ public class SystemLogService
         await _systemLogRepo.AddAsync(entity);
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
-
-    public async Task UpdateAsync(Guid id, UpdateSystemLogRequest request)
-    {
-        var entity = await _systemLogRepo.GetByIdAsync(id);
-        if (entity == null) return;
-        SystemLogMapper.UpdateEntity(entity, request);
-        _systemLogRepo.Update(entity);
-        await _uow.SaveChangesAsync(); // ← actually saves now
-    }
-
-    public async Task DeleteAsync(Guid id)
-    {
-        var entity = await _systemLogRepo.GetByIdAsync(id);
-        if (entity == null) return;
-        _systemLogRepo.Delete(entity);
-        await _uow.SaveChangesAsync(); // ← actually saves now
-    }
-    public async Task<IEnumerable<SystemLogListResponse>> GetRecentAsync(int take)
+    public async Task<IEnumerable<SystemLogResponse>> GetRecentAsync(int take)
     {
         var all = await _systemLogRepo.GetAllAsync();
         return all
             .Where(i => i.DeletedAt == null)
             .OrderByDescending(i => i.CreatedAt)
             .Take(take)
-            .Select(SystemLogMapper.ToListResponse);
+            .Select(SystemLogMapper.ToResponse);
     }
 }

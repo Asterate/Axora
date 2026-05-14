@@ -2,7 +2,7 @@ namespace App.DTO.v1.Identity;
 
 public class SetInstituteDto
 {
-    public int InstituteSelection { get; set; } // 0 = select existing, 1 = create new
+    public int InstituteSelection { get; set; }
     public string? InstituteId { get; set; }
     public NewInstituteDto? NewInstitute { get; set; }
 }

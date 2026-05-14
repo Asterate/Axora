@@ -5,6 +5,7 @@ using App.Modules.Institute.Infrastructure.Repositories;
 using App.Modules.Lab.Infrastructure;
 using App.Modules.Lab.Infrastructure.Repositories;
 using App.Modules.Project.Application.Interfaces;
+using App.Modules.Project.Infrastructure.Repositories;
 using App.Shared.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

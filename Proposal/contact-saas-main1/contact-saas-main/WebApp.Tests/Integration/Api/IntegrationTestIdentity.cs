@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using App.DTO.v1.Identity;
 using App.Helpers;
+using App.Modules.Identity.Application.DTO;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 

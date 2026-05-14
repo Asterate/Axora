@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using App.DTO.v1.Identity;
 
-namespace App.DTO.v1.Identity;
+namespace App.Modules.Identity.Application.DTO;
 
 public enum InstituteSelectionType
 {

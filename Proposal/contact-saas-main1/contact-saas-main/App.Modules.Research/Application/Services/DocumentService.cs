@@ -53,11 +53,22 @@ public class DocumentService
         _document.Update(entity);
         await _uow.SaveChangesAsync();
     }
-    public async Task<IEnumerable<DocumentListResponse>> FindDeletedAsync()
+    public async Task<IEnumerable<DocumentResponse>> FindDeletedAsync()
     {
         var entities = await _document.GetAllAsync();
         return entities
             .Where(s => s.DeletedAt != null)
-            .Select(DocumentMapper.ToListResponse);
+            .Select(DocumentMapper.ToResponse);
+    }
+    public async Task<List<LookupItem>> GetActivesAsync(string? culture = null)
+    {
+        var entities = await _document.GetAllAsync();
+        return entities
+            .Where(t => t.DeletedAt == null)
+            .Select(t => new LookupItem
+            {
+                Id = t.Id,
+                Name = t.GetName(culture) ?? "???"
+            }).ToList();
     }
 }

@@ -1,9 +1,9 @@
 using System.Text;
+using App.Modules.Audit.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Tokens;
 using WebApp.Helpers;
 using WebApp.Setup;
-using App.Modules.Audit.Infrastructure.Data;
 using App.Modules.Identity;
 using App.Modules.Identity.Infrastructure;
 using App.Modules.Lab.Infrastructure;
@@ -34,6 +34,7 @@ builder.Services.AddAuthentication(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     options.LoginPath = "/Identity/Account/Login?ReturnUrl=%2F";
+    options.AccessDeniedPath = "/Account/AccessDenied";
     options.SlidingExpiration = true;
     options.ExpireTimeSpan = TimeSpan.FromDays(30);
 })
@@ -66,7 +67,6 @@ builder.Services.AddAppLocalization(builder.Configuration);
 
 //Modular monolith
 builder.Services.AddModuleDatabase<AuditDbContext>(builder.Configuration, builder.Environment);
-builder.Services.AddAuditModule();
 builder.Services.AddModuleDatabase<IdentityModuleDbContext>(builder.Configuration, builder.Environment);
 builder.Services.AddIdentityDatabase(builder.Configuration, builder.Environment);
 builder.Services.AddModuleDatabase<LabDbContext>(builder.Configuration, builder.Environment);

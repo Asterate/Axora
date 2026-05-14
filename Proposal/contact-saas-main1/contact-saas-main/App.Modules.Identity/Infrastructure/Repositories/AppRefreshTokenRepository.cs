@@ -1,9 +1,9 @@
-﻿using App.Domain.Identity;
+﻿using App.Modules.Identity.Application.Interfaces;
 using App.Modules.Identity.Applications.Interfaces;
-using App.Modules.Identity.Infrastructure;
+using App.Modules.Identity.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.Modules.Equipment.Infrastructure.Repositories;
+namespace App.Modules.Identity.Infrastructure.Repositories;
 
 internal sealed class AppRefreshTokenRepository : IAppRefreshTokenRepository
 {
@@ -12,6 +12,16 @@ internal sealed class AppRefreshTokenRepository : IAppRefreshTokenRepository
     public AppRefreshTokenRepository(IdentityModuleDbContext context)
     {
         _context = context;
+    }
+    public async Task<AppRefreshToken?> GetValidTokenAsync(string tokenHash, Guid userId)
+    {
+        return await _context.AppRefreshTokens
+            .SingleOrDefaultAsync(x =>
+                x.TokenHash == tokenHash &&
+                x.UserId == userId &&
+                !x.IsRevoked &&
+                x.ExpiresAt > DateTime.UtcNow
+            );
     }
 
     public async Task<IEnumerable<AppRefreshToken>> GetAllAsync()
@@ -31,18 +41,11 @@ internal sealed class AppRefreshTokenRepository : IAppRefreshTokenRepository
 
     public async Task<int> DeleteExpiredByUserIdAsync(Guid userId)
     {
-        if (_context.Database.ProviderName!.Contains("InMemory"))
-        {
-            var expired = _context.AppRefreshTokens
-                .Where(t => t.UserId == userId && t.Expiration < DateTime.UtcNow)
-                .ToList();
+        var expired = await _context.AppRefreshTokens
+            .Where(t => t.UserId == userId && t.ExpiresAt <= DateTime.UtcNow)
+            .ToListAsync();
 
-            _context.AppRefreshTokens.RemoveRange(expired);
-            return expired.Count;
-        }
-
-        return await _context.AppRefreshTokens
-            .Where(t => t.UserId == userId && t.Expiration < DateTime.UtcNow)
-            .ExecuteDeleteAsync();
+        _context.AppRefreshTokens.RemoveRange(expired);
+        return expired.Count;
     }
 }

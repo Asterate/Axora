@@ -1,8 +1,8 @@
-﻿using App.Domain.Entities;
+﻿using App.Modules.Audit.Domain;
 using App.Shared.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.Modules.Audit.Infrastructure.Data;
+namespace App.Modules.Audit.Infrastructure;
 
 public sealed class AuditDbContext : DbContext
 {

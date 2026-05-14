@@ -14,10 +14,10 @@ public class ProjectService
         _project = project;
         _uow = uow;
     }
-    public async Task<IEnumerable<ProjectListResponse>> GetAllAsync()
+    public async Task<IEnumerable<ProjectResponse>> GetAllAsync()
     {
         var entities = await _project.GetAllAsync();
-        return entities.Select(ProjectMapper.ToListResponse);
+        return entities.Select(ProjectMapper.ToResponse);
     }
 
     public async Task<ProjectResponse?> GetByIdAsync(Guid id)

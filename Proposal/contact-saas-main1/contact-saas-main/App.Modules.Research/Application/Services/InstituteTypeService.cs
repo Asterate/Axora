@@ -57,7 +57,7 @@ public class InstituteTypeService
         return entities.Select(i => new LookupItem 
         { 
             Id = i.Id, 
-            Name = i.GetInstituteName(culture) ?? "???"
+            Name = i.GetName(culture) ?? "???"
         }).ToList();
     }
 }

@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 using App.DTO.v1.Identity;
 using App.Helpers;
+using App.Modules.Identity.Application.DTO;
 using Xunit;
 
 namespace WebApp.Tests.Helpers;

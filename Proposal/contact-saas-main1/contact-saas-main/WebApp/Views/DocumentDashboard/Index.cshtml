@@ -1,11 +1,11 @@
-@model WebApp.ViewModels.DocumentationViewModel
+@model IEnumerable<DocumentListResponse>
 @using Index = App.Resources.Views.DocumentDashboard.Index
 @{
     Layout = "_Layout";
+    var items = Model?.ToList() ?? new List<DocumentListResponse>();
 }
 
 <!DOCTYPE html>
-
 <html>
 <head>
     <title>Document Dashboard</title>
@@ -26,11 +26,11 @@
         </tr>
         </thead>
         <tbody>
-        @foreach (var document in Model.Documents)
+        @foreach (var document in items)
         {
             <tr>
                 <td>@document.DocumentName</td>
-                <td>@document.DocumentType?</td>
+                <td>@document.DocumentType</td>
                 <td>@document.CreatedAt.ToShortDateString()</td>
                 <td>
                     <a asp-controller="Document" asp-action="Edit" asp-route-id="@document.Id">@Index.Edit</a> |

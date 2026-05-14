@@ -1,4 +1,5 @@
 ﻿using App.Domain.Entities;
+using App.Modules.Identity.Domain;
 
 public class InstituteUserListResponse
 {

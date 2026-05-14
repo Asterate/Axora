@@ -1,5 +1,4 @@
-﻿using App.Modules.Audit.Infrastructure.Data;
-using App.Shared.Contracts;
+﻿using App.Shared.Contracts;
 
 namespace App.Modules.Audit.Infrastructure;
 

@@ -1,3 +1,5 @@
+using App.Modules.Audit.Application.DTO;
+
 namespace WebApp.ViewModels;
 
 public class AdminDashboardViewModel
@@ -7,7 +9,7 @@ public class AdminDashboardViewModel
     public int TotalLabs { get; set; }
     public int TotalProjects { get; set; }
     
-    public IEnumerable<SystemLogListResponse> RecentLogs { get; set; } = new List<SystemLogListResponse>();
+    public IEnumerable<SystemLogResponse> RecentLogs { get; set; } = new List<SystemLogResponse>();
     public IEnumerable<InstituteListResponse> RecentInstitutes { get; set; } =  new List<InstituteListResponse>();
     public IEnumerable<ProjectListResponse> RecentProjects { get; set; } = new List<ProjectListResponse>();
 }
