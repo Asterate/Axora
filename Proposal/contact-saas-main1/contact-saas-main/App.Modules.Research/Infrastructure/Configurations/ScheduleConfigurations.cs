@@ -1,4 +1,4 @@
-﻿using App.Domain.Entities;
+﻿using App.Modules.Project.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,8 +8,31 @@ internal sealed class ScheduleConfiguration : IEntityTypeConfiguration<Schedule>
 {
     public void Configure(EntityTypeBuilder<Schedule> builder)
     {
-        builder.Property(x => x.Id)
+        builder.Property(x => x.ScheduleName)
+            .IsRequired()
+            .HasMaxLength(128);
+
+        builder.Property(x => x.ScheduleDescription)
+            .IsRequired()
+            .HasMaxLength(128);
+
+        builder.Property(x => x.ColorCode)
+            .HasMaxLength(32);
+
+        builder.Property(x => x.Status)
             .IsRequired();
-        
+
+        builder.ToTable(t =>
+        {
+            t.HasCheckConstraint(
+                "CK_Schedule_TimeRange",
+                "[EndTime] > [StartTime]");
+        });
+
+        builder.HasOne<ExperimentTask>()
+            .WithMany()
+            .HasForeignKey(x => x.ExperimentTaskId)
+            .OnDelete(DeleteBehavior.Restrict);
+        builder.ToTable(t => t.HasCheckConstraint("CK_Schedule_EndAfterStart", "\"ScheduleEndTime\" > \"ScheduleStartTime\""));
     }
 }

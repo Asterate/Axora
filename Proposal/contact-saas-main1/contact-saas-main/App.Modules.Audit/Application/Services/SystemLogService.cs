@@ -5,7 +5,7 @@ using App.Shared.Contracts;
 
 namespace App.Modules.Audit.Application.Services;
 
-public class SystemLogService
+public class SystemLogService : ISystemLogService
 {
     private readonly ISystemLogRepository _systemLogRepo;
     private readonly IUnitOfWork _uow;

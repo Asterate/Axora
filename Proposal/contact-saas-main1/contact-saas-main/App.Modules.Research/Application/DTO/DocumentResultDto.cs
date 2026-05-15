@@ -1,22 +1,19 @@
-﻿public class DocumentResultListResponse
-{
-    public Guid Id { get; set; }
-    public string? Name { get; set; }
-}
+﻿namespace App.Modules.Project.Application.DTO;
 
 public class DocumentResultResponse
 {
     public Guid Id { get; set; }
-    public string? Name { get; set; }
+    public string? DocumentName { get; set; }
+    public string? ResultName { get; set; }
 }
 
 public class CreateDocumentResultRequest
 {
-    public Guid Id { get; set; }
+    public Guid ResultId { get; set; }
+    public Guid DocumentId { get; set; }
 }
 
-public class UpdateDocumentResultRequest
+public class UpdateDocumentResultRequest :  CreateDocumentResultRequest
 {
     public Guid Id { get; set; }
-    public string? Name { get; set; }
 }

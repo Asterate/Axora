@@ -3,10 +3,15 @@ using MediatR;
 
 namespace App.Shared.Contracts.Events;
 
+// Shared/Contracts/Events/UserRegisteredEvent.cs
 public record UserRegisteredEvent(
     Guid UserId,
     string Email,
-    InstituteSelectionType InstituteSelection,
+    bool IsNewInstitute,
     Guid? ExistingInstituteId,
-    NewInstituteDto? NewInstitute
+    string? NewInstituteName,
+    string? NewInstituteCountry,
+    string? NewInstituteAddress,
+    string? NewInstitutePhone,
+    Guid? NewInstituteTypeId 
 ) : INotification;

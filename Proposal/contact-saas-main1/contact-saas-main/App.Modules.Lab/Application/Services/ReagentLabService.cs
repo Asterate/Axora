@@ -1,8 +1,11 @@
-﻿using App.Modules.Lab.Application.Interfaces;
-using App.Modules.Lab.Application.Mapper;
+﻿using App.Modules.Lab.Application.DTO;
+using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Mappers;
 using App.Shared.Contracts;
 
-public class ReagentLabService
+namespace App.Modules.Lab.Application.Services;
+
+public class ReagentLabService :  IReagentLabService
 {
     private readonly IReagentLabRepository _reagentLab;
     private readonly IUnitOfWork _uow;
@@ -14,7 +17,7 @@ public class ReagentLabService
         _reagentLab = reagentLabRepo;
         _uow = uow;
     }
-    public async Task<IEnumerable<ReagentLabListResponse>> GetAllAsync()
+    public async Task<IEnumerable<ReagentLabResponse>> GetAllAsync()
     {
         var entities = await _reagentLab.GetAllAsync();
         return entities.Select(ReagentLabMapper.ToReagentLabResponse);
@@ -24,14 +27,14 @@ public class ReagentLabService
     {
         var entity = await _reagentLab.GetByIdAsync(id);
         if (entity == null) return null;
-        return ReagentLabMapper.ToResponse(entity);
+        return ReagentLabMapper.ToReagentLabResponse(entity);
     }
 
     public async Task CreateAsync(CreateReagentLabRequest request)
     {
         var entity = ReagentLabMapper.ToEntity(request);
         await _reagentLab.AddAsync(entity);
-        await _uow.SaveChangesAsync(); // ← actually saves now
+        await _uow.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(Guid id, UpdateReagentLabRequest request)
@@ -40,7 +43,7 @@ public class ReagentLabService
         if (entity == null) return;
         ReagentLabMapper.UpdateEntity(entity, request);
         _reagentLab.Update(entity);
-        await _uow.SaveChangesAsync(); // ← actually saves now
+        await _uow.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(Guid id)
@@ -48,6 +51,6 @@ public class ReagentLabService
         var entity = await _reagentLab.GetByIdAsync(id);
         if (entity == null) return;
         _reagentLab.Delete(entity);
-        await _uow.SaveChangesAsync(); // ← actually saves now
+        await _uow.SaveChangesAsync();
     }
 }

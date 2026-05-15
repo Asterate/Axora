@@ -1,4 +1,4 @@
-@model App.Domain.Entities.ExperimentEquipment
+@model App.Modules.Project.Domain.ExperimentEquipment
 
 @{
     ViewData["Title"] = "Edit";
@@ -33,9 +33,9 @@
                 <span asp-validation-for="ExperimentId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="EquipementId" class="control-label"></label>
-                <input asp-for="EquipementId" class="form-control" />
-                <span asp-validation-for="EquipementId" class="text-danger"></span>
+                <label asp-for="EquipmentId" class="control-label"></label>
+                <input asp-for="EquipmentId" class="form-control" />
+                <span asp-validation-for="EquipmentId" class="text-danger"></span>
             </div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">

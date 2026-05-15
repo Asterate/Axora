@@ -15,4 +15,5 @@ public interface IAccountService
         int? refreshTokenExpiresInSeconds);
     Task<JWTResponse> RenewRefreshTokenAsync(RefreshTokenModel model);
     Task LogoutAsync(LogoutInfo model, Guid userId);
+    DateTime GetExpirationDateTime(int? expiresInSeconds, string settingsKey);
 }

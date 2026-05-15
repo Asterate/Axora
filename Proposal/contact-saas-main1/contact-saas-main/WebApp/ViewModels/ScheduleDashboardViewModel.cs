@@ -1,4 +1,6 @@
-﻿namespace WebApp.ViewModels;
+﻿using App.Modules.Project.Application.DTO;
+
+namespace WebApp.ViewModels;
 
 public class ScheduleDashboardViewModel
 {

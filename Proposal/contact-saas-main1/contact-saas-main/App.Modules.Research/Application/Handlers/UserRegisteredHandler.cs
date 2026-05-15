@@ -1,6 +1,5 @@
-﻿// Modules/Institutions/Application/Handlers/UserRegisteredHandler.cs
-
-using App.Modules.Project.Application.Interfaces;
+﻿using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Services;
 using App.Shared.Contracts.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -10,41 +9,38 @@ namespace App.Modules.Project.Application.Handlers;
 public class UserRegisteredHandler : INotificationHandler<UserRegisteredEvent>
 {
     private readonly InstituteService _instituteService;
-    private readonly InstituteUserService _instituteUserService;
-    private readonly InstituteTypeService _instituteTypeService;
+    private readonly IMediator _mediator;  
     private readonly ILogger<UserRegisteredHandler> _logger;
 
     public UserRegisteredHandler(
-        InstituteService instituteService,
-        InstituteUserService instituteUserService,
-        InstituteTypeService instituteTypeService,
+        InstituteService instituteService, InstituteTypeService instituteTypeService,
+        IMediator mediator,
         ILogger<UserRegisteredHandler> logger)
     {
         _instituteService = instituteService;
-        _instituteUserService = instituteUserService;
-        _instituteTypeService = instituteTypeService;
+        _mediator = mediator;
         _logger = logger;
     }
 
     public async Task Handle(UserRegisteredEvent e, CancellationToken ct)
     {
-        Domain.Entities.Institute institute;
+        Domain.Institute institute;
 
-        if (e.InstituteSelection == InstituteSelectionType.CreateNew)
+        if (e.IsNewInstitute)
         {
-            var dto = e.NewInstitute!;
             institute = await _instituteService.CreateAndReturnAsync(new CreateInstituteRequest
             {
-                Id = Guid.NewGuid(),
-                InstituteName = dto.InstituteName,
-                InstituteCountry = dto.InstituteCountry,
-                InstituteAddress = dto.InstituteAddress,
-                InstitutePhoneNumber = dto.InstitutePhoneNumber,
-                InstituteTypeId = dto.InstituteTypeId,
+                InstituteName = e.NewInstituteName ?? "??",
+                InstituteCountry = e.NewInstituteCountry ?? "??",
+                InstituteAddress = e.NewInstituteAddress ?? "??",
+                InstitutePhoneNumber = e.NewInstitutePhone ?? "??",
+                InstituteTypeId = e.NewInstituteTypeId!.Value,
                 CreatedAt = DateTime.UtcNow,
                 Active = true
             });
-            _logger.LogInformation("New institute {Name} created for {Email}", institute.InstituteName, e.Email);
+
+            _logger.LogInformation("New institute {Name} created for {Email}", 
+                institute.InstituteName, e.Email);
         }
         else
         {
@@ -52,13 +48,10 @@ public class UserRegisteredHandler : INotificationHandler<UserRegisteredEvent>
                         ?? throw new InvalidOperationException($"Institute {e.ExistingInstituteId} not found");
         }
 
-        await _instituteUserService.CreateAsync(new CreateInstituteUserRequest
-        {
-            Id = Guid.NewGuid(),
-            InstituteId = institute.Id,
-            UserId = e.UserId,
-            Role = EInstituteUserRole.Employee
-        });
+        await _mediator.Publish(new InstituteReadyEvent(
+            UserId: e.UserId,
+            InstituteId: institute.Id
+        ), ct);
 
         _logger.LogInformation("InstituteUser created for {Email}", e.Email);
     }

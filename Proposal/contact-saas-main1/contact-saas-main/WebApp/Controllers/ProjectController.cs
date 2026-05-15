@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels;

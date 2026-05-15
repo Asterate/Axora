@@ -2,6 +2,8 @@
 
 using System.Text.Json;
 using App.Domain.Entities;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Domain;
 using App.Shared.Domain;
 
 namespace App.Modules.Experiment.Application.Mapper;
@@ -10,7 +12,7 @@ public static class ExperimentTypeMapper
 {
     // Entity → List Response
     public static ExperimentTypeListResponse ToListResponse(ExperimentType entity)
-        => new ExperimentTypeListResponse
+        => new ()
         {
             Id = entity.Id,
             Name = entity.GetName(),
@@ -19,7 +21,7 @@ public static class ExperimentTypeMapper
 
     // Entity → Full Response
     public static ExperimentTypeResponse ToResponse(ExperimentType entity)
-        => new ExperimentTypeResponse
+        => new ()
         {
             Id = entity.Id,
             NameEn = entity.GetName("en"),
@@ -30,9 +32,8 @@ public static class ExperimentTypeMapper
 
     // Create Request → Entity
     public static ExperimentType ToEntity(CreateExperimentTypeRequest request)
-        => new ExperimentType
+        => new ()
         {
-            Id = request.Id,
             Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.NameEn ?? "", ["et"] = request.NameEt ?? "" }),
             Description = request.DescriptionEn == null && request.DescriptionEt == null ? null
                 : JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.DescriptionEn ?? "", ["et"] = request.DescriptionEt ?? "" })
@@ -47,5 +48,16 @@ public static class ExperimentTypeMapper
         {
             entity.Description = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.DescriptionEn ?? "", ["et"] = request.DescriptionEt ?? "" });
         }
+    }
+    public static UpdateExperimentTypeRequest ToUpdateRequest(ExperimentType request)
+    {
+        return new UpdateExperimentTypeRequest
+        {
+            Id = request.Id,
+            NameEn = request.GetName("en"),
+            NameEt = request.GetName("et"),
+            DescriptionEn = request.GetDescription("en"),
+            DescriptionEt = request.GetDescription("et")
+        };
     }
 }

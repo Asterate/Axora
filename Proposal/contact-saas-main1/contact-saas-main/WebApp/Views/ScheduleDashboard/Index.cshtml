@@ -37,8 +37,8 @@
                             <tr>
                                 <td>@schedule.ScheduleName</td>
                                 <td>@schedule.Status</td>
-                                <td>@schedule.StartTime.ToShortDateString()</td>
-                                <td>@schedule.EndTime.ToShortDateString()</td>
+                                <td>@schedule.ScheduleStartTime.ToShortDateString()</td>
+                                <td>@schedule.ScheduleEndTime.ToShortDateString()</td>
                                 <td>
                                     <a asp-controller="Schedule" asp-action="Edit" asp-route-id="@schedule.Id">@ScheduleDashboardIndex.Edit</a> |
                                     <a asp-controller="Schedule" asp-action="Details" asp-route-id="@schedule.Id">@ScheduleDashboardIndex.Details</a> |

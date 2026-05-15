@@ -1,8 +1,12 @@
 ﻿using App.Modules.Equipment.Application.Interfaces;
 using App.Modules.Equipment.Application.Mapper;
+using App.Modules.Lab.Application.DTO;
+using App.Modules.Lab.Application.Interfaces;
 using App.Shared.Contracts;
 
-public class EquipmentTypeService
+namespace App.Modules.Lab.Application.Services;
+
+public class EquipmentTypeService :  IEquipmentTypeService
 {
     private readonly IEquipmentTypeRepository _equipmentTypeRepo;
     private readonly IUnitOfWork _uow;

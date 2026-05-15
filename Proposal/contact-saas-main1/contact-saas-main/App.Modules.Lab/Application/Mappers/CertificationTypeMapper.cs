@@ -1,9 +1,10 @@
 ﻿// App.Modules.Equipment/Application/Mapper/EquipmentMapper.cs
 
 using System.Text.Json;
-using App.Modules.Equipment.Domain;
+using App.Modules.Lab.Application.DTO;
+using App.Modules.Lab.Domain;
 
-namespace App.Modules.Equipment.Application.Mapper;
+namespace App.Modules.Lab.Application.Mappers;
 
 public static class CertificationTypeMapper
 {
@@ -31,7 +32,6 @@ public static class CertificationTypeMapper
     public static CertificationType ToEntity(CreateCertificationTypeRequest request)
         => new ()
         {
-            Id = request.Id,
             Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.NameEn ?? "", ["et"] = request.NameEt ?? "" }),
             Description = request.DescriptionEn == null && request.DescriptionEt == null ? null
                 : JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.DescriptionEn ?? "", ["et"] = request.DescriptionEt ?? "" })

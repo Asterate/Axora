@@ -1,21 +1,20 @@
-﻿public class ExperimentEquipmentListResponse
-{
-    public Guid Id { get; set; }
-    public string? Name { get; set; }
-}
+﻿namespace App.Modules.Project.Application.DTO;
 
 public class ExperimentEquipmentResponse
 {
     public Guid Id { get; set; }
-    public string? Name { get; set; }
+    public string? ExperimentName { get; set; }
+    public Guid EquipementId { get; set; }
 }
 
 public class CreateExperimentEquipmentRequest
 {
-    public Guid Id { get; set; }
+    public string? ExperimentName { get; set; }
+    public Guid EquipementId { get; set; }
 }
 
-public class UpdateExperimentEquipmentRequest
+public class UpdateExperimentEquipmentRequest :  CreateExperimentEquipmentRequest
 {
     public Guid Id { get; set; }
+    
 }

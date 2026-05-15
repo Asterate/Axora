@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
 using App.Domain.Entities;
+using App.Modules.Institute.Application.Mapper;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Services;
 using App.Shared.Domain;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels;
@@ -58,16 +61,19 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 var name = new LangStr();
-                name.SetTranslation(viewModel.NameEn, "en");
-                name.SetTranslation(viewModel.NameEt, "et");
+                name.SetTranslation(viewModel.InstituteTypes.NameEn ?? "??", "en");
+                name.SetTranslation(viewModel.InstituteTypes.NameEt ?? "??", "et");
                 
                 var description = new LangStr();
-                description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
-                description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
+                description.SetTranslation(viewModel.InstituteTypes.DescriptionEn ?? string.Empty, "en");
+                description.SetTranslation(viewModel.InstituteTypes.DescriptionEt ?? string.Empty, "et");
                 
                 var instituteType = new CreateInstituteTypeRequest()
                 {
-                    Name = name,
+                    NameEn = viewModel.InstituteTypes.NameEn,
+                    NameEt = viewModel.InstituteTypes.NameEt,
+                    DescriptionEn = viewModel.InstituteTypes.DescriptionEn,
+                    DescriptionEt = viewModel.InstituteTypes.DescriptionEt
                 };
                 await _instituteTypeService.CreateAsync(instituteType);
                 return RedirectToAction("Index", "LookupData");
@@ -88,12 +94,10 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-            
-            // Convert to ViewModel for display
             var viewModel = new InstituteTypeViewModel
             {
-                Id = instituteType.Id,
-                };
+                InstituteTypes = instituteType 
+            };
             return View(viewModel);
         }
 
@@ -104,7 +108,7 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, InstituteTypeViewModel viewModel)
         {
-            if (id != viewModel.Id)
+            if (id != viewModel.InstituteTypes.Id)
             {
                 return NotFound();
             }
@@ -130,18 +134,14 @@ namespace WebApp.Controllers
                     instituteType.Description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
                     instituteType.Description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
                     */
-                    var instituteTypeUpdate = new UpdateInstituteTypeRequest(instituteType);
+                    var instituteTypeUpdate = InstituteTypeMapper.ToUpdateRequest(instituteType);
                     await _instituteTypeService.UpdateAsync(id, instituteTypeUpdate);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await InstituteTypeExists(viewModel.Id))
+                    if (!await InstituteTypeExists(viewModel.InstituteTypes.Id))
                     {
                         return NotFound();
-                    }
-                    else
-                    {
-                        throw;
                     }
                 }
                 return RedirectToAction("Index", "LookupData");

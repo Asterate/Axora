@@ -2,6 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.Domain.Entities;
 using App.Modules.Equipment.Application.Mapper;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Mappers;
+using App.Modules.Project.Application.Services;
+using App.Modules.Project.Domain;
 using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
@@ -103,7 +107,7 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    var update = new UpdateExperimentTaskRequest(experimentTask);
+                    var update = ExperimentTaskMapper.ToUpdateRequest(experimentTask);
                     await _experimentTask.UpdateAsync(id, update);
                 }
                 catch (DbUpdateConcurrencyException)

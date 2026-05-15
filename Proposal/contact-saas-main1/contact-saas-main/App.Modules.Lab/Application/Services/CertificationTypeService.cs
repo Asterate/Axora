@@ -1,8 +1,12 @@
 ﻿using App.Modules.Equipment.Application.Interfaces;
-using App.Modules.Equipment.Application.Mapper;
+using App.Modules.Lab.Application.DTO;
+using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Mappers;
 using App.Shared.Contracts;
 
-public class CertificationTypeService
+namespace App.Modules.Lab.Application.Services;
+
+public class CertificationTypeService : ICertificationTypeService
 {
     private readonly ICertificationTypeRepository _certificationTypeRepo;
     private readonly IUnitOfWork _uow;

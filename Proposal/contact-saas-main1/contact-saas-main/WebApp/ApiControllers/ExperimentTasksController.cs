@@ -8,6 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using App.Modules.Experiment.Application.Mapper;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Mappers;
+using App.Modules.Project.Application.Services;
+using ExperimentTaskResponse = App.Modules.Project.Application.DTO.ExperimentTaskResponse;
 
 namespace WebApp.ApiControllers;
 

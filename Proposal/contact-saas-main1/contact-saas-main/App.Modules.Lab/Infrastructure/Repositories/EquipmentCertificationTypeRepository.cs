@@ -1,5 +1,4 @@
 ﻿using App.Modules.Equipment.Application.Interfaces;
-using App.Modules.Equipment.Domain;
 using App.Modules.Lab.Domain;
 using App.Modules.Lab.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -15,18 +14,18 @@ internal sealed class EquipmentCertificationTypeRepository : IEquipmentCertifica
         _context = context;
     }
 
-    public async Task<IEnumerable<EquipmentCertificationType>> GetAllAsync()
+    public async Task<IEnumerable<EquipmentCertification>> GetAllAsync()
         => await _context.EquipmentCertificationTypes.ToListAsync();
 
-    public async Task<EquipmentCertificationType?> GetByIdAsync(Guid id)
+    public async Task<EquipmentCertification?> GetByIdAsync(Guid id)
         => await _context.EquipmentCertificationTypes.FindAsync(id);
 
-    public async Task AddAsync(EquipmentCertificationType entity)
+    public async Task AddAsync(EquipmentCertification entity)
         => await _context.EquipmentCertificationTypes.AddAsync(entity);
 
-    public void Update(EquipmentCertificationType entity)
+    public void Update(EquipmentCertification entity)
         => _context.EquipmentCertificationTypes.Update(entity);
 
-    public void Delete(EquipmentCertificationType entity)
+    public void Delete(EquipmentCertification entity)
         => _context.EquipmentCertificationTypes.Remove(entity);
 }

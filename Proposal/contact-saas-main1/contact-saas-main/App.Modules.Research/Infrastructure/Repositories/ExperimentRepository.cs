@@ -13,18 +13,18 @@ internal sealed class ExperimentRepository : IExperimentRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Domain.Entities.Experiment>> GetAllAsync()
+    public async Task<IEnumerable<Project.Domain.Experiment>> GetAllAsync()
         => await _context.Experiments.ToListAsync();
 
-    public async Task<Domain.Entities.Experiment?> GetByIdAsync(Guid id)
+    public async Task<Project.Domain.Experiment?> GetByIdAsync(Guid id)
         => await _context.Experiments.FindAsync(id);
 
-    public async Task AddAsync(Domain.Entities.Experiment entity)
+    public async Task AddAsync(Project.Domain.Experiment entity)
         => await _context.Experiments.AddAsync(entity);
 
-    public void Update(Domain.Entities.Experiment entity)
+    public void Update(Project.Domain.Experiment entity)
         => _context.Experiments.Update(entity);
 
-    public void Delete(Domain.Entities.Experiment entity)
+    public void Delete(Project.Domain.Experiment entity)
         => _context.Experiments.Remove(entity);
 }

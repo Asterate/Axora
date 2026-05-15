@@ -1,4 +1,6 @@
-﻿public class ProjectTypeListResponse
+﻿namespace App.Modules.Project.Application.DTO;
+
+public class ProjectTypeListResponse
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }
@@ -16,7 +18,6 @@ public class ProjectTypeResponse
 
 public class CreateProjectTypeRequest
 {
-    public Guid Id { get; set; }
     public string? NameEn { get; set; }
     public string? NameEt { get; set; }
     public string? DescriptionEn { get; set; }

@@ -1,8 +1,12 @@
 ﻿using App.Modules.Institute.Application.Interfaces;
-using App.Modules.Institute.Application.Mapper;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces.Service;
+using App.Modules.Project.Application.Mappers;
 using App.Shared.Contracts;
 
-public class InstituteProjectService
+namespace App.Modules.Project.Application.Services;
+
+public class InstituteProjectService : IInstituteProjectService
 {
     private readonly IInstituteProjectRepository _instituteProject;
     private readonly IUnitOfWork _uow;
@@ -14,10 +18,10 @@ public class InstituteProjectService
         _instituteProject = instituteProjectRepo;
         _uow = uow;
     }
-    public async Task<IEnumerable<InstituteProjectListResponse>> GetAllAsync()
+    public async Task<IEnumerable<InstituteProjectResponse>> GetAllAsync()
     {
         var entities = await _instituteProject.GetAllAsync();
-        return entities.Select(InstituteProjectMapper.ToListResponse);
+        return entities.Select(InstituteProjectMapper.ToResponse);
     }
 
     public async Task<InstituteProjectResponse?> GetByIdAsync(Guid id)

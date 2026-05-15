@@ -1,37 +1,35 @@
-﻿// App.Modules.Equipment/Application/Mapper/EquipmentMapper.cs
-
-using App.Modules.Equipment.Domain;
+﻿using App.Modules.Lab.Application.DTO;
 using App.Modules.Lab.Domain;
-using App.Shared.Domain;
 
-namespace App.Modules.Equipment.Application.Mapper;
+namespace App.Modules.Lab.Application.Mappers;
 
 public static class EquipmentCertificationTypeMapper
 {
     // Entity → List Response
-    public static EquipmentCertificationTypeListResponse ToListResponse(EquipmentCertificationType entity)
-        => new EquipmentCertificationTypeListResponse
+    public static EquipmentCertificationListResponse ToListResponse(EquipmentCertification entity)
+        => new ()
         {
             Id = entity.Id,
+            EquipmentId = entity.EquipmentId,
+            CertificationTypeId =  entity.CertificationTypeId
         };
 
     // Entity → Full Response
-    public static EquipmentCertificationTypeResponse ToResponse(EquipmentCertificationType entity)
-        => new EquipmentCertificationTypeResponse
+    public static EquipmentCertificationResponse ToResponse(EquipmentCertification entity)
+        => new ()
         {
             Id = entity.Id,
+            EquipmentId = entity.EquipmentId,
+            CertificationTypeId = entity.CertificationTypeId,
+            EquipmentName = entity.Equipment.EquipmentName,
+            CertificationTypeName = entity.CertificationType.Name,
         };
 
     // Create Request → Entity
-    public static EquipmentCertificationType ToEntity(CreateEquipmentCertificationTypeRequest request)
-        => new EquipmentCertificationType
+    public static EquipmentCertification ToEntity(CreateEquipmentCertificationRequest request)
+        => new ()
         {
-            Id = request.Id,
+            EquipmentId = request.EquipmentId,
+            CertificationTypeId =  request.CertificationTypeId
         };
-
-    // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(EquipmentCertificationType entity, UpdateEquipmentCertificationTypeRequest request)
-    {
-        entity.Id = request.Id;
-    }
 }

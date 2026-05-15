@@ -13,23 +13,23 @@ internal sealed class InstituteRepository : IInstituteRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Domain.Entities.Institute>> GetAllAsync()
+    public async Task<IEnumerable<Project.Domain.Institute>> GetAllAsync()
         => await _context.Institutes.ToListAsync();
 
-    public async Task<Domain.Entities.Institute?> GetByIdAsync(Guid id)
+    public async Task<Project.Domain.Institute?> GetByIdAsync(Guid id)
         => await _context.Institutes.FindAsync(id);
     
 
-    public async Task AddAsync(Domain.Entities.Institute entity)
+    public async Task AddAsync(Project.Domain.Institute entity)
         => await _context.Institutes.AddAsync(entity);
 
-    public void Update(Domain.Entities.Institute entity)
+    public void Update(Project.Domain.Institute entity)
         => _context.Institutes.Update(entity);
 
-    public void Delete(Domain.Entities.Institute entity)
+    public void Delete(Project.Domain.Institute entity)
         => _context.Institutes.Remove(entity);
     
-    public async Task<List<Domain.Entities.Institute>> GetActivesAsync()
+    public async Task<List<Project.Domain.Institute>> GetActivesAsync()
     {
         return await _context.Institutes
             .Where(i => i.Active && i.DeletedAt == null)

@@ -1,16 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-using App.Shared.Domain;
+﻿using App.Shared.Domain;
 
-namespace App.Domain.Entities;
+namespace App.Modules.Lab.Domain;
 
 public class Reagent : BaseEntity
 {
-    [StringLength(128, MinimumLength = 3)]
     public string ReagentName { get; set; }  = default!;
-    [StringLength(128, MinimumLength = 3)]
     public string ReagentDescription { get; set; }  = default!;
-    [StringLength(50)]
-    public string? CASNumber { get; set; }
+    public string? CasNumber { get; set; }
     public string? ChemicalFormula { get; set; }
     public float? MolecularWeight { get; set; }
     public string? Concentration { get; set; }

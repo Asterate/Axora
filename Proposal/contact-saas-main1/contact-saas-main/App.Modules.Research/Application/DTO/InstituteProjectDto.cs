@@ -1,28 +1,21 @@
-﻿using App.Domain.Entities;
-
-public class InstituteProjectListResponse
-{
-    public Guid Id { get; set; }
-    public string? Name { get; set; }
-}
+﻿namespace App.Modules.Project.Application.DTO;
 
 public class InstituteProjectResponse
 {
     public Guid Id { get; set; }
-    public string? Name { get; set; }
+    public string InstituteName { get; set; } =  "??";
+    public Guid ProjectId { get; set; }
 }
 
 public class CreateInstituteProjectRequest
 {
-    public Guid Id { get; set; }
+    public Guid InstituteId { get; set; }
+    public Guid ProjectId { get; set; }
 }
 
 public class UpdateInstituteProjectRequest
 {
     public Guid Id { get; set; }
-
-    public UpdateInstituteProjectRequest(InstituteProject instituteProject)
-    {
-        Id = instituteProject.Id;
-    }
+    public Guid InstituteId { get; set; }
+    public Guid ProjectId { get; set; }
 }

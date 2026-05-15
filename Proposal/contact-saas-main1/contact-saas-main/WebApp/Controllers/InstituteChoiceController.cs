@@ -13,6 +13,9 @@ using App.DAL.EF;
 using App.Domain.Entities;
 using App.Domain.Identity;
 using App.Helpers;
+using App.Modules.Identity.Application.Services;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Services;
 using App.Shared.Contracts;
 
 namespace WebApp.Controllers;
@@ -136,7 +139,6 @@ public class InstituteChoiceController : Controller
                 // Create new institute
                 var newInstitute = new CreateInstituteRequest
                 {
-                    Id =  Guid.NewGuid(),
                     InstituteName = model.InstituteName ?? "",
                     InstituteCountry = model.InstituteCountry ?? "",
                     InstituteAddress = model.InstituteAddress ?? "",
@@ -146,13 +148,13 @@ public class InstituteChoiceController : Controller
                     CreatedAt = DateTime.UtcNow
                 };
 
-                await _instituteService.CreateAsync(newInstitute);
+                var createdInstitute = await _instituteService.CreateAsync(newInstitute);
 
                 // Create institute user record
                 var newInstituteUser = new CreateInstituteUserRequest
                 {
                     UserId = userId,
-                    InstituteId = newInstitute.Id,
+                    InstituteId = createdInstitute.Id,
                     Role = EInstituteUserRole.Owner
                 };
                 await _instituteUserService.CreateAsync(newInstituteUser);

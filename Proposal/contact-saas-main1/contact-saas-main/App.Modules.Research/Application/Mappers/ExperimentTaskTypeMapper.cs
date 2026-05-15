@@ -1,13 +1,13 @@
 ﻿using System.Text.Json;
-using App.Domain.Entities;
+using App.Modules.Project.Domain;
 
-namespace App.Modules.Experiment.Application.Mapper;
+namespace App.Modules.Project.Application.Mappers;
 
 public static class ExperimentTaskTypeMapper
 {
     // Entity → List Response
     public static ExperimentTaskTypeListResponse ToListResponse(ExperimentTaskType entity)
-        => new ExperimentTaskTypeListResponse
+        => new ()
         {
             Id = entity.Id,
             Name = entity.GetName(),
@@ -16,7 +16,7 @@ public static class ExperimentTaskTypeMapper
 
     // Entity → Full Response
     public static ExperimentTaskTypeResponse ToResponse(ExperimentTaskType entity)
-        => new ExperimentTaskTypeResponse
+        => new ()
         {
             Id = entity.Id,
             NameEn = entity.GetName("en"),
@@ -27,9 +27,8 @@ public static class ExperimentTaskTypeMapper
 
     // Create Request → Entity
     public static ExperimentTaskType ToEntity(CreateExperimentTaskTypeRequest request)
-        => new ExperimentTaskType
+        => new ()
         {
-            Id = request.Id,
             Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.NameEn ?? "", ["et"] = request.NameEt ?? "" }),
             Description = request.DescriptionEn == null && request.DescriptionEt == null ? null
                 : JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.DescriptionEn ?? "", ["et"] = request.DescriptionEt ?? "" })

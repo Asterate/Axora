@@ -1,66 +1,40 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json;
-using App.Domain;
-using App.Shared.Domain;
+﻿using App.Shared.Domain;
+using App.Shared.Helpers;
 
-namespace App.Domain.Entities;
+namespace App.Modules.Lab.Domain;
 
 public class ReagentType : BaseEntity
 {
-    // Stored as JSON, like ProjectType
-    public string Name { get; set; } = "{}";
+    public string Name { get; set; } = "??";
     public string? Description { get; set; }
-
-    [StringLength(64)]
+    
     public string? Category { get; set; }
+    
+    public int? DefaultStorage { get; set; }
 
-    [StringLength(64)]
-    public string? DefaultStorage { get; set; }
-
-    [StringLength(64)]
     public string? HazardLevel { get; set; }
 
-    [StringLength(64)]
     public string? StandardConcentration { get; set; }
 
-    [StringLength(64)]
     public string? MaterialFilePath { get; set; }
 
     public bool IsHazardous { get; set; } = false;
 
-    [StringLength(64)]
     public string? ColorCode { get; set; }
-
-    public DateTime? DeletedAt { get; set; }
-
-    // Helper to read a translation by key from the JSON stored in Name
+    
     public string? GetName(string? culture = null)
-        => GetFromJson(Name, culture);
+        => Name.GetLocalizedValue(culture);
 
     public string? GetDescription(string? culture = null)
-        => GetFromJson(Description, culture);
-
-    private static string? GetFromJson(string? json, string? culture)
-    {
-        if (string.IsNullOrWhiteSpace(json)) return null;
-
-        culture = culture?.Trim() ?? Thread.CurrentThread.CurrentUICulture.Name;
-        var neutral = culture.Split('-')[0];
-
-        try
-        {
-            var dict = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-            if (dict == null) return null;
-
-            if (dict.TryGetValue(culture, out var val)) return val;
-            if (dict.TryGetValue(neutral, out val)) return val;
-            if (dict.TryGetValue("en", out val)) return val;
-
-            return dict.Values.FirstOrDefault();
-        }
-        catch
-        {
-            return null;
-        }
-    }
+        => Description.GetLocalizedValue(culture); 
+    
+    public string? GetCategory(string? culture = null)
+        => Category.GetLocalizedValue(culture);
+    
+    public string? GetHazardLevel(string? culture = null)
+        => HazardLevel.GetLocalizedValue(culture);
+    
+    public string? GetColorCode(string? culture = null)
+        => ColorCode.GetLocalizedValue(culture);
+    
 }

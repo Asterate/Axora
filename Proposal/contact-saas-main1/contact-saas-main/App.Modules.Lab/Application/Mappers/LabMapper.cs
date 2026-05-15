@@ -1,35 +1,41 @@
-﻿using App.Shared.Domain;
+﻿using App.Modules.Lab.Application.DTO;
+using App.Shared.Domain;
 
-namespace App.Modules.Lab.Application.Mapper;
+namespace App.Modules.Lab.Application.Mappers;
 
 public static class LabMapper
 {
-    // Entity → List Response
-    public static LabListResponse ToListResponse(App.Domain.Entities.Lab entity)
-        => new LabListResponse
-        {
-            Id = entity.Id,
-            Name = entity.LabName.ToString()
-        };
-
     // Entity → Full Response
-    public static LabResponse ToResponse(App.Domain.Entities.Lab entity)
-        => new LabResponse
+    public static LabResponse ToResponse(Domain.Lab entity)
+        => new ()
         {
             Id = entity.Id,
-            Name = entity.LabName.ToString(),
+            LabName = entity.LabName,
+            LabAddress = entity.LabAddress,
+            LabCapacity =  entity.LabCapacity,
+            LabIsActive = entity.LabIsActive,
+            LabTypeName = entity.LabType.Name
         };
 
     // Create Request → Entity
-    public static App.Domain.Entities.Lab ToEntity(CreateLabRequest request)
-        => new App.Domain.Entities.Lab
+    public static Domain.Lab ToEntity(CreateLabRequest request)
+        => new ()
         {
-            LabName = new LangStr { ["en"] = request.Name ?? "" },
+            LabName = new LangStr { ["en"] = request.LabName ?? "" },
+            LabAddress =  new LangStr { ["en"] = request.LabAddress ?? "" },
+            LabCapacity =  request.LabCapacity,
+            LabIsActive = request.LabIsActive,
+            LabTypeId = request.LabTypeId,
         };
 
     // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(App.Domain.Entities.Lab entity, UpdateLabRequest request)
+    public static void UpdateEntity(Domain.Lab entity, UpdateLabRequest request)
     {
-        entity.LabName = new LangStr { ["en"] = request.Name ?? "" };
+        entity.Id = request.Id;
+        entity.LabName = new LangStr { ["en"] = request.LabName ?? "" };
+        entity.LabAddress = new LangStr { ["en"] = request.LabAddress ?? "" };
+        entity.LabCapacity = request.LabCapacity;
+        entity.LabIsActive = request.LabIsActive;
+        entity.LabTypeId = request.LabTypeId;
     }
 }

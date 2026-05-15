@@ -1,15 +1,17 @@
-﻿using App.Domain.Entities;
+﻿using App.Modules.Project.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace App.Modules.Institute.Infrastructure.Configurations;
+namespace App.Modules.Project.Infrastructure.Configurations;
 
 internal sealed class InstituteProjectConfiguration : IEntityTypeConfiguration<InstituteProject> 
 {
     public void Configure(EntityTypeBuilder<InstituteProject> builder)
     {
-        builder.Property(x => x.Id)
-            .IsRequired();
+        builder.HasOne(x => x.Institute)
+            .WithMany()
+            .HasForeignKey(x => x.InstituteId)
+            .OnDelete(DeleteBehavior.Restrict);
         
     }
 }

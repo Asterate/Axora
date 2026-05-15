@@ -1,8 +1,12 @@
 ﻿using App.Modules.Experiment.Application.Interfaces;
-using App.Modules.Experiment.Application.Mapper;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces.Service;
+using App.Modules.Project.Application.Mappers;
 using App.Shared.Contracts;
 
-public class ExperimentService
+namespace App.Modules.Project.Application.Services;
+
+public class ExperimentService : IExperimentService
 {
     private readonly IExperimentRepository _experimentRepo;
     private readonly IUnitOfWork _uow;
@@ -14,10 +18,10 @@ public class ExperimentService
         _experimentRepo = experimentRepo;
         _uow = uow;
     }
-    public async Task<IEnumerable<ExperimentListResponse>> GetAllAsync()
+    public async Task<IEnumerable<ExperimentResponse>> GetAllAsync()
     {
         var entities = await _experimentRepo.GetAllAsync();
-        return entities.Select(ExperimentMapper.ToListResponse);
+        return entities.Select(ExperimentMapper.ToResponse);
     }
 
     public async Task<ExperimentResponse?> GetByIdAsync(Guid id)
@@ -34,7 +38,7 @@ public class ExperimentService
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(Guid id, UpdateExperimentRequest request)
+  public async Task UpdateAsync(Guid id, UpdateExperimentRequest request)
     {
         var entity = await _experimentRepo.GetByIdAsync(id);
         if (entity == null) return;

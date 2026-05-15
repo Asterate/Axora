@@ -1,3 +1,4 @@
+using App.Modules.Project.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 using App.Shared.Domain;
 using Microsoft.AspNetCore.Authorization;
@@ -54,7 +55,6 @@ namespace WebApp.Controllers
             {
                 var taskType = new CreateExperimentTaskTypeRequest
                 {
-                    Id = Guid.NewGuid(),
                     NameEn = viewModel.TaskTypeNameEn,
                     NameEt = viewModel.TaskTypeNameEt,
                     DescriptionEn = viewModel.TaskTypeDescriptionEn,

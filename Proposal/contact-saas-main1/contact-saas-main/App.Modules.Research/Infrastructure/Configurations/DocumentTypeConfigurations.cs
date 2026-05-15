@@ -1,4 +1,4 @@
-﻿using App.Domain.Entities;
+﻿using App.Modules.Project.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,8 +8,10 @@ internal sealed class DocumentTypeConfiguration : IEntityTypeConfiguration<Docum
 {
     public void Configure(EntityTypeBuilder<DocumentType> builder)
     {
-        builder.Property(x => x.Id)
-            .IsRequired();
+        builder.Property(x => x.Name)
+            .IsRequired().HasMaxLength(100);
+        builder.Property(x => x.Description)
+            .HasMaxLength(512);
         
     }
 }

@@ -1,5 +1,6 @@
 ﻿using App.Domain.Entities;
 using App.Modules.Institute.Application.Interfaces;
+using App.Modules.Project.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Modules.Project.Infrastructure.Repositories;

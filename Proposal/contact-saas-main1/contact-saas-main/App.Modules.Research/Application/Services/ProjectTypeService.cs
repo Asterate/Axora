@@ -1,8 +1,12 @@
-﻿using App.Modules.Project.Application.Interfaces;
+﻿using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces;
+using App.Modules.Project.Application.Interfaces.Service;
 using App.Modules.Project.Application.Mapper;
 using App.Shared.Contracts;
 
-public class ProjectTypeService
+namespace App.Modules.Project.Application.Services;
+
+public class ProjectTypeService : IProjectTypeService
 {
     private readonly IProjectTypeRepository _projectType;
     private readonly IUnitOfWork _uow;
@@ -52,14 +56,14 @@ public class ProjectTypeService
     }
     // ExperimentTypeService
     public async Task<List<LookupItem>> GetActivesAsync(string? culture = null)
-     {
-         var entities = await _projectType.GetAllAsync();
-         return entities
-             .Where(t => t.DeletedAt == null)
-             .Select(t => new LookupItem
-             {
-                 Id = t.Id,
-                 Name = t.GetName(culture) ?? "???"
-             }).ToList();
-     }
+    {
+        var entities = await _projectType.GetAllAsync();
+        return entities
+            .Where(t => t.DeletedAt == null)
+            .Select(t => new LookupItem
+            {
+                Id = t.Id,
+                Name = t.GetName(culture) ?? "???"
+            }).ToList();
+    }
 }

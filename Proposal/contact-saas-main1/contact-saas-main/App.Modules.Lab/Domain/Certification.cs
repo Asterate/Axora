@@ -1,6 +1,6 @@
 ﻿using App.Shared.Domain;
 
-namespace App.Modules.Equipment.Domain;
+namespace App.Modules.Lab.Domain;
 
 public class Certification : BaseEntity
 {

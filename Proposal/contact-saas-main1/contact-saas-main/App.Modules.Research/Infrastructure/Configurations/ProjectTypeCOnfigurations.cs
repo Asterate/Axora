@@ -1,4 +1,4 @@
-﻿using App.Domain.Entities;
+﻿using App.Modules.Project.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,8 +8,8 @@ internal sealed class ProjectTypeConfiguration : IEntityTypeConfiguration<Projec
 {
     public void Configure(EntityTypeBuilder<ProjectType> builder)
     {
-        builder.Property(x => x.Id)
-            .IsRequired();
+        builder.Property(x => x.Name).HasMaxLength(256).IsRequired();
+        builder.Property(x => x.Description).HasMaxLength(512);
         
     }
 }

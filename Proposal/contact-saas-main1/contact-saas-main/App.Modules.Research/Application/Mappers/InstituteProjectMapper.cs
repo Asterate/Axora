@@ -1,33 +1,43 @@
-﻿using App.Domain.Entities;
+﻿using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Domain;
+using App.Shared.Domain;
 
-namespace App.Modules.Institute.Application.Mapper;
+namespace App.Modules.Project.Application.Mappers;
 
 public static class InstituteProjectMapper
 {
-    // Entity → List Response
-    public static InstituteProjectListResponse ToListResponse(InstituteProject entity)
-        => new InstituteProjectListResponse
-        {
-            Id = entity.Id,
-        };
-
     // Entity → Full Response
     public static InstituteProjectResponse ToResponse(InstituteProject entity)
-        => new InstituteProjectResponse
+        => new ()
         {
             Id = entity.Id,
+            InstituteName = entity.Institute.InstituteName,
+            ProjectId = entity.ProjectId
         };
 
     // Create Request → Entity
     public static InstituteProject ToEntity(CreateInstituteProjectRequest request)
-        => new InstituteProject
+        => new ()
         {
-            Id = request.Id,
+            InstituteId = request.InstituteId,
+            ProjectId = request.ProjectId
         };
 
     // Update Request → existing Entity (modifies in place)
     public static void UpdateEntity(InstituteProject entity, UpdateInstituteProjectRequest request)
     {
-        request.Id = entity.Id;
+        entity.Id = request.Id;
+        entity.InstituteId = request.InstituteId;
+        entity.ProjectId = request.ProjectId;
+    }
+    public static UpdateInstituteProjectRequest ToUpdateRequest(InstituteProject request)
+    {
+        return new UpdateInstituteProjectRequest
+        {
+            Id = request.Id,
+            InstituteId = request.InstituteId,
+            ProjectId = request.ProjectId,
+            
+        };
     }
 }

@@ -1,3 +1,5 @@
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels;
@@ -35,7 +37,6 @@ namespace WebApp.Controllers
                 Id = document.Id,
                 DocumentName = document.DocumentName,
                 Description = document.Description,
-                DocumentType = document.DocumentType,
                 FilePath = document.FilePath,
                 DocumentTypeId = document.DocumentTypeId
             };

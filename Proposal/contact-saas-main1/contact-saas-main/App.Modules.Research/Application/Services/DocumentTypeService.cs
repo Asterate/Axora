@@ -1,8 +1,12 @@
-﻿using App.Modules.Project.Application.Interfaces;
-using App.Modules.Project.Application.Mapper;
+﻿using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces;
+using App.Modules.Project.Application.Interfaces.Service;
+using App.Modules.Project.Application.Mappers;
 using App.Shared.Contracts;
 
-public class DocumentTypeService
+namespace App.Modules.Project.Application.Services;
+
+public class DocumentTypeService : IDocumentTypeService
 {
     private readonly IDocumentTypeRepository _documentType;
     private readonly IUnitOfWork _uow;

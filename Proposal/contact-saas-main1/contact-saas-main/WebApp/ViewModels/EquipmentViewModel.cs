@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using App.Domain;
 using App.Domain.Entities;
-using App.Modules.Equipment.Domain;
 using App.Modules.Lab.Domain;
 using App.Shared.Domain;
 
@@ -38,8 +37,8 @@ public class EquipmentViewModel
         return new EquipmentViewModel
         {
             Id = equipment.Id,
-            NameEn = equipment.EquipmentName.Translate("en") ?? string.Empty,
-            NameEt = equipment.EquipmentName.Translate("et") ?? string.Empty,
+            NameEn = equipment.EquipmentName,
+            NameEt = equipment.EquipmentName,
             EquipmentSerialCode = equipment.EquipmentSerialCode,
             ManualFilePath = equipment.ManualFilePath,
             CreatedAt = equipment.CreatedAt,
@@ -53,8 +52,6 @@ public class EquipmentViewModel
     public void ApplyTo(Equipment equipment)
     {
         equipment.EquipmentName ??= new LangStr();
-        equipment.EquipmentName.SetTranslation(NameEn ?? string.Empty, "en");
-        equipment.EquipmentName.SetTranslation(NameEt ?? string.Empty, "et");
         equipment.EquipmentSerialCode = EquipmentSerialCode;
         equipment.ManualFilePath = ManualFilePath;
         equipment.UpdatedAt = UpdatedAt;
@@ -75,8 +72,6 @@ public class EquipmentViewModel
             DeletedAt = this.DeletedAt,
             EquipmentTypeId = this.EquipmentTypeId
         };
-        equipment.EquipmentName.SetTranslation(NameEn ?? string.Empty, "en");
-        equipment.EquipmentName.SetTranslation(NameEt ?? string.Empty, "et");
         return equipment;
     }
 }

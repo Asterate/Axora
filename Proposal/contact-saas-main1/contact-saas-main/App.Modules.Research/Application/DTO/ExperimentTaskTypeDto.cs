@@ -16,7 +16,6 @@ public class ExperimentTaskTypeResponse
 
 public class CreateExperimentTaskTypeRequest
 {
-    public Guid Id { get; set; }
     public string? NameEn { get; set; }
     public string? NameEt { get; set; }
     public string? DescriptionEn { get; set; }

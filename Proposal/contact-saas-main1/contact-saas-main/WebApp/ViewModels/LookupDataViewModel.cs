@@ -1,4 +1,7 @@
-﻿namespace WebApp.ViewModels;
+﻿using App.Modules.Lab.Application.DTO;
+using App.Modules.Project.Application.DTO;
+
+namespace WebApp.ViewModels;
 
 public class LookupDataViewModel
 {

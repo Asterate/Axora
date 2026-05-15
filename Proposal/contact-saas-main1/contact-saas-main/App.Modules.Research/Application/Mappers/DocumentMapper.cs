@@ -1,15 +1,16 @@
-﻿using App.Domain.Entities;
+﻿using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Domain;
 
-namespace App.Modules.Project.Application.Mapper;
+namespace App.Modules.Project.Application.Mappers;
 
 public static class DocumentMapper
 {
     public static DocumentListResponse ToListResponse(Document entity)
-        => new DocumentListResponse
+        => new ()
         {
             Id = entity.Id,
             DocumentName = entity.DocumentName,
-            DocumentType = entity.DocumentType?.Name,
+            DocumentTypeName = entity.DocumentType?.Name,
             CreatedAt = entity.CreatedAt
         };
     public static DocumentResponse ToResponse(Document entity)
@@ -17,16 +18,17 @@ public static class DocumentMapper
         {
             Id = entity.Id,
             DocumentName = entity.DocumentName,
-            DocumentType = entity.DocumentType?.Name,
+            DocumentTypeName = entity.DocumentType?.Name,
             Description = entity.Description,
-            CreatedAt = entity.CreatedAt
+            CreatedAt = entity.CreatedAt,
+            FilePath =  entity.FilePath,
+            UpdatedAt = entity.UpdatedAt,
         };
 
     // Create Request → Entity
     public static Document ToEntity(CreateDocumentRequest request)
-        => new Document
+        => new ()
         {
-            Id = request.Id,
             DocumentName = request.DocumentName ?? "Document",
             FilePath = request.FilePath ?? "None",
             DocumentTypeId = request.DocumentTypeId

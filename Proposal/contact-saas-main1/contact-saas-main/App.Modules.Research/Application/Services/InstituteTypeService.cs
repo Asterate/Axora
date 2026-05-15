@@ -1,6 +1,9 @@
 ﻿using App.Modules.Institute.Application.Interfaces;
 using App.Modules.Institute.Application.Mapper;
+using App.Modules.Project.Application.DTO;
 using App.Shared.Contracts;
+
+namespace App.Modules.Project.Application.Services;
 
 public class InstituteTypeService
 {

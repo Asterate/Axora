@@ -1,9 +1,13 @@
-﻿using App.Domain.Entities;
-using App.Modules.Experiment.Application.Interfaces;
-using App.Modules.Experiment.Application.Mapper;
+﻿using App.Modules.Experiment.Application.Interfaces;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces.Service;
+using App.Modules.Project.Application.Mappers;
+using App.Modules.Project.Domain;
 using App.Shared.Contracts;
 
-public class ExperimentTaskService
+namespace App.Modules.Project.Application.Services;
+
+public class ExperimentTaskService : IExperimentTaskService
 {
     private readonly IExperimentTaskRepository _experimentTaskRepo;
     private readonly IUnitOfWork _uow;

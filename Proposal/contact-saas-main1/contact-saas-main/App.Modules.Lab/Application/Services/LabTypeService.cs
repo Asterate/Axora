@@ -1,8 +1,11 @@
-﻿using App.Modules.Lab.Application.Interfaces;
-using App.Modules.Lab.Application.Mapper;
+﻿using App.Modules.Lab.Application.DTO;
+using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Mappers;
 using App.Shared.Contracts;
 
-public class LabTypeService
+namespace App.Modules.Lab.Application.Services;
+
+public class LabTypeService : ILabTypeService
 {
     private readonly ILabTypeRepository _labType;
     private readonly IUnitOfWork _uow;

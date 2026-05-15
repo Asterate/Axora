@@ -1,4 +1,4 @@
-@model App.Domain.Entities.ExperimentEquipment
+@model App.Modules.Project.Domain.ExperimentEquipment
 
 @{
     ViewData["Title"] = "Create";
@@ -32,9 +32,9 @@
                 <select asp-for="ExperimentId" class ="form-control" asp-items="ViewBag.ExperimentId"></select>
             </div>
             <div class="form-group">
-                <label asp-for="EquipementId" class="control-label"></label>
-                <input asp-for="EquipementId" class="form-control" />
-                <span asp-validation-for="EquipementId" class="text-danger"></span>
+                <label asp-for="EquipmentId" class="control-label"></label>
+                <input asp-for="EquipmentId" class="form-control" />
+                <span asp-validation-for="EquipmentId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

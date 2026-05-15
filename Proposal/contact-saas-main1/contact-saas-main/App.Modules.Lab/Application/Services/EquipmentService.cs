@@ -1,8 +1,12 @@
 ﻿using App.Modules.Equipment.Application.Interfaces;
-using App.Modules.Equipment.Application.Mapper;
+using App.Modules.Lab.Application.DTO;
+using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Mappers;
 using App.Shared.Contracts;
 
-public class EquipmentService
+namespace App.Modules.Lab.Application.Services;
+
+public class EquipmentService : IEquipmentService
 {
     private readonly IEquipmentRepository _equipmentRepo;
     private readonly IUnitOfWork _uow;
@@ -19,7 +23,6 @@ public class EquipmentService
         var entities = await _equipmentRepo.GetAllAsync();
         return entities.Select(EquipmentMapper.ToListResponse);
     }
-
     public async Task<EquipmentResponse?> GetByIdAsync(Guid id)
     {
         var entity = await _equipmentRepo.GetByIdAsync(id);

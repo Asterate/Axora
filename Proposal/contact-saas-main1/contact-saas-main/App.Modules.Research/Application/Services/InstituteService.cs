@@ -1,8 +1,12 @@
-﻿using App.Domain.Entities;
-using App.Modules.Institute.Application.Interfaces;
+﻿using App.Modules.Institute.Application.Interfaces;
 using App.Modules.Institute.Application.Mapper;
+using App.Modules.Project.Application.DTO;
 using App.Modules.Project.Application.Interfaces;
+using App.Modules.Project.Application.Interfaces.Repository;
+using App.Modules.Project.Application.Mappers;
 using App.Shared.Contracts;
+
+namespace App.Modules.Project.Application.Services;
 
 public class InstituteService : IInstituteService
 {
@@ -29,11 +33,12 @@ public class InstituteService : IInstituteService
         return InstituteMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateInstituteRequest request)
+    public async Task<InstituteResponse> CreateAsync(CreateInstituteRequest request)
     {
         var entity = InstituteMapper.ToEntity(request);
         await _instituteRepo.AddAsync(entity);
         await _uow.SaveChangesAsync(); // ← actually saves now
+        return InstituteMapper.ToResponse(entity);
     }
 
     public async Task UpdateAsync(Guid id, UpdateInstituteRequest request)
@@ -66,12 +71,12 @@ public class InstituteService : IInstituteService
             .Take(take)
             .Select(InstituteMapper.ToListResponse);
     }
-    public async Task<IEnumerable<InstituteListResponse>> FindDeletedAsync()
+    public async Task<IEnumerable<InstituteResponse>> FindDeletedAsync()
     {
         var entities = await _instituteRepo.GetAllAsync();
         return entities
             .Where(s => s.DeletedAt != null)
-            .Select(InstituteMapper.ToListResponse);
+            .Select(InstituteMapper.ToResponse);
     }
     public async Task<List<LookupItem>> GetActivesAsync()
     {
@@ -83,13 +88,13 @@ public class InstituteService : IInstituteService
         }).ToList();
     }
     // For SelectExisting branch
-    public async Task<Institute?> GetEntityByIdAsync(Guid id)
+    public async Task<Domain.Institute?> GetEntityByIdAsync(Guid id)
     {
         return await _instituteRepo.GetByIdAsync(id);
     }
 
 // For CreateNew branch
-    public async Task<Institute> CreateAndReturnAsync(CreateInstituteRequest request)
+    public async Task<Domain.Institute> CreateAndReturnAsync(CreateInstituteRequest request)
     {
         var entity = InstituteMapper.ToEntity(request);
         await _instituteRepo.AddAsync(entity);
@@ -98,12 +103,12 @@ public class InstituteService : IInstituteService
     }
 
 // For Fallback branch
-    public async Task<Institute?> GetFirstActiveAsync()
+    public async Task<Domain.Institute?> GetFirstActiveAsync()
     {
         var entities = await _instituteRepo.GetAllAsync();
         return entities.FirstOrDefault(i => i.Active && i.DeletedAt == null);
     } 
-    public async Task<Institute?> GetFirstActiveByIdAsync(Guid id)
+    public async Task<Domain.Institute?> GetFirstActiveByIdAsync(Guid id)
     {
         var entities = await _instituteRepo.GetAllAsync();
         return entities.FirstOrDefault(i => i.Id == id && i.DeletedAt == null && i.Active);

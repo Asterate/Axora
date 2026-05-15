@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.Domain.Entities;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Mappers;
+using App.Modules.Project.Application.Services;
+using App.Modules.Project.Domain;
 using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
@@ -57,7 +61,8 @@ namespace WebApp.Controllers
             {
                 var newInstituteProject = new CreateInstituteProjectRequest()
                 {
-                    Id = instituteProject.Id,
+                    InstituteId = instituteProject.InstituteId,
+                    ProjectId = instituteProject.ProjectId,
                 };
                await _instituteProjectService.CreateAsync(newInstituteProject);
             }
@@ -96,8 +101,8 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    var InstituteProjectUpdate = new UpdateInstituteProjectRequest(instituteProject);
-                    await _instituteProjectService.UpdateAsync(id, InstituteProjectUpdate);
+                    var instituteProjectUpdate = InstituteProjectMapper.ToUpdateRequest(instituteProject);
+                    await _instituteProjectService.UpdateAsync(id, instituteProjectUpdate);
                 }
                 catch (DbUpdateConcurrencyException)
                 {

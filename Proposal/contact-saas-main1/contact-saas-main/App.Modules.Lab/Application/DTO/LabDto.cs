@@ -1,22 +1,31 @@
-﻿public class LabListResponse
-{
-    public Guid Id { get; set; }
-    public string? Name { get; set; }
-}
+﻿namespace App.Modules.Lab.Application.DTO;
 
 public class LabResponse
 {
     public Guid Id { get; set; }
-    public string? Name { get; set; }
+    public string LabName { get; set; }  = default!;
+    public string LabAddress { get; set; }  = default!;
+    
+    public int LabCapacity { get; set; }
+    
+    public bool LabIsActive { get; set; } = true;
+    
+    public string LabTypeName { get; set; } = "??";
 }
 
 public class CreateLabRequest
 {
-    public string? Name { get; set; }
+    public string LabName { get; set; }  = default!;
+    public string LabAddress { get; set; }  = default!;
+    
+    public int LabCapacity { get; set; }
+    
+    public bool LabIsActive { get; set; } = true;
+    
+    public Guid LabTypeId { get; set; }
 }
 
-public class UpdateLabRequest
+public class UpdateLabRequest :  CreateLabRequest
 {
     public Guid Id { get; set; }
-    public string? Name { get; set; }
 }

@@ -1,4 +1,5 @@
 using App.Modules.Audit.Application.DTO;
+using App.Modules.Project.Application.DTO;
 
 namespace WebApp.ViewModels;
 

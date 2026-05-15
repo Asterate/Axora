@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.Domain.Entities;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Mappers;
+using App.Modules.Project.Application.Services;
+using App.Modules.Project.Domain;
 using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
@@ -85,7 +89,6 @@ namespace WebApp.Controllers
                 {
                     var institute = new CreateInstituteRequest()
                     {
-                        Id = Guid.NewGuid(),
                         InstituteName = name,
                         InstituteCountry = country,
                         InstituteAddress = address,
@@ -136,7 +139,7 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    var update = new UpdateInstituteRequest(institute);
+                    var update = InstituteMapper.ToUpdateRequest(institute);
                     await _instituteService.UpdateAsync(id, update);
                 }
                 catch (DbUpdateConcurrencyException)

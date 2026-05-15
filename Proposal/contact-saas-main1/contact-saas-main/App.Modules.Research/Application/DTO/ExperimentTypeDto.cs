@@ -1,4 +1,4 @@
-﻿using App.Domain.Entities;
+﻿namespace App.Modules.Project.Application.DTO;
 
 public class ExperimentTypeListResponse
 {
@@ -18,7 +18,6 @@ public class ExperimentTypeResponse
 
 public class CreateExperimentTypeRequest
 {
-    public Guid Id { get; set; }
     public string? NameEn { get; set; }
     public string? NameEt { get; set; }
     public string? DescriptionEn { get; set; }
@@ -32,9 +31,4 @@ public class UpdateExperimentTypeRequest
     public string? NameEt { get; set; }
     public string? DescriptionEn { get; set; }
     public string? DescriptionEt { get; set; }
-    
-    public UpdateExperimentTypeRequest(ExperimentType experimentTask)
-    {
-        NameEn = experimentTask.Name;
-    }
 }

@@ -1,8 +1,11 @@
-﻿using App.Modules.Lab.Application.Interfaces;
-using App.Modules.Lab.Application.Mapper;
+﻿using App.Modules.Lab.Application.DTO;
+using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Mappers;
 using App.Shared.Contracts;
 
-public class EquipmentLabService
+namespace App.Modules.Lab.Application.Services;
+
+public class EquipmentLabService : IEquipmentLabService
 {
     private readonly IEquipmentLabRepository _equipmentLab;
     private readonly IUnitOfWork _uow;
@@ -14,10 +17,10 @@ public class EquipmentLabService
         _equipmentLab = equipmentLabRepo;
         _uow = uow;
     }
-    public async Task<IEnumerable<EquipmentLabListResponse>> GetAllAsync()
+    public async Task<IEnumerable<EquipmentLabResponse>> GetAllAsync()
     {
         var entities = await _equipmentLab.GetAllAsync();
-        return entities.Select(EquipmentLabMapper.ToEquipmentLabResponse);
+        return entities.Select(EquipmentLabMapper.ToResponse);
     }
 
     public async Task<EquipmentLabResponse?> GetByIdAsync(Guid id)
@@ -31,7 +34,7 @@ public class EquipmentLabService
     {
         var entity = EquipmentLabMapper.ToEntity(request);
         await _equipmentLab.AddAsync(entity);
-        await _uow.SaveChangesAsync(); // ← actually saves now
+        await _uow.SaveChangesAsync();
     }
 
     public async Task UpdateAsync(Guid id, UpdateEquipmentLabRequest request)
@@ -40,7 +43,7 @@ public class EquipmentLabService
         if (entity == null) return;
         EquipmentLabMapper.UpdateEntity(entity, request);
         _equipmentLab.Update(entity);
-        await _uow.SaveChangesAsync(); // ← actually saves now
+        await _uow.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(Guid id)
@@ -48,6 +51,6 @@ public class EquipmentLabService
         var entity = await _equipmentLab.GetByIdAsync(id);
         if (entity == null) return;
         _equipmentLab.Delete(entity);
-        await _uow.SaveChangesAsync(); // ← actually saves now
+        await _uow.SaveChangesAsync();
     }
 }

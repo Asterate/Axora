@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using App.DAL.EF;
 using App.Domain.Identity;
 using App.Modules.Identity.Infrastructure;
-using App.Modules.Research;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

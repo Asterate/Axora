@@ -1,5 +1,6 @@
 ﻿using App.Domain.Entities;
 using App.Modules.Project.Application.Interfaces;
+using App.Modules.Project.Domain;
 using App.Modules.Project.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 

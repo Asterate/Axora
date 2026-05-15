@@ -1,6 +1,4 @@
 ﻿using System.Text.Json;
-using App.Domain.Entities;
-using App.Modules.Equipment.Domain;
 using App.Modules.Lab.Domain;
 using App.Shared.Domain;
 using App.Shared.Persistence;
@@ -13,7 +11,7 @@ public sealed class LabDbContext : DbContext
     public LabDbContext(DbContextOptions<LabDbContext> options) 
         : base(options) { }
 
-    public DbSet<App.Domain.Entities.Lab> Labs { get; set; }
+    public DbSet<Domain.Lab> Labs { get; set; }
     public DbSet<LabType> LabTypes { get; set; }
     public DbSet<ReagentLab> ReagentLabs { get; set; }
     public DbSet<EquipmentLab> EquipmentLabs { get; set; }
@@ -22,8 +20,8 @@ public sealed class LabDbContext : DbContext
     public DbSet<EquipmentType> EquipmentTypes { get; set; }
     public DbSet<Certification> Certifications { get; set; }
     public DbSet<CertificationType> CertificationTypes { get; set; }
-    public DbSet<EquipmentCertificationType> EquipmentCertificationTypes { get; set; }
-    public DbSet<App.Domain.Entities.Reagent> Reagents { get; set; }
+    public DbSet<EquipmentCertification> EquipmentCertificationTypes { get; set; }
+    public DbSet<Domain.Reagent> Reagents { get; set; }
     public DbSet<ReagentType> ReagentTypes { get; set; }
    
     protected override void OnModelCreating(ModelBuilder builder)

@@ -1,8 +1,12 @@
 ﻿using App.Modules.Experiment.Application.Interfaces;
-using App.Modules.Experiment.Application.Mapper;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces.Service;
+using App.Modules.Project.Application.Mappers;
 using App.Shared.Contracts;
 
-public class ExperimentEquipmentService
+namespace App.Modules.Project.Application.Services;
+
+public class ExperimentEquipmentService : IExperimentEquipmentService
 {
     private readonly IExperimentEquipmentRepository _experimentEquipmentRepo;
     private readonly IUnitOfWork _uow;
@@ -14,10 +18,10 @@ public class ExperimentEquipmentService
         _experimentEquipmentRepo = experimentEquipmentRepo;
         _uow = uow;
     }
-    public async Task<IEnumerable<ExperimentEquipmentListResponse>> GetAllAsync()
+    public async Task<IEnumerable<ExperimentEquipmentResponse>> GetAllAsync()
     {
         var entities = await _experimentEquipmentRepo.GetAllAsync();
-        return entities.Select(ExperimentEquipmentMapper.ToListResponse);
+        return entities.Select(ExperimentEquipmentMapper.ToResponse);
     }
 
     public async Task<ExperimentEquipmentResponse?> GetByIdAsync(Guid id)

@@ -1,4 +1,5 @@
-﻿using App.Shared.Contracts;
+﻿using App.Modules.Project.Application.DTO;
+using App.Shared.Contracts;
 
 namespace WebApp.ViewModels;
 

@@ -1,5 +1,5 @@
-﻿using App.Modules.Equipment.Domain;
-using App.Modules.Lab.Application.Interfaces;
+﻿using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Modules.Lab.Infrastructure.Repositories;

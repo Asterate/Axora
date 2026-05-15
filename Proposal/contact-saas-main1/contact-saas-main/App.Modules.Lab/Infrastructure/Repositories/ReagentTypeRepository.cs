@@ -1,8 +1,8 @@
-﻿using App.Domain.Entities;
-using App.Modules.Lab.Infrastructure;
+﻿using App.Modules.Lab.Domain;
 using App.Modules.Reagent.Application.Interfaces;
-using App.Modules.Reagent.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+
+namespace App.Modules.Lab.Infrastructure.Repositories;
 
 internal class ReagentTypeRepository : IReagentTypeRepository
 {

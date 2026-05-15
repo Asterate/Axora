@@ -4,6 +4,7 @@ using App.DTO.v1;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using App.Modules.Project.Application.DTO;
 using Asp.Versioning;
 
 namespace WebApp.ApiControllers;

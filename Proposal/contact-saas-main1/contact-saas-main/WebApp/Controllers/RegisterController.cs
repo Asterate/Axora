@@ -1,4 +1,5 @@
 using App.Domain.Identity;
+using App.Modules.Project.Application.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.ViewModels;

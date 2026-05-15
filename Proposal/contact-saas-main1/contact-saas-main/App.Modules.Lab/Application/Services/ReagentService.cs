@@ -1,8 +1,12 @@
-﻿using App.Modules.Reagent.Application.Interfaces;
-using App.Modules.Reagent.Application.Mappers;
+﻿using App.Modules.Lab.Application.DTO;
+using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Mappers;
+using App.Modules.Reagent.Application.Interfaces;
 using App.Shared.Contracts;
 
-public class ReagentService
+namespace App.Modules.Lab.Application.Services;
+
+public class ReagentService : IReagentService
 {
     private readonly IReagentRepository _reagent;
     private readonly IUnitOfWork _uow;

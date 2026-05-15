@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.ViewModels;
@@ -60,7 +62,7 @@ public class HomeDashboardController : Controller
         {
             var request = new CreateProjectRequest
             {
-                ProjectName = dto.ProjectName,
+                ProjectName = dto.ProjectName ?? "??",
                 Funding = dto.Funding,
                 Requirements = dto.Requirements,
                 RequirementsFilePath = dto.RequirementsFilePath,

@@ -1,4 +1,4 @@
-﻿using App.Domain.Entities;
+﻿using App.Modules.Lab.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,8 +8,14 @@ internal sealed class InstituteLabConfiguration : IEntityTypeConfiguration<Insti
 {
     public void Configure(EntityTypeBuilder<InstituteLab> builder)
     {
-        builder.Property(x => x.Id)
-            .IsRequired();
-        
+        builder.HasIndex(x => new { x.InstituteId, x.LabId })
+            .IsUnique();
+        builder.HasOne(x => x.Lab)
+            .WithMany()
+            .HasForeignKey(x => x.LabId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(x => new { x.InstituteId, x.LabId })
+            .IsUnique();
     }
 }

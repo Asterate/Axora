@@ -1,22 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json;
-using App.Domain;
+﻿using App.Domain.Entities;
 using App.Shared.Domain;
+using App.Shared.Helpers;
 
-namespace App.Domain.Entities;
+namespace App.Modules.Project.Domain;
 
 public class ExperimentTask : BaseEntity
 {
-    [StringLength(128, MinimumLength = 3)]
-    [Column(TypeName = "jsonb")]
-    public string TaskName { get; set; } = "{}";
-    [StringLength(128, MinimumLength = 3)]
-    [Column(TypeName = "jsonb")]
+    public string TaskName { get; set; } = "??";
     public string? TaskDescription { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? DeletedAt { get; set; }
     public EExperimentTaskStatus Status { get; set; } = EExperimentTaskStatus.Pending;
     public int? Priority { get; set; }
 
@@ -28,28 +19,8 @@ public class ExperimentTask : BaseEntity
     public EExperimentTaskPriority PriorityType { get; set; } = EExperimentTaskPriority.Low;
 
     public string? GetTaskName(string? culture = null)
-        => GetFromJson(TaskName, culture);
+        => TaskName.GetLocalizedValue(culture);
 
     public string? GetTaskDescription(string? culture = null)
-        => GetFromJson(TaskDescription, culture);
-
-    private static string? GetFromJson(string? json, string? culture)
-    {
-        if (string.IsNullOrWhiteSpace(json)) return null;
-        culture = culture?.Trim() ?? Thread.CurrentThread.CurrentUICulture.Name;
-        var neutral = culture.Split('-')[0];
-        try
-        {
-            var dict = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-            if (dict == null) return null;
-            if (dict.TryGetValue(culture, out var val)) return val;
-            if (dict.TryGetValue(neutral, out val)) return val;
-            if (dict.TryGetValue("en", out val)) return val;
-            return dict.Values.FirstOrDefault();
-        }
-        catch
-        {
-            return null;
-        }
-    }
+        => TaskDescription.GetLocalizedValue(culture);
 }

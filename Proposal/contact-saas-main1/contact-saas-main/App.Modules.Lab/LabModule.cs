@@ -1,6 +1,7 @@
 ﻿using App.Modules.Equipment.Application.Interfaces;
 using App.Modules.Equipment.Infrastructure.Repositories;
 using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Services;
 using App.Modules.Lab.Infrastructure.Repositories;
 using App.Modules.Reagent.Application.Interfaces;
 using App.Shared.Contracts;

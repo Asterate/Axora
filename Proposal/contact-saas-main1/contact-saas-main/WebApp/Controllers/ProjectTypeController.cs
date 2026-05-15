@@ -1,3 +1,5 @@
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Services;
 using App.Shared.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -54,7 +56,6 @@ namespace WebApp.Controllers
             {
                 var projectType = new CreateProjectTypeRequest
                 {
-                    Id = Guid.NewGuid(),
                     NameEn = viewModel.NameEn,
                     NameEt = viewModel.NameEt,
                     DescriptionEn = viewModel.DescriptionEn,

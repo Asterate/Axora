@@ -1,8 +1,11 @@
 ﻿using App.Modules.Equipment.Application.Mapper;
+using App.Modules.Identity.Application.Interfaces;
 using App.Modules.Identity.Applications.Interfaces;
 using App.Shared.Contracts;
 
-public class InstituteUserService
+namespace App.Modules.Identity.Application.Services;
+
+public class InstituteUserService : IInstituteUserService
 {
     private readonly IInstituteUserRepository _instituteUserRepo;
     private readonly IUnitOfWork _uow;

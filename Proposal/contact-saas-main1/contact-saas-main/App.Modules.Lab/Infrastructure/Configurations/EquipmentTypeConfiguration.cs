@@ -1,8 +1,8 @@
-﻿using App.Modules.Equipment.Domain;
+﻿using App.Modules.Lab.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace App.Modules.Equipment.Infrastructure.Configurations;
+namespace App.Modules.Lab.Infrastructure.Configurations;
 
 internal sealed class EquipmentTypeConfiguration : IEntityTypeConfiguration<EquipmentType>
 {
@@ -10,5 +10,7 @@ internal sealed class EquipmentTypeConfiguration : IEntityTypeConfiguration<Equi
     {
         builder.Property(c => c.Description)
             .HasMaxLength(512);
+        builder.Property(c => c.Name)
+            .HasMaxLength(100).IsRequired();
     }
 }

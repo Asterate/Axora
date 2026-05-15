@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
 using WebApp.ViewModels;
-using ScheduleEntity = App.Domain.Entities.Schedule;
+using ScheduleEntity = App.Modules.Project.Domain.Schedule;
 
 namespace WebApp.Controllers;
 

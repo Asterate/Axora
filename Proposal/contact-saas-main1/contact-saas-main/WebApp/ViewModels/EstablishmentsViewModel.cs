@@ -1,10 +1,11 @@
-﻿using App.Domain.Entities;
+﻿using App.Modules.Lab.Application.DTO;
+using App.Modules.Project.Application.DTO;
 
 namespace WebApp.ViewModels;
 
 public class EstablishmentsViewModel
 {
-    public IEnumerable<InstituteListResponse>  Institutes { get; set; } = new List<InstituteListResponse>();
+    public IEnumerable<InstituteResponse>  Institutes { get; set; } = new List<InstituteResponse>();
 
-    public IEnumerable<LabListResponse>  Labs { get; set; } = new List<LabListResponse>();
+    public IEnumerable<LabResponse>  Labs { get; set; } = new List<LabResponse>();
 }

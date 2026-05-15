@@ -1,8 +1,12 @@
-﻿using App.Modules.Project.Application.Interfaces;
-using App.Modules.Project.Application.Mapper;
+﻿using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces;
+using App.Modules.Project.Application.Interfaces.Service;
+using App.Modules.Project.Application.Mappers;
 using App.Shared.Contracts;
 
-public class DocumentResultService
+namespace App.Modules.Project.Application.Services;
+
+public class DocumentResultService : IDocumentResultService
 {
     private readonly IDocumentResultRepository _documentResult;
     private readonly IUnitOfWork _uow;
@@ -14,10 +18,10 @@ public class DocumentResultService
         _documentResult = documentResult;
         _uow = uow;
     }
-    public async Task<IEnumerable<DocumentResultListResponse>> GetAllAsync()
+    public async Task<IEnumerable<DocumentResultResponse>> GetAllAsync()
     {
         var entities = await _documentResult.GetAllAsync();
-        return entities.Select(DocumentResultMapper.ToEquipmentResultLabResponse);
+        return entities.Select(DocumentResultMapper.ToResponse);
     }
 
     public async Task<DocumentResultResponse?> GetByIdAsync(Guid id)

@@ -2,6 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
 using App.Domain.Entities;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Mappers;
+using App.Modules.Project.Application.Services;
+using App.Modules.Project.Domain;
 using App.Shared.Domain;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels;
@@ -67,7 +71,6 @@ namespace WebApp.Controllers
         
                 var documentType = new CreateDocumentTypeRequest
                 {
-                    Id = Guid.NewGuid(),
                     NameEn = viewModel.NameEn,
                     NameEt = viewModel.NameEt,
                     DescriptionEn = viewModel.DescriptionEn,
@@ -113,7 +116,7 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    var update = new UpdateDocumentTypeRequest(documentType);
+                    var update = DocumentTypeMapper.ToUpdateRequest(documentType);
                     await _documentType.UpdateAsync(id, update);
                 }
                 catch (DbUpdateConcurrencyException)

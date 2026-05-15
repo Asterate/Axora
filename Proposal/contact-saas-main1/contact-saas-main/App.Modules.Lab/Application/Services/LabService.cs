@@ -1,8 +1,11 @@
-﻿using App.Modules.Lab.Application.Interfaces;
-using App.Modules.Lab.Application.Mapper;
+﻿using App.Modules.Lab.Application.DTO;
+using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Mappers;
 using App.Shared.Contracts;
 
-public class LabService
+namespace App.Modules.Lab.Application.Services;
+
+public class LabService : ILabService
 {
     private readonly ILabRepository _lab;
     private readonly IUnitOfWork _uow;
@@ -14,10 +17,10 @@ public class LabService
         _lab = labRepo;
         _uow = uow;
     }
-    public async Task<IEnumerable<LabListResponse>> GetAllAsync()
+    public async Task<IEnumerable<LabResponse>> GetAllAsync()
     {
         var entities = await _lab.GetAllAsync();
-        return entities.Select(LabMapper.ToListResponse);
+        return entities.Select(LabMapper.ToResponse);
     }
 
     public async Task<LabResponse?> GetByIdAsync(Guid id)

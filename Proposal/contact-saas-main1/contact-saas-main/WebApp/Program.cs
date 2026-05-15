@@ -81,6 +81,9 @@ builder.Services.AddProjectModule();
 
 builder.Services.AddDataProtection()
      .PersistKeysToDbContext<IdentityModuleDbContext>();
+//Mediator
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 // Build and configure pipeline
 var app = builder.Build();

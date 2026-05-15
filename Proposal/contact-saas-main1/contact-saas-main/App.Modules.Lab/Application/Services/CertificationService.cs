@@ -1,8 +1,12 @@
 ﻿using App.Modules.Equipment.Application.Interfaces;
-using App.Modules.Equipment.Application.Mapper;
+using App.Modules.Lab.Application.DTO;
+using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Mappers;
 using App.Shared.Contracts;
 
-public class CertificationService
+namespace App.Modules.Lab.Application.Services;
+
+public class CertificationService :  ICertificationService
 {
     private readonly ICertificationRepository _certificationRepo;
     private readonly IUnitOfWork _uow;
@@ -14,10 +18,10 @@ public class CertificationService
         _certificationRepo = certificationRepo;
         _uow = uow;
     }
-    public async Task<IEnumerable<CertificationListResponse>> GetAllAsync()
+    public async Task<IEnumerable<CertificationResponse>> GetAllAsync()
     {
         var entities = await _certificationRepo.GetAllAsync();
-        return entities.Select(CertificationMapper.ToListResponse);
+        return entities.Select(CertificationMapper.ToResponse);
     }
 
     public async Task<CertificationResponse?> GetByIdAsync(Guid id)

@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.Domain.Entities;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Mappers;
+using App.Modules.Project.Domain;
 using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
@@ -57,7 +60,13 @@ namespace WebApp.Controllers
             {
                 var create = new CreateScheduleRequest
                 {
-                    Id = schedule.Id,
+                    ScheduleName =  schedule.ScheduleName ?? "??",
+                    Status = schedule.Status,
+                    ColorCode =  schedule.ColorCode,
+                    CreatedAt = schedule.CreatedAt,
+                    LabId = schedule.LabId,
+                    InstituteUserId = schedule.InstituteUserId,
+                    EquipmentId =  schedule.EquipmentId,
                 };
                 await _scheduleService.CreateAsync(create);
                 return RedirectToAction(nameof(Index));
@@ -97,7 +106,7 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    var update = new UpdateScheduleRequest(schedule);
+                    var update = ScheduleMapper.ToUpdateRequest(schedule);
                     await _scheduleService.UpdateAsync(id, update);
                 }
                 catch (DbUpdateConcurrencyException)

@@ -1,4 +1,5 @@
 ﻿using App.Domain.Entities;
+using App.Modules.Project.Application.DTO;
 
 namespace WebApp.ViewModels;
 

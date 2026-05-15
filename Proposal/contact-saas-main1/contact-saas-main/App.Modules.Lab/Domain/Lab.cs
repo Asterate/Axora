@@ -1,24 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using App.Shared.Domain;
+﻿using App.Shared.Domain;
 
-namespace App.Domain.Entities;
+namespace App.Modules.Lab.Domain;
 
 public class Lab : BaseEntity
 {
-    [StringLength(128, MinimumLength = 3)]
     public string LabName { get; set; }  = default!;
-    
-    [StringLength(128, MinimumLength = 3)]
     public string LabAddress { get; set; }  = default!;
     
     public int LabCapacity { get; set; }
-    
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    
-    public DateTime? UpdatedAt { get; set; }
-    
-    public DateTime? DeletedAt { get; set; }
     
     public bool LabIsActive { get; set; } = true;
     

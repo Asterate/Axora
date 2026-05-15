@@ -1,37 +1,57 @@
-﻿// App.Modules.Equipment/Application/Mapper/EquipmentMapper.cs
-
+﻿using App.Modules.Project.Application.DTO;
 using App.Shared.Domain;
 
-namespace App.Modules.Experiment.Application.Mapper;
+namespace App.Modules.Project.Application.Mappers;
 
 public static class ExperimentMapper
 {
-    // Entity → List Response
-    public static ExperimentListResponse ToListResponse(Domain.Entities.Experiment entity)
-        => new ExperimentListResponse
-        {
-            Id = entity.Id,
-            Name = entity.ExperimentName.ToString()
-        };
-
     // Entity → Full Response
-    public static ExperimentResponse ToResponse(Domain.Entities.Experiment entity)
-        => new ExperimentResponse
+    public static ExperimentResponse ToResponse(Project.Domain.Experiment entity)
+        => new ()
         {
             Id = entity.Id,
-            Name = entity.ExperimentName.ToString(),
+            ExperimentName = entity.ExperimentName,
+            ExperimentTypeName = entity.ExperimentType.Name,
+            ProjectName = entity.Projects.ProjectName,
+            InstituteUserId = entity.InstituteUserId,
+            CreatedAt = entity.CreatedAt,
         };
 
     // Create Request → Entity
-    public static Domain.Entities.Experiment ToEntity(CreateExperimentRequest request)
-        => new Domain.Entities.Experiment
+    public static Project.Domain.Experiment ToEntity(CreateExperimentRequest request)
+        => new ()
         {
             ExperimentName = new LangStr { ["en"] = request.ExperimentName ?? "" },
+            InstituteUserId = request.InstituteUserId,
+            CreatedAt = request.CreatedAt,
+            UpdatedAt =  request.UpdatedAt,
+            ExperimentNotes =  request.ExperimentNotes,
+            ProjectId = request.ProjectId,
         };
 
     // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(Domain.Entities.Experiment entity, UpdateExperimentRequest request)
+    public static void UpdateEntity(Project.Domain.Experiment entity, UpdateExperimentRequest request)
     {
+        entity.Id = request.Id;
         entity.ExperimentName = new LangStr { ["en"] = request.ExperimentName ?? "" };
+        entity.InstituteUserId = request.InstituteUserId;
+        entity.CreatedAt = request.CreatedAt;
+        entity.UpdatedAt = request.UpdatedAt;
+        entity.ExperimentNotes = request.ExperimentNotes;
+        entity.ProjectId = request.ProjectId;
+    }
+    public static UpdateExperimentRequest ToUpdateRequest(Domain.Experiment request)
+    {
+        return new UpdateExperimentRequest
+        {
+            Id = request.Id,
+            ExperimentName = new LangStr { ["en"] = request.ExperimentName ?? "" },
+            InstituteUserId = request.InstituteUserId,
+            CreatedAt = request.CreatedAt,
+            UpdatedAt =  request.UpdatedAt,
+            ExperimentNotes =  request.ExperimentNotes,
+            ProjectId = request.ProjectId,
+            
+        };
     }
 }

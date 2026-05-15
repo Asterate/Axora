@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
 using App.Domain.Entities;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Domain;
 using App.Shared.Domain;
 
 namespace App.Modules.Institute.Application.Mapper;
@@ -41,9 +43,21 @@ public static class InstituteTypeMapper
     {
         entity.Id = request.Id;
         entity.Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.NameEn ?? "", ["et"] = request.NameEt ?? "" });
-        if (request.DescriptionEn != null || request.DescriptionEt != null)
+        entity.Description = JsonSerializer.Serialize(new Dictionary<string, string> 
+        { 
+            ["en"] = request.DescriptionEn ?? "", 
+            ["et"] = request.DescriptionEt ?? "" 
+        });
+    }
+    public static UpdateInstituteTypeRequest ToUpdateRequest(InstituteTypeResponse request)
+    {
+        return new UpdateInstituteTypeRequest
         {
-            entity.Description = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.DescriptionEn ?? "", ["et"] = request.DescriptionEt ?? "" });
-        }
+            Id = request.Id,
+            NameEn = request.NameEn,
+            NameEt = request.NameEt,
+            DescriptionEn = request.DescriptionEn,
+            DescriptionEt = request.DescriptionEt
+        };
     }
 }

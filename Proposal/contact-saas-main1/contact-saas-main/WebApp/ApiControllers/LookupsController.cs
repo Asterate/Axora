@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Linq;
+using App.Modules.Lab.Application.Services;
+using App.Modules.Project.Application.Services;
 using App.Shared.Contracts;
 
 namespace WebApp.ApiControllers;

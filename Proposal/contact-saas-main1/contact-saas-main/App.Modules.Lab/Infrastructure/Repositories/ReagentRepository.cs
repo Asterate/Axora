@@ -1,10 +1,7 @@
-﻿
-using System.Reflection.Metadata;
-using App.Domain.Entities;
-using App.Modules.Lab.Infrastructure;
-using App.Modules.Reagent.Application.Interfaces;
-using App.Modules.Reagent.Infrastructure;
+﻿using App.Modules.Reagent.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
+
+namespace App.Modules.Lab.Infrastructure.Repositories;
 
 internal class ReagentRepository : IReagentRepository
 {
@@ -15,19 +12,19 @@ internal class ReagentRepository : IReagentRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Reagent>> GetAllAsync()
+    public async Task<IEnumerable<Domain.Reagent>> GetAllAsync()
         => await _context.Reagents.ToListAsync();
 
-    public async Task<Reagent?> GetByIdAsync(Guid id)
+    public async Task<Domain.Reagent?> GetByIdAsync(Guid id)
         => await _context.Reagents
             .FirstOrDefaultAsync(d => d.Id == id);
 
-    public async Task AddAsync(Reagent entity)
+    public async Task AddAsync(Domain.Reagent entity)
         => await _context.Reagents.AddAsync(entity);
 
-    public void Update(Reagent entity)
+    public void Update(Domain.Reagent entity)
         => _context.Reagents.Update(entity);
 
-    public void Delete(Reagent entity)
+    public void Delete(Domain.Reagent entity)
         => _context.Reagents.Remove(entity);
 }

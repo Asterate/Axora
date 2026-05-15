@@ -1,7 +1,7 @@
-﻿using App.DAL.EF;
+﻿using App.Modules.Lab.Application.Services;
+using App.Modules.Project.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WebApp.ViewModels;
 
 namespace WebApp.Controllers;

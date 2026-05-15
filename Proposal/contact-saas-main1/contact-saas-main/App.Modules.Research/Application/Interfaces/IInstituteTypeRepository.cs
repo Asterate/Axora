@@ -1,9 +1,0 @@
-﻿using App.Domain.Entities;
-using App.Shared.Contracts;
-
-namespace App.Modules.Institute.Application.Interfaces;
-
-public interface IInstituteTypeRepository : IBaseRepository<InstituteType>
-{
-    Task<List<InstituteType>> GetActivesAsync();
-}

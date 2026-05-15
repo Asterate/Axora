@@ -16,8 +16,8 @@ public class AccountService : IAccountService
     private readonly ILogger<AccountService> _logger;
     private readonly IAppRefreshTokenService _refreshTokenService;
 
-    private const string SettingsJWTPrefix = "JWT";
-    private const string SettingsJWTRefreshTokenExpiresInSeconds = SettingsJWTPrefix + ":RefreshTokenExpiresInSeconds";
+    private const string SettingsJwtPrefix = "JWT";
+    private const string SettingsJwtRefreshTokenExpiresInSeconds = SettingsJwtPrefix + ":RefreshTokenExpiresInSeconds";
 
     public AccountService(
         IConfiguration configuration,
@@ -64,7 +64,7 @@ public class AccountService : IAccountService
         var tokenResponse = await _refreshTokenService.CreateAsync(new CreateAppRefreshTokenRequest
         {
             UserId = appUser.Id,
-            ExpiresAt = GetExpirationDateTime(refreshTokenExpiresInSeconds, SettingsJWTRefreshTokenExpiresInSeconds)
+            ExpiresAt = GetExpirationDateTime(refreshTokenExpiresInSeconds, SettingsJwtRefreshTokenExpiresInSeconds)
         });
 
         return new LoginResult
@@ -114,7 +114,7 @@ public class AccountService : IAccountService
         var tokenResponse = await _refreshTokenService.CreateAsync(new CreateAppRefreshTokenRequest
         {
             UserId = appUser.Id,
-            ExpiresAt = GetExpirationDateTime(refreshTokenExpiresInSeconds, SettingsJWTRefreshTokenExpiresInSeconds)
+            ExpiresAt = GetExpirationDateTime(refreshTokenExpiresInSeconds, SettingsJwtRefreshTokenExpiresInSeconds)
         });
 
         return new RegisterUserResult
@@ -136,7 +136,7 @@ public class AccountService : IAccountService
     {
         throw new NotImplementedException();
     }
-    private DateTime GetExpirationDateTime(int? expiresInSeconds, string settingsKey)
+    public DateTime GetExpirationDateTime(int? expiresInSeconds, string settingsKey)
     {
         if (expiresInSeconds <= 0) expiresInSeconds = int.MaxValue;
         expiresInSeconds = expiresInSeconds < _configuration.GetValue<int>(settingsKey)

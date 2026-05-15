@@ -1,8 +1,12 @@
-﻿using App.Modules.Project.Application.Interfaces;
-using App.Modules.Project.Application.Mapper;
+﻿using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces;
+using App.Modules.Project.Application.Interfaces.Service;
+using App.Modules.Project.Application.Mappers;
 using App.Shared.Contracts;
 
-public class ProjectService
+namespace App.Modules.Project.Application.Services;
+
+public class ProjectService : IProjectService
 {
     private readonly IProjectRepository _project;
     private readonly IUnitOfWork _uow;
@@ -27,11 +31,13 @@ public class ProjectService
         return ProjectMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateProjectRequest request)
+    public async Task<ProjectResponse> CreateAsync(CreateProjectRequest request)
     {
         var entity = ProjectMapper.ToEntity(request);
         await _project.AddAsync(entity);
-        await _uow.SaveChangesAsync(); // ← actually saves now
+        await _uow.SaveChangesAsync();
+
+        return ProjectMapper.ToResponse(entity);
     }
 
     public async Task UpdateAsync(Guid id, UpdateProjectRequest request)

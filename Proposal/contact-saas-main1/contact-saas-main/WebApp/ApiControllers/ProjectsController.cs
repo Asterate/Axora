@@ -1,10 +1,8 @@
-﻿using App.BLL.Services;
-using App.DAL.EF;
-using App.DTO.v1;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using App.Modules.Research;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces.Service;
 using Asp.Versioning;
 
 namespace WebApp.ApiControllers;
@@ -30,7 +28,7 @@ public class ProjectsController : ControllerBase
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
         
-        var projects = await _projectService.GetAllAsync(userId.Value);
+        var projects = await _projectService.GetAllAsync();
         return Ok(projects);
     }
 
@@ -43,7 +41,7 @@ public class ProjectsController : ControllerBase
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
         
-        var project = await _projectService.GetByIdAsync(id, userId.Value);
+        var project = await _projectService.GetByIdAsync(id);
         if (project == null) return NotFound();
 
         return Ok(project);
@@ -60,7 +58,7 @@ public class ProjectsController : ControllerBase
 
         try
         {
-            var result = await _projectService.CreateAsync(dto, userId.Value);
+            var result = await _projectService.CreateAsync(dto);
             return CreatedAtAction(nameof(GetProject), new { id = result.Id }, result);
         }
         catch (InvalidOperationException ex)
@@ -80,8 +78,7 @@ public class ProjectsController : ControllerBase
 
         try
         {
-            var success = await _projectService.UpdateAsync(id, dto, userId.Value);
-            if (!success) return NotFound();
+            await _projectService.UpdateAsync(id, dto);
             return NoContent();
         }
         catch (InvalidOperationException ex)
@@ -99,8 +96,7 @@ public class ProjectsController : ControllerBase
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
 
-        var success = await _projectService.DeleteAsync(id, userId.Value);
-        if (!success) return NotFound();
+        await _projectService.DeleteAsync(id);
 
         return NoContent();
     }

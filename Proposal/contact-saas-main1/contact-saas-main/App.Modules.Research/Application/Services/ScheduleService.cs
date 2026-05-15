@@ -1,5 +1,7 @@
-﻿using App.Modules.Project.Application.Interfaces;
+﻿using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces;
 using App.Modules.Project.Application.Mapper;
+using App.Modules.Project.Application.Mappers;
 using App.Shared.Contracts;
 
 public class ScheduleService

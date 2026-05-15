@@ -1,8 +1,7 @@
 ﻿using App.Modules.Project.Application.Interfaces;
-using App.Modules.Project.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.Modules.Lab.Infrastructure.Repositories;
+namespace App.Modules.Project.Infrastructure.Repositories;
 
 internal sealed class ProjectRepository : IProjectRepository
 {
@@ -13,18 +12,18 @@ internal sealed class ProjectRepository : IProjectRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Domain.Entities.Project>> GetAllAsync()
+    public async Task<IEnumerable<Domain.Project>> GetAllAsync()
         => await _context.Projects.ToListAsync();
 
-    public async Task<Domain.Entities.Project?> GetByIdAsync(Guid id)
+    public async Task<Domain.Project?> GetByIdAsync(Guid id)
         => await _context.Projects.FindAsync(id);
 
-    public async Task AddAsync(Domain.Entities.Project entity)
+    public async Task AddAsync(Domain.Project entity)
         => await _context.Projects.AddAsync(entity);
 
-    public void Update(Domain.Entities.Project entity)
+    public void Update(Domain.Project entity)
         => _context.Projects.Update(entity);
 
-    public void Delete(Domain.Entities.Project entity)
+    public void Delete(Domain.Project entity)
         => _context.Projects.Remove(entity);
 }

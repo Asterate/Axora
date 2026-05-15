@@ -1,8 +1,11 @@
 ﻿using App.Modules.Experiment.Application.Interfaces;
-using App.Modules.Experiment.Application.Mapper;
+using App.Modules.Project.Application.Interfaces.Service;
+using App.Modules.Project.Application.Mappers;
 using App.Shared.Contracts;
 
-public class ExperimentTaskTypeService
+namespace App.Modules.Project.Application.Services;
+
+public class ExperimentTaskTypeService : IExperimentTaskTypeService
 {
     private readonly IExperimentTaskTypeRepository _experimentTaskTypeRepo;
     private readonly IUnitOfWork _uow;

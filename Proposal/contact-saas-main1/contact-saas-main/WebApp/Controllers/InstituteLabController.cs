@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
 using App.Domain.Entities;
+using App.Modules.Lab.Application.DTO;
+using App.Modules.Lab.Application.Mappers;
+using App.Modules.Lab.Application.Services;
+using App.Modules.Lab.Domain;
 using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
@@ -64,7 +68,8 @@ namespace WebApp.Controllers
             {
                 var newInstituteLab = new CreateInstituteLabRequest()
                 {
-                    Id = instituteLab.Id,
+                    InstituteId = instituteLab.InstituteId,
+                    LabId = instituteLab.LabId,
                 };
                 await _instituteLabService.CreateAsync(newInstituteLab);
                 return RedirectToAction(nameof(Index));
@@ -104,7 +109,7 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    var instituteLabInstitute = new UpdateInstituteLabRequest(instituteLab);
+                    var instituteLabInstitute = InstituteLabMapper.ToUpdateRequest(instituteLab);
                     await _instituteLabService.UpdateAsync(id, instituteLabInstitute);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -112,10 +117,6 @@ namespace WebApp.Controllers
                     if (!await InstituteLabExists(instituteLab.Id))
                     {
                         return NotFound();
-                    }
-                    else
-                    {
-                        throw;
                     }
                 }
                 return RedirectToAction(nameof(Index));

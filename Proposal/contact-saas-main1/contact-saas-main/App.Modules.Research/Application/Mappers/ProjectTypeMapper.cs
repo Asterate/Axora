@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
 using App.Domain.Entities;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Domain;
 using App.Shared.Domain;
 
 namespace App.Modules.Project.Application.Mapper;
@@ -29,7 +31,6 @@ public static class ProjectTypeMapper
     public static ProjectType ToEntity(CreateProjectTypeRequest request)
         => new ()
         {
-            Id = request.Id,
             Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.NameEn ?? "", ["et"] = request.NameEt ?? "" }),
             Description = request.DescriptionEn == null && request.DescriptionEt == null ? null
                 : JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.DescriptionEn ?? "", ["et"] = request.DescriptionEt ?? "" })

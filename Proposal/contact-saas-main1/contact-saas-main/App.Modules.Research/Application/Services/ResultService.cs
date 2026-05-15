@@ -1,8 +1,12 @@
-﻿using App.Modules.Project.Application.Interfaces;
-using App.Modules.Project.Application.Mapper;
+﻿using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces;
+using App.Modules.Project.Application.Interfaces.Service;
+using App.Modules.Project.Application.Mappers;
 using App.Shared.Contracts;
 
-public class ResultService
+namespace App.Modules.Project.Application.Services;
+
+public class ResultService : IResultService
 {
     private readonly IResultRepository _result;
     private readonly IUnitOfWork _uow;

@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Security.Claims;
 using App.Domain.Identity;
+using App.Modules.Identity.Application.Services;
+using App.Modules.Project.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;

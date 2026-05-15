@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
-using App.Domain.Entities;
-using App.Shared.Domain;
+using App.Modules.Lab.Application.DTO;
+using App.Modules.Lab.Domain;
 
-namespace App.Modules.Lab.Application.Mapper;
+namespace App.Modules.Lab.Application.Mappers;
 
 public static class LabTypeMapper
 {
@@ -30,7 +30,6 @@ public static class LabTypeMapper
     public static LabType ToEntity(CreateLabTypeRequest request)
         => new ()
         {
-            Id = request.Id,
             Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.NameEn ?? "", ["et"] = request.NameEt ?? "" }),
             Description = request.DescriptionEn == null && request.DescriptionEt == null ? null
                 : JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.DescriptionEn ?? "", ["et"] = request.DescriptionEt ?? "" })

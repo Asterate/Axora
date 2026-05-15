@@ -1,4 +1,5 @@
 ﻿using App.Domain.Entities;
+using App.Modules.Project.Domain;
 using App.Shared.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,16 +13,16 @@ public sealed class ResearchDbContext : DbContext
     public DbSet<Document> Documents { get; set; }
     public DbSet<DocumentResult> DocumentResults { get; set; }
     public DbSet<DocumentType> DocumentTypes { get; set; }
-    public DbSet<Domain.Entities.Project> Projects { get; set; }
+    public DbSet<Domain.Project> Projects { get; set; }
     public DbSet<ProjectType> ProjectTypes { get; set; }
     public DbSet<Result> Results { get; set; }
     public DbSet<Schedule> Schedules { get; set; }
     
-    public DbSet<Domain.Entities.Institute> Institutes { get; set; }
+    public DbSet<Domain.Institute> Institutes { get; set; }
     public DbSet<InstituteProject> InstituteProjects { get; set; }
     public DbSet<InstituteType> InstituteTypes { get; set; }
     
-    public DbSet<Domain.Entities.Experiment> Experiments { get; set; }
+    public DbSet<Domain.Experiment> Experiments { get; set; }
     public DbSet<ExperimentType> ExperimentTypes { get; set; }
     public DbSet<ExperimentEquipment> ExperimentEquipments { get; set; }
     public DbSet<ExperimentTask> ExperimentTasks { get; set; }

@@ -1,4 +1,4 @@
-﻿using App.Domain.Entities;
+﻿using App.Modules.Lab.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,8 +8,18 @@ internal sealed class ReagantLabConfiguration : IEntityTypeConfiguration<Reagent
 {
     public void Configure(EntityTypeBuilder<ReagentLab> builder)
     {
-        builder.Property(x => x.Id)
-            .IsRequired();
-        
+        builder.ToTable(t =>
+        {
+            t.HasCheckConstraint(
+                "CK_ReagentLab_Quantity",
+                "[Quantity] > 0");
+        });
+        builder.Property(l => l.Unit).IsRequired().HasMaxLength(10);
+        builder.HasOne(x => x.Reagent)
+            .WithMany()
+            .HasForeignKey(x => x.Reagent)
+            .OnDelete(DeleteBehavior.Restrict);
+        builder.HasIndex(x => new { x.ReagentId, x.LabId })
+            .IsUnique();
     }
 }

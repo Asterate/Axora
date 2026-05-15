@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.Domain.Entities;
+using App.Modules.Experiment.Application.Mapper;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Services;
+using App.Modules.Project.Domain;
 using App.Shared.Domain;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels;
@@ -66,7 +70,6 @@ namespace WebApp.Controllers
                 
                 var experimentType = new CreateExperimentTypeRequest()
                 {
-                    Id = Guid.NewGuid(),
                     NameEn = viewModel.NameEn,
                     NameEt = viewModel.NameEt,
                     DescriptionEn = viewModel.DescriptionEn,
@@ -111,7 +114,7 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    var update = new UpdateExperimentTypeRequest(experimentType);
+                    var update = ExperimentTypeMapper.ToUpdateRequest(experimentType);
                     await _experimentTypeService.UpdateAsync(id, update);
                 }
                 catch (DbUpdateConcurrencyException)
