@@ -20,16 +20,10 @@ public class DocumentResponse
     public DateTime? DeletedAt { get; set; }
     public Guid DocumentTypeId { get; set; }
 }
-public class CreateDocumentRequest
+public class SaveDocumentRequest
 {
     public string DocumentName { get; set; } = default!;
     public string? Description { get; set; } 
     public string? FilePath { get; set; }
     public Guid DocumentTypeId { get; set; }
-}
-
-// UpdateDocumentRequest — user can change these
-public class UpdateDocumentRequest :  CreateDocumentRequest
-{
-    public Guid Id { get; set; }
 }

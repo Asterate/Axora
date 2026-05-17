@@ -8,11 +8,11 @@ public interface IExperimentTaskService
 {
     Task<IEnumerable<ExperimentTaskListResponse>> GetAllAsync();
     Task<IEnumerable<ExperimentTaskListResponse>> GetAllByExperimentIdsAsync(IEnumerable<Guid> experimentIds);
-    Task CreateAsync(CreateExperimentTaskRequest request);
+    Task CreateAsync(SaveExperimentTaskRequest request);
     Task<ExperimentTaskResponse?> GetByIdAsync(Guid id);
-    Task<ExperimentTask> CreateAndReturnAsync(CreateExperimentTaskRequest request);
+    Task<ExperimentTask> CreateAndReturnAsync(SaveExperimentTaskRequest request);
     Task DeleteAsync(Guid id);
-    Task UpdateAsync(Guid id, UpdateExperimentTaskRequest request);
+    Task UpdateAsync(Guid id, SaveExperimentTaskRequest request);
     Task SoftDeleteAsync(Guid id);
     Task<List<LookupItem>> GetActivesAsync(string? culture = null);
 }

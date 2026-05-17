@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
-using App.Domain.Entities;
 using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces.Service;
 using App.Modules.Project.Application.Mappers;
 using App.Modules.Project.Application.Services;
 using App.Modules.Project.Domain;
@@ -16,9 +15,9 @@ namespace WebApp.Controllers
     [Authorize(Roles = "admin")]
     public class DocumentTypeController : Controller
     {
-        private readonly DocumentTypeService _documentType;
+        private readonly IDocumentTypeService _documentType;
 
-        public DocumentTypeController(DocumentTypeService documentType)
+        public DocumentTypeController(IDocumentTypeService documentType)
         {
             _documentType = documentType;
         }
@@ -69,7 +68,7 @@ namespace WebApp.Controllers
                 description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
                 description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
         
-                var documentType = new CreateDocumentTypeRequest
+                var documentType = new SaveDocumentTypeRequest
                 {
                     NameEn = viewModel.NameEn,
                     NameEt = viewModel.NameEt,

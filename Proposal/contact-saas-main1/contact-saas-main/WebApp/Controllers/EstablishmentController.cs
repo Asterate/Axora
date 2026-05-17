@@ -1,4 +1,6 @@
-﻿using App.Modules.Lab.Application.Services;
+﻿using App.Modules.Lab.Application.Interfaces.Service;
+using App.Modules.Lab.Application.Services;
+using App.Modules.Project.Application.Interfaces.Service;
 using App.Modules.Project.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +13,10 @@ namespace WebApp.Controllers;
 [Route("Establishments")]
 public class EstablishmentsController : Controller
 {
-    private readonly InstituteService _institute;
-    private readonly LabService _lab;
+    private readonly IInstituteService _institute;
+    private readonly ILabService _lab;
 
-    public EstablishmentsController(InstituteService instituteService, LabService labService)
+    public EstablishmentsController(IInstituteService instituteService, ILabService labService)
     {
         _institute = instituteService;
         _lab = labService;

@@ -24,7 +24,7 @@ internal sealed class EquipmentLabConfiguration : IEntityTypeConfiguration<Equip
         {
             t.HasCheckConstraint(
                 "CK_EquipmentLab_Quantity",
-                "[Quantity] >= 0");
+                "\"Quantity\" >= 0");
         });
     }
 }

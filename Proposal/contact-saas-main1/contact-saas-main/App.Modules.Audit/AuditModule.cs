@@ -5,6 +5,8 @@ using App.Modules.Audit.Infrastructure.Repositories;
 using App.Shared.Contracts;
 using Microsoft.Extensions.DependencyInjection;
 
+namespace App.Modules.Audit;
+
 public static class AuditModule
 {
     public static IServiceCollection AddAuditModule(
@@ -18,7 +20,7 @@ public static class AuditModule
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Services
-        services.AddScoped<SystemLogService>();
+        services.AddScoped<ISystemLogService, SystemLogService>();
       
         return services;
     }

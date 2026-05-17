@@ -1,5 +1,4 @@
-﻿using App.DAL.EF;
-using App.Modules.Project.Application.Services;
+﻿using App.Modules.Project.Application.Interfaces.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.ViewModels;
@@ -10,9 +9,9 @@ namespace WebApp.Controllers;
 [Authorize(Roles = "admin, employee, owner, instituteadmin, guest")]
 public class AnalysisDashboardController : Controller
 {
-    private readonly ResultService _result;
+    private readonly IResultService _result;
 
-    public AnalysisDashboardController(ResultService resultService)
+    public AnalysisDashboardController(IResultService resultService)
     {
         _result = resultService;
     }

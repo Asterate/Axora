@@ -22,6 +22,8 @@ public class ScheduleResponse
     public EScheduleStatus Status { get; set; }
     public string? ColorCode { get; set; }
     public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public DateTime DeletedAt { get; set; }
     public Guid LabId { get; set; }
     public Guid InstituteUserId { get; set; }
     public Guid EquipmentId { get; set; }
@@ -30,12 +32,13 @@ public class ScheduleResponse
     public DateTime ScheduleStartTime { get; set; }
 }
 
-public class CreateScheduleRequest
+public class SaveScheduleRequest
 {
-    public string? ScheduleName { get; set; }
+    public string? ScheduleNameEn { get; set; }
+    public string? ScheduleNameEt { get; set; }
     public EScheduleStatus Status { get; set; }
-    public string? ColorCode { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public string? ColorCodeEn { get; set; }
+    public string? ColorCodeEt { get; set; }
     public Guid LabId { get; set; }
     public Guid InstituteUserId { get; set; }
     public Guid EquipmentId { get; set; }
@@ -43,10 +46,4 @@ public class CreateScheduleRequest
     public DateTime ScheduleEndTime { get; set; }
     public DateTime ScheduleStartTime { get; set; }
     public bool IsValid() => ScheduleEndTime > ScheduleStartTime;
-}
-
-public class UpdateScheduleRequest :  CreateScheduleRequest
-{
-    public Guid Id { get; set; }
-    
 }

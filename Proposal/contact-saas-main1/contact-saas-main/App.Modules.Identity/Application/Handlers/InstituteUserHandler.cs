@@ -1,5 +1,6 @@
-﻿using App.Domain.Entities;
+﻿using App.Modules.Identity.Application.DTO;
 using App.Modules.Identity.Application.Services;
+using App.Modules.Identity.Domain;
 using App.Shared.Contracts.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -22,7 +23,7 @@ public class InstituteUserHandler : INotificationHandler<InstituteReadyEvent>
 
     public async Task Handle(InstituteReadyEvent e, CancellationToken ct)
     {
-        await _instituteUserService.CreateAsync(new CreateInstituteUserRequest
+        await _instituteUserService.CreateAsync(new SaveInstituteUserRequest
         {
             Id = Guid.NewGuid(),
             InstituteId = e.InstituteId,

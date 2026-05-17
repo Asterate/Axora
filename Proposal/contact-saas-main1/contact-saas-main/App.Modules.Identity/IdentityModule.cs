@@ -20,8 +20,8 @@ public static class IdentityModule
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     
-        services.AddScoped<AppRefreshTokenService>();
-        services.AddScoped<InstituteUserService>();
+        services.AddScoped<IAppRefreshTokenService,AppRefreshTokenService>();
+        services.AddScoped<IInstituteUserService, InstituteUserService>();
     
         return services;
     }

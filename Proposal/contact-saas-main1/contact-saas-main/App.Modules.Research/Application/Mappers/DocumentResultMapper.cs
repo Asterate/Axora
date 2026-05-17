@@ -15,7 +15,7 @@ public static class DocumentResultMapper
         };
 
     // Create Request → Entity
-    public static DocumentResult ToEntity(CreateDocumentResultRequest request)
+    public static DocumentResult ToEntity(SaveDocumentResultRequest request)
         => new ()
         {
             ResultId =  request.ResultId,
@@ -23,9 +23,8 @@ public static class DocumentResultMapper
         };
 
     // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(DocumentResult entity, UpdateDocumentResultRequest request)
+    public static void UpdateEntity(DocumentResult entity, SaveDocumentResultRequest request)
     {
-        entity.Id = request.Id;
         entity.ResultId = request.ResultId;
         entity.DocumentId = request.DocumentId;
     }

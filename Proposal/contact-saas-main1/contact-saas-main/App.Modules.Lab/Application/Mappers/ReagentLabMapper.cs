@@ -12,13 +12,13 @@ public static class ReagentLabMapper
             Quantity =  entity.Quantity,
             Unit = entity.Unit,
             LabId = entity.LabId,
-            LabName = entity.Lab.LabName,
+            LabName = entity.Lab.LabName.Translate(),
             ReagentId = entity.ReagentId,
-            ReagentName = entity.Reagent.ReagentName,
+            ReagentName = entity.Reagent.ReagentName.Translate(),
         };
 
     // Create Request → Entity
-    public static ReagentLab ToEntity(CreateReagentLabRequest request)
+    public static ReagentLab ToEntity(SaveReagentLabRequest request)
         => new ()
         {
             Quantity =  request.Quantity,
@@ -28,9 +28,8 @@ public static class ReagentLabMapper
         };
 
     // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(ReagentLab entity, UpdateReagentLabRequest request)
+    public static void UpdateEntity(ReagentLab entity, SaveReagentLabRequest request)
     {
-        entity.Id = request.Id;
         entity.Quantity = request.Quantity;
         entity.Unit = request.Unit;
         entity.LabId = request.LabId;

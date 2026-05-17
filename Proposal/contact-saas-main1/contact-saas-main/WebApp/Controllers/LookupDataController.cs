@@ -1,9 +1,9 @@
-﻿using App.DAL.EF;
+﻿using App.Modules.Lab.Application.Interfaces.Service;
 using App.Modules.Lab.Application.Services;
+using App.Modules.Project.Application.Interfaces.Service;
 using App.Modules.Project.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using WebApp.ViewModels;
 
 namespace WebApp.Controllers;
@@ -13,21 +13,21 @@ namespace WebApp.Controllers;
 [Route("LookupData")]
 public class LookupDataController : Controller
 {
-    private readonly CertificationTypeService _certificationTypeService;
-    private readonly DocumentTypeService _documentTypeService;
-    private readonly EquipmentTypeService _equipmentTypeService;
-    private readonly ExperimentTypeService _experimentTypeService;
-    private readonly InstituteTypeService _instituteTypeService;
-    private readonly LabTypeService _labTypeService;
-    private readonly ProjectTypeService _projectTypeService;
-    private readonly ReagentTypeService _reagentTypeService;
-    private readonly ExperimentTaskTypeService _taskTypeService;
+    private readonly ICertificationTypeService _certificationTypeService;
+    private readonly IDocumentTypeService _documentTypeService;
+    private readonly IEquipmentTypeService _equipmentTypeService;
+    private readonly IExperimentTypeService _experimentTypeService;
+    private readonly IInstituteTypeService _instituteTypeService;
+    private readonly ILabTypeService _labTypeService;
+    private readonly IProjectTypeService _projectTypeService;
+    private readonly IReagentTypeService _reagentTypeService;
+    private readonly IExperimentTaskTypeService _taskTypeService;
 
-    public LookupDataController(CertificationTypeService certificationTypeService,
-        DocumentTypeService documentTypeService, EquipmentTypeService equipmentTypeService,
-        ExperimentTypeService experimentTypeService, InstituteTypeService instituteTypeService,
-        LabTypeService labTypeService, ProjectTypeService projectTypeService,
-        ReagentTypeService reagentTypeService, ExperimentTaskTypeService taskTypeService)
+    public LookupDataController(ICertificationTypeService certificationTypeService,
+        IDocumentTypeService documentTypeService, IEquipmentTypeService equipmentTypeService,
+        IExperimentTypeService experimentTypeService, IInstituteTypeService instituteTypeService,
+        ILabTypeService labTypeService, IProjectTypeService projectTypeService,
+        IReagentTypeService reagentTypeService, IExperimentTaskTypeService taskTypeService)
     {
         _certificationTypeService = certificationTypeService;
         _documentTypeService = documentTypeService;

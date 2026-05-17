@@ -1,9 +1,8 @@
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using App.Domain.Entities;
-using App.Modules.Project.Application.DTO;
 using App.Modules.Project.Application.Mappers;
-using App.Modules.Project.Application.Services;
 using App.Modules.Project.Domain;
 using Microsoft.AspNetCore.Authorization;
 
@@ -13,9 +12,9 @@ namespace WebApp.Controllers
     [Authorize]
     public class ResultController : Controller
     {
-        private readonly ResultService _resultService;
+        private readonly IResultService _resultService;
 
-        public ResultController(ResultService resultService)
+        public ResultController(IResultService resultService)
         {
             _resultService = resultService;
         }
@@ -59,16 +58,16 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var create = new CreateResultRequest
+                var create = new SaveResultRequest
                 {
-                    ResultName = result.ResultName,
+                    //issue
+                    ResultNameEn = result.ResultName,
                     ExperimentId = result.ExperimentId,
-                    ResultDescription  = result.ResultDescription,
-                    MeasurementName = result.MeasurementName,
+                    ResultDescriptionEn  = result.ResultDescription,
+                    MeasurementNameEn = result.MeasurementName,
                     MeasurementValue = result.MeasurementValue,
-                    CreatedAt = result.CreatedAt,
-                    Unit =  result.Unit,
-                    Notes = result.Notes,
+                    UnitEn =  result.Unit,
+                    NotesEn = result.Notes,
                     FilePath = result.FilePath,
                     ProjectId = result.ProjectId
                 };

@@ -1,5 +1,6 @@
 ﻿using App.Modules.Project.Application.DTO;
 using App.Shared.Domain;
+using App.Shared.Helpers;
 
 namespace App.Modules.Project.Application.Mappers;
 
@@ -10,47 +11,63 @@ public static class ExperimentMapper
         => new ()
         {
             Id = entity.Id,
-            ExperimentName = entity.ExperimentName,
-            ExperimentTypeName = entity.ExperimentType.Name,
-            ProjectName = entity.Projects.ProjectName,
+            ExperimentName = entity.ExperimentName.Translate(),
+            ExperimentTypeName = entity.ExperimentType.Name.Translate(),
+            ProjectName = entity.Projects.ProjectName.Translate() ?? String.Empty,
             InstituteUserId = entity.InstituteUserId,
-            CreatedAt = entity.CreatedAt,
         };
 
     // Create Request → Entity
-    public static Project.Domain.Experiment ToEntity(CreateExperimentRequest request)
+    public static Project.Domain.Experiment ToEntity(SaveExperimentRequest request)
         => new ()
         {
-            ExperimentName = new LangStr { ["en"] = request.ExperimentName ?? "" },
+            ExperimentName = new LangStr
+            {
+                [Cultures.English] = request.ExperimentNameEn,
+                [Cultures.Estonian] = request.ExperimentNameEt,
+            },
             InstituteUserId = request.InstituteUserId,
-            CreatedAt = request.CreatedAt,
-            UpdatedAt =  request.UpdatedAt,
-            ExperimentNotes =  request.ExperimentNotes,
+            ExperimentNotes =  new LangStr
+            {
+                [Cultures.English] = request.ExperimentNotesEn,
+                [Cultures.Estonian] = request.ExperimentNotesEt,
+            },
             ProjectId = request.ProjectId,
+            ExperimentTypeId = request.ExperimentTypeId,
         };
+    public static SaveExperimentRequest ToRequest(Domain.Experiment entity) => new()
+    {
+        ExperimentTypeId = entity.ExperimentTypeId,
+        ExperimentNameEn = entity.ExperimentName[Cultures.English],
+        ExperimentNameEt = entity.ExperimentName[Cultures.Estonian],
+        ExperimentNotesEn = entity.ExperimentNotes[Cultures.English],
+        ExperimentNotesEt = entity.ExperimentNotes[Cultures.Estonian],
+        ProjectId = entity.ProjectId,
+        InstituteUserId = entity.InstituteUserId
+    };
 
     // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(Project.Domain.Experiment entity, UpdateExperimentRequest request)
+    public static void UpdateEntity(Project.Domain.Experiment entity, SaveExperimentRequest request)
     {
-        entity.Id = request.Id;
-        entity.ExperimentName = new LangStr { ["en"] = request.ExperimentName ?? "" };
+        entity.ExperimentName.SetTranslation(request.ExperimentNameEn, Cultures.English);
+        entity.ExperimentName.SetTranslation(request.ExperimentNameEt, Cultures.Estonian);
         entity.InstituteUserId = request.InstituteUserId;
-        entity.CreatedAt = request.CreatedAt;
-        entity.UpdatedAt = request.UpdatedAt;
-        entity.ExperimentNotes = request.ExperimentNotes;
+        entity.ExperimentNotes.SetTranslation(request.ExperimentNotesEn, Cultures.English);
+        entity.ExperimentNotes.SetTranslation(request.ExperimentNotesEt, Cultures.Estonian);
         entity.ProjectId = request.ProjectId;
+        entity.ExperimentTypeId = request.ExperimentTypeId;
     }
-    public static UpdateExperimentRequest ToUpdateRequest(Domain.Experiment request)
+    public static SaveExperimentRequest ToUpdateRequest(Domain.Experiment request)
     {
-        return new UpdateExperimentRequest
+        return new SaveExperimentRequest
         {
-            Id = request.Id,
-            ExperimentName = new LangStr { ["en"] = request.ExperimentName ?? "" },
+            ExperimentNameEn = request.ExperimentName.Translate(Cultures.English) ?? String.Empty,
+            ExperimentNameEt = request.ExperimentName.Translate(Cultures.Estonian) ?? String.Empty,
             InstituteUserId = request.InstituteUserId,
-            CreatedAt = request.CreatedAt,
-            UpdatedAt =  request.UpdatedAt,
-            ExperimentNotes =  request.ExperimentNotes,
+            ExperimentNotesEn =  request.ExperimentNotes.Translate(Cultures.English) ?? String.Empty,
+            ExperimentNotesEt = request.ExperimentNotes.Translate(Cultures.Estonian) ?? String.Empty,
             ProjectId = request.ProjectId,
+            ExperimentTypeId = request.ExperimentTypeId,
             
         };
     }

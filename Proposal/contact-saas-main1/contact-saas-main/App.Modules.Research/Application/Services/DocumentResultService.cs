@@ -31,14 +31,14 @@ public class DocumentResultService : IDocumentResultService
         return DocumentResultMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateDocumentResultRequest request)
+    public async Task CreateAsync(SaveDocumentResultRequest request)
     {
         var entity = DocumentResultMapper.ToEntity(request);
         await _documentResult.AddAsync(entity);
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(Guid id, UpdateDocumentResultRequest request)
+    public async Task UpdateAsync(Guid id, SaveDocumentResultRequest request)
     {
         var entity = await _documentResult.GetByIdAsync(id);
         if (entity == null) return;
@@ -51,7 +51,8 @@ public class DocumentResultService : IDocumentResultService
     {
         var entity = await _documentResult.GetByIdAsync(id);
         if (entity == null) return;
-        _documentResult.Delete(entity);
+        _documentResult.Update(entity);
+        entity.DeletedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 }

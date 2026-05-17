@@ -1,5 +1,6 @@
 ﻿using App.Modules.Lab.Application.DTO;
 using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Interfaces.Service;
 using App.Modules.Lab.Application.Mappers;
 using App.Modules.Reagent.Application.Interfaces;
 using App.Shared.Contracts;
@@ -18,10 +19,10 @@ public class ReagentTypeService : IReagentTypeService
         _reagentType = reagentType;
         _uow = uow;
     }
-    public async Task<IEnumerable<ReagentTypeListResponse>> GetAllAsync()
+    public async Task<IEnumerable<ReagentTypeResponse>> GetAllAsync()
     {
         var entities = await _reagentType.GetAllAsync();
-        return entities.Select(ReagentTypeMapper.ToListResponse);
+        return entities.Select(ReagentTypeMapper.ToResponse);
     }
 
     public async Task<ReagentTypeResponse?> GetByIdAsync(Guid id)
@@ -31,19 +32,21 @@ public class ReagentTypeService : IReagentTypeService
         return ReagentTypeMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateReagentTypeRequest request)
+    public async Task CreateAsync(SaveReagentTypeRequest request)
     {
         var entity = ReagentTypeMapper.ToEntity(request);
         await _reagentType.AddAsync(entity);
+        entity.CreatedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(Guid id, UpdateReagentTypeRequest request)
+    public async Task UpdateAsync(Guid id, SaveReagentTypeRequest request)
     {
         var entity = await _reagentType.GetByIdAsync(id);
         if (entity == null) return;
         ReagentTypeMapper.UpdateEntity(entity, request);
         _reagentType.Update(entity);
+        entity.UpdatedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
@@ -51,7 +54,8 @@ public class ReagentTypeService : IReagentTypeService
     {
         var entity = await _reagentType.GetByIdAsync(id);
         if (entity == null) return;
-        _reagentType.Delete(entity);
+        _reagentType.Update(entity);
+        entity.DeletedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
     public async Task<List<LookupItem>> GetActivesAsync(string? culture = null)
@@ -62,7 +66,7 @@ public class ReagentTypeService : IReagentTypeService
             .Select(t => new LookupItem
             {
                 Id = t.Id,
-                Name = t.GetName(culture) ?? "???"
+                Name = t.Name.Translate() ?? "??",
             }).ToList();
     }
 }

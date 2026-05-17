@@ -5,10 +5,10 @@ namespace App.Modules.Project.Application.Interfaces.Service;
 
 public interface IProjectTypeService
 {
-    Task<IEnumerable<ProjectTypeListResponse>> GetAllAsync();
+    Task<IEnumerable<ProjectTypeResponse>> GetAllAsync();
     Task<ProjectTypeResponse?> GetByIdAsync(Guid id);
-    Task CreateAsync(CreateProjectTypeRequest request);
-    Task UpdateAsync(Guid id, UpdateProjectTypeRequest request);
+    Task CreateAsync(SaveProjectTypeRequest request);
+    Task UpdateAsync(Guid id, SaveProjectTypeRequest request);
     Task DeleteAsync(Guid id);
     Task<List<LookupItem>> GetActivesAsync(string? culture = null);
 }

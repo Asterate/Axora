@@ -1,6 +1,7 @@
 ﻿using App.Modules.Equipment.Application.Interfaces;
 using App.Modules.Lab.Application.DTO;
 using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Interfaces.Service;
 using App.Modules.Lab.Application.Mappers;
 using App.Shared.Contracts;
 
@@ -30,19 +31,21 @@ public class EquipmentService : IEquipmentService
         return EquipmentMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateEquipmentRequest request)
+    public async Task CreateAsync(SaveEquipmentRequest request)
     {
         var entity = EquipmentMapper.ToEntity(request);
         await _equipmentRepo.AddAsync(entity);
+        entity.CreatedAt  = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(Guid id, UpdateEquipmentRequest request)
+    public async Task UpdateAsync(Guid id, SaveEquipmentRequest request)
     {
         var entity = await _equipmentRepo.GetByIdAsync(id);
         if (entity == null) return;
         EquipmentMapper.UpdateEntity(entity, request);
         _equipmentRepo.Update(entity);
+        entity.UpdatedAt  = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
@@ -50,7 +53,19 @@ public class EquipmentService : IEquipmentService
     {
         var entity = await _equipmentRepo.GetByIdAsync(id);
         if (entity == null) return;
-        _equipmentRepo.Delete(entity);
+        _equipmentRepo.Update(entity);
+        entity.UpdatedAt  = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
+    }
+    public async Task<List<LookupItem>> GetActivesAsync(string? culture = null)
+    {
+        var entities = await _equipmentRepo.GetAllAsync();
+        return entities
+            .Where(t => t.DeletedAt == null)
+            .Select(t => new LookupItem
+            {
+                Id = t.Id,
+                Name = t.EquipmentName.Translate(culture) ?? String.Empty,
+            }).ToList();
     }
 }

@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using App.DTO.v1.Identity;
 using App.Modules.Identity.Application.DTO;
 using App.Shared.Contracts;
 

@@ -18,10 +18,10 @@ public class DocumentTypeService : IDocumentTypeService
         _documentType = documentType;
         _uow = uow;
     }
-    public async Task<IEnumerable<DocumentTypeListResponse>> GetAllAsync()
+    public async Task<IEnumerable<DocumentTypeResponse>> GetAllAsync()
     {
         var entities = await _documentType.GetAllAsync();
-        return entities.Select(DocumentTypeMapper.ToListResponse);
+        return entities.Select(DocumentTypeMapper.ToResponse);
     }
 
     public async Task<DocumentTypeResponse?> GetByIdAsync(Guid id)
@@ -31,19 +31,21 @@ public class DocumentTypeService : IDocumentTypeService
         return DocumentTypeMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateDocumentTypeRequest request)
+    public async Task CreateAsync(SaveDocumentTypeRequest request)
     {
         var entity = DocumentTypeMapper.ToEntity(request);
         await _documentType.AddAsync(entity);
+        entity.CreatedAt = DateTime.Now;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(Guid id, UpdateDocumentTypeRequest request)
+    public async Task UpdateAsync(Guid id, SaveDocumentTypeRequest request)
     {
         var entity = await _documentType.GetByIdAsync(id);
         if (entity == null) return;
         DocumentTypeMapper.UpdateEntity(entity, request);
         _documentType.Update(entity);
+        entity.UpdatedAt = DateTime.Now;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
@@ -51,7 +53,8 @@ public class DocumentTypeService : IDocumentTypeService
     {
         var entity = await _documentType.GetByIdAsync(id);
         if (entity == null) return;
-        _documentType.Delete(entity);
+        _documentType.Update(entity);
+        entity.DeletedAt = DateTime.Now;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
     public async Task<List<LookupItem>> GetActivesAsync(string? culture = null)
@@ -62,7 +65,7 @@ public class DocumentTypeService : IDocumentTypeService
             .Select(t => new LookupItem
             {
                 Id = t.Id,
-                Name = t.GetName(culture) ?? "???"
+                Name = t.Name.Translate(culture) ?? String.Empty,
             }).ToList();
     }
 }

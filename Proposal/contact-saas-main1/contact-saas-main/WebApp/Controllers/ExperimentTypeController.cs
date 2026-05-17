@@ -1,8 +1,8 @@
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using App.Domain.Entities;
-using App.Modules.Experiment.Application.Mapper;
-using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Mappers;
 using App.Modules.Project.Application.Services;
 using App.Modules.Project.Domain;
 using App.Shared.Domain;
@@ -15,9 +15,9 @@ namespace WebApp.Controllers
     [Authorize(Roles = "admin")]
     public class ExperimentTypeController : Controller
     {
-        private readonly ExperimentTypeService _experimentTypeService;
+        private readonly IExperimentTypeService _experimentTypeService;
 
-        public ExperimentTypeController(ExperimentTypeService experimentTypeService)
+        public ExperimentTypeController(IExperimentTypeService experimentTypeService)
         {
             _experimentTypeService = experimentTypeService;
         }
@@ -68,7 +68,7 @@ namespace WebApp.Controllers
                 description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
                 description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
                 
-                var experimentType = new CreateExperimentTypeRequest()
+                var experimentType = new SaveExperimentTypeRequest()
                 {
                     NameEn = viewModel.NameEn,
                     NameEt = viewModel.NameEt,

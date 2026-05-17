@@ -1,5 +1,4 @@
-﻿using App.DTO.v1.Identity;
-using App.Modules.Identity.Application.DTO;
+﻿using App.Modules.Identity.Application.DTO;
 
 namespace App.Modules.Identity.Application.Interfaces;
 
@@ -13,7 +12,7 @@ public interface IAccountService
     );
     Task<RegisterUserResult> RegisterUserAsync(Register registerModel,
         int? refreshTokenExpiresInSeconds);
-    Task<JWTResponse> RenewRefreshTokenAsync(RefreshTokenModel model);
+    Task<JwtResponse> RenewRefreshTokenAsync(RefreshTokenModel model);
     Task LogoutAsync(LogoutInfo model, Guid userId);
     DateTime GetExpirationDateTime(int? expiresInSeconds, string settingsKey);
 }

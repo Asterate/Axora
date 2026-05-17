@@ -23,7 +23,7 @@ namespace App.Modules.Project.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("App.Domain.Entities.Document", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.Document", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -36,18 +36,20 @@ namespace App.Modules.Project.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<string>("DocumentName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<Guid>("DocumentTypeId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -59,10 +61,12 @@ namespace App.Modules.Project.Migrations
                     b.ToTable("Documents", "project");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.DocumentResult", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.DocumentResult", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("DocumentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ResultId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -71,25 +75,25 @@ namespace App.Modules.Project.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("DocumentId")
+                    b.Property<Guid?>("DocumentId1")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ResultId")
+                    b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("Id");
+                    b.HasKey("DocumentId", "ResultId");
 
-                    b.HasIndex("DocumentId");
+                    b.HasIndex("DocumentId1");
 
                     b.HasIndex("ResultId");
 
                     b.ToTable("DocumentResults", "project");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.DocumentType", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.DocumentType", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -102,11 +106,13 @@ namespace App.Modules.Project.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -116,7 +122,7 @@ namespace App.Modules.Project.Migrations
                     b.ToTable("DocumentTypes", "project");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.Experiment", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.Experiment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -135,7 +141,8 @@ namespace App.Modules.Project.Migrations
 
                     b.Property<string>("ExperimentNotes")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<Guid>("ExperimentTypeId")
                         .HasColumnType("uuid");
@@ -153,10 +160,12 @@ namespace App.Modules.Project.Migrations
 
                     b.HasIndex("ExperimentTypeId");
 
+                    b.HasIndex("ProjectId");
+
                     b.ToTable("Experiments", "project");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.ExperimentEquipment", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.ExperimentEquipment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -168,7 +177,7 @@ namespace App.Modules.Project.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("EquipementId")
+                    b.Property<Guid>("EquipmentId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("ExperimentId")
@@ -184,7 +193,7 @@ namespace App.Modules.Project.Migrations
                     b.ToTable("ExperimentEquipments", "project");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.ExperimentTask", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.ExperimentTask", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -202,7 +211,7 @@ namespace App.Modules.Project.Migrations
                     b.Property<Guid>("ExperimentId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("ExperimentTaskTypeId")
+                    b.Property<Guid?>("ExperimentId1")
                         .HasColumnType("uuid");
 
                     b.Property<int?>("Priority")
@@ -216,12 +225,12 @@ namespace App.Modules.Project.Migrations
 
                     b.Property<string>("TaskDescription")
                         .HasMaxLength(128)
-                        .HasColumnType("jsonb");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<string>("TaskName")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("jsonb");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<Guid>("TaskTypeId")
                         .HasColumnType("uuid");
@@ -233,12 +242,17 @@ namespace App.Modules.Project.Migrations
 
                     b.HasIndex("ExperimentId");
 
-                    b.HasIndex("ExperimentTaskTypeId");
+                    b.HasIndex("ExperimentId1");
 
-                    b.ToTable("ExperimentTasks", "project");
+                    b.HasIndex("TaskTypeId");
+
+                    b.ToTable("ExperimentTasks", "project", t =>
+                        {
+                            t.HasCheckConstraint("CK_ExperimentTask_Priority", "\"Priority\" IS NULL OR \"Priority\" BETWEEN 0 AND 5");
+                        });
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.ExperimentTaskType", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.ExperimentTaskType", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -251,11 +265,13 @@ namespace App.Modules.Project.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -265,7 +281,7 @@ namespace App.Modules.Project.Migrations
                     b.ToTable("ExperimentTaskTypes", "project");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.ExperimentType", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.ExperimentType", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -278,11 +294,13 @@ namespace App.Modules.Project.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -292,7 +310,7 @@ namespace App.Modules.Project.Migrations
                     b.ToTable("ExperimentTypes", "project");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.Institute", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.Institute", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -309,23 +327,23 @@ namespace App.Modules.Project.Migrations
 
                     b.Property<string>("InstituteAddress")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
 
                     b.Property<string>("InstituteCountry")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("InstituteName")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("InstitutePhoneNumber")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<Guid>("InstituteTypeId")
                         .HasColumnType("uuid");
@@ -340,7 +358,7 @@ namespace App.Modules.Project.Migrations
                     b.ToTable("Institutes", "project");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.InstituteProject", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.InstituteProject", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -355,6 +373,9 @@ namespace App.Modules.Project.Migrations
                     b.Property<Guid>("InstituteId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("InstituteId1")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("uuid");
 
@@ -365,10 +386,12 @@ namespace App.Modules.Project.Migrations
 
                     b.HasIndex("InstituteId");
 
+                    b.HasIndex("InstituteId1");
+
                     b.ToTable("InstituteProjects", "project");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.InstituteType", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.InstituteType", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -381,11 +404,13 @@ namespace App.Modules.Project.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -395,7 +420,7 @@ namespace App.Modules.Project.Migrations
                     b.ToTable("InstituteTypes", "project");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.Project", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.Project", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -419,10 +444,12 @@ namespace App.Modules.Project.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Requirements")
-                        .HasColumnType("text");
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
 
                     b.Property<string>("RequirementsFilePath")
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -431,10 +458,13 @@ namespace App.Modules.Project.Migrations
 
                     b.HasIndex("ProjectTypeId");
 
-                    b.ToTable("Projects", "project");
+                    b.ToTable("Projects", "project", t =>
+                        {
+                            t.HasCheckConstraint("CK_Project_Funding", "\"Funding\" IS NULL OR \"Funding\" >= 0");
+                        });
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.ProjectType", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.ProjectType", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -447,11 +477,13 @@ namespace App.Modules.Project.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -461,7 +493,7 @@ namespace App.Modules.Project.Migrations
                     b.ToTable("ProjectTypes", "project");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.Result", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.Result", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -476,20 +508,33 @@ namespace App.Modules.Project.Migrations
                     b.Property<Guid>("ExperimentId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("ExperimentId1")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("ExperimentTaskId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("ExperimentTaskId1")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("FilePath")
-                        .HasColumnType("text");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("MeasurementName")
-                        .HasColumnType("text");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
-                    b.Property<string>("MeasurementValue")
-                        .HasColumnType("text");
+                    b.Property<float?>("MeasurementValue")
+                        .HasMaxLength(128)
+                        .HasColumnType("real");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("text");
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ResultDescription")
                         .IsRequired()
@@ -502,24 +547,36 @@ namespace App.Modules.Project.Migrations
                         .HasColumnType("character varying(128)");
 
                     b.Property<string>("Unit")
-                        .HasColumnType("text");
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ExperimentId");
+
+                    b.HasIndex("ExperimentId1");
+
+                    b.HasIndex("ExperimentTaskId");
+
+                    b.HasIndex("ExperimentTaskId1");
+
+                    b.HasIndex("ProjectId");
+
                     b.ToTable("Results", "project");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.Schedule", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.Schedule", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("ColorCode")
-                        .HasColumnType("text");
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -527,10 +584,10 @@ namespace App.Modules.Project.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<Guid>("EquipmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ExperimentId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("ExperimentTaskId")
@@ -547,12 +604,15 @@ namespace App.Modules.Project.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
+                    b.Property<DateTime>("ScheduleEndTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("ScheduleName")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
-                    b.Property<DateTime>("StartTime")
+                    b.Property<DateTime>("ScheduleStartTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Status")
@@ -563,12 +623,21 @@ namespace App.Modules.Project.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Schedules", "project");
+                    b.HasIndex("ExperimentId");
+
+                    b.HasIndex("ExperimentTaskId");
+
+                    b.ToTable("Schedules", "project", t =>
+                        {
+                            t.HasCheckConstraint("CK_Schedule_EndAfterStart", "\"ScheduleEndTime\" > \"ScheduleStartTime\"");
+
+                            t.HasCheckConstraint("CK_Schedule_TimeRange", "\"ScheduleEndTime\" > \"ScheduleStartTime\"");
+                        });
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.Document", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.Document", b =>
                 {
-                    b.HasOne("App.Domain.Entities.DocumentType", "DocumentType")
+                    b.HasOne("App.Modules.Project.Domain.DocumentType", "DocumentType")
                         .WithMany()
                         .HasForeignKey("DocumentTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -577,18 +646,22 @@ namespace App.Modules.Project.Migrations
                     b.Navigation("DocumentType");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.DocumentResult", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.DocumentResult", b =>
                 {
-                    b.HasOne("App.Domain.Entities.Document", "Document")
-                        .WithMany("DocumentResults")
+                    b.HasOne("App.Modules.Project.Domain.Document", "Document")
+                        .WithMany()
                         .HasForeignKey("DocumentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("App.Domain.Entities.Result", "Result")
+                    b.HasOne("App.Modules.Project.Domain.Document", null)
+                        .WithMany("DocumentResults")
+                        .HasForeignKey("DocumentId1");
+
+                    b.HasOne("App.Modules.Project.Domain.Result", "Result")
                         .WithMany("DocumentResults")
                         .HasForeignKey("ResultId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Document");
@@ -596,20 +669,28 @@ namespace App.Modules.Project.Migrations
                     b.Navigation("Result");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.Experiment", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.Experiment", b =>
                 {
-                    b.HasOne("App.Domain.Entities.ExperimentType", "ExperimentType")
+                    b.HasOne("App.Modules.Project.Domain.ExperimentType", "ExperimentType")
                         .WithMany()
                         .HasForeignKey("ExperimentTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("App.Modules.Project.Domain.Project", "Projects")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("ExperimentType");
+
+                    b.Navigation("Projects");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.ExperimentEquipment", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.ExperimentEquipment", b =>
                 {
-                    b.HasOne("App.Domain.Entities.Experiment", "Experiment")
+                    b.HasOne("App.Modules.Project.Domain.Experiment", "Experiment")
                         .WithMany()
                         .HasForeignKey("ExperimentId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -618,17 +699,21 @@ namespace App.Modules.Project.Migrations
                     b.Navigation("Experiment");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.ExperimentTask", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.ExperimentTask", b =>
                 {
-                    b.HasOne("App.Domain.Entities.Experiment", "Experiment")
-                        .WithMany("ExperimentTasks")
+                    b.HasOne("App.Modules.Project.Domain.Experiment", "Experiment")
+                        .WithMany()
                         .HasForeignKey("ExperimentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("App.Domain.Entities.ExperimentTaskType", "ExperimentTaskType")
+                    b.HasOne("App.Modules.Project.Domain.Experiment", null)
+                        .WithMany("ExperimentTasks")
+                        .HasForeignKey("ExperimentId1");
+
+                    b.HasOne("App.Modules.Project.Domain.ExperimentTaskType", "ExperimentTaskType")
                         .WithMany()
-                        .HasForeignKey("ExperimentTaskTypeId")
+                        .HasForeignKey("TaskTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -637,9 +722,9 @@ namespace App.Modules.Project.Migrations
                     b.Navigation("ExperimentTaskType");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.Institute", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.Institute", b =>
                 {
-                    b.HasOne("App.Domain.Entities.InstituteType", "InstituteType")
+                    b.HasOne("App.Modules.Project.Domain.InstituteType", "InstituteType")
                         .WithMany()
                         .HasForeignKey("InstituteTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -648,20 +733,24 @@ namespace App.Modules.Project.Migrations
                     b.Navigation("InstituteType");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.InstituteProject", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.InstituteProject", b =>
                 {
-                    b.HasOne("App.Domain.Entities.Institute", "Institute")
-                        .WithMany("InstituteProjects")
+                    b.HasOne("App.Modules.Project.Domain.Institute", "Institute")
+                        .WithMany()
                         .HasForeignKey("InstituteId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("App.Modules.Project.Domain.Institute", null)
+                        .WithMany("InstituteProjects")
+                        .HasForeignKey("InstituteId1");
+
                     b.Navigation("Institute");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.Project", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.Project", b =>
                 {
-                    b.HasOne("App.Domain.Entities.ProjectType", "ProjectType")
+                    b.HasOne("App.Modules.Project.Domain.ProjectType", "ProjectType")
                         .WithMany()
                         .HasForeignKey("ProjectTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -670,22 +759,78 @@ namespace App.Modules.Project.Migrations
                     b.Navigation("ProjectType");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.Document", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.Result", b =>
+                {
+                    b.HasOne("App.Modules.Project.Domain.Experiment", null)
+                        .WithMany()
+                        .HasForeignKey("ExperimentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("App.Modules.Project.Domain.Experiment", "Experiment")
+                        .WithMany()
+                        .HasForeignKey("ExperimentId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("App.Modules.Project.Domain.ExperimentTask", null)
+                        .WithMany()
+                        .HasForeignKey("ExperimentTaskId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("App.Modules.Project.Domain.ExperimentTask", "ExperimentTask")
+                        .WithMany()
+                        .HasForeignKey("ExperimentTaskId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("App.Modules.Project.Domain.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Experiment");
+
+                    b.Navigation("ExperimentTask");
+
+                    b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("App.Modules.Project.Domain.Schedule", b =>
+                {
+                    b.HasOne("App.Modules.Project.Domain.Experiment", "Experiment")
+                        .WithMany()
+                        .HasForeignKey("ExperimentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("App.Modules.Project.Domain.ExperimentTask", null)
+                        .WithMany()
+                        .HasForeignKey("ExperimentTaskId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Experiment");
+                });
+
+            modelBuilder.Entity("App.Modules.Project.Domain.Document", b =>
                 {
                     b.Navigation("DocumentResults");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.Experiment", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.Experiment", b =>
                 {
                     b.Navigation("ExperimentTasks");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.Institute", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.Institute", b =>
                 {
                     b.Navigation("InstituteProjects");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.Result", b =>
+            modelBuilder.Entity("App.Modules.Project.Domain.Result", b =>
                 {
                     b.Navigation("DocumentResults");
                 });

@@ -1,5 +1,4 @@
-﻿using App.Domain.Entities;
-using App.Domain.Identity;
+﻿using App.Domain.Identity;
 using App.Modules.Identity.Domain;
 using App.Shared.Persistence;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
@@ -27,5 +26,6 @@ public sealed class IdentityModuleDbContext
         builder.HasDefaultSchema("identity");
         builder.ApplyAppConventions();
         builder.ApplyConfigurationsFromAssembly(typeof(IdentityModuleDbContext).Assembly);
+        builder.ConfigureLangStrAsJson();
     }
 }

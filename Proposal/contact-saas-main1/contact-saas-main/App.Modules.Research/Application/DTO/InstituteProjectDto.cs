@@ -7,15 +7,8 @@ public class InstituteProjectResponse
     public Guid ProjectId { get; set; }
 }
 
-public class CreateInstituteProjectRequest
+public class SaveInstituteProjectRequest
 {
-    public Guid InstituteId { get; set; }
-    public Guid ProjectId { get; set; }
-}
-
-public class UpdateInstituteProjectRequest
-{
-    public Guid Id { get; set; }
     public Guid InstituteId { get; set; }
     public Guid ProjectId { get; set; }
 }

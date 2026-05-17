@@ -1,5 +1,6 @@
 ﻿using App.Modules.Lab.Application.DTO;
 using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Interfaces.Service;
 using App.Modules.Lab.Application.Mappers;
 using App.Shared.Contracts;
 
@@ -30,14 +31,15 @@ public class InstituteLabService : IInstituteLabService
         return InstituteLabMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateInstituteLabRequest request)
+    public async Task CreateAsync(SaveInstituteLabRequest request)
     {
         var entity = InstituteLabMapper.ToEntity(request);
         await _instituteLab.AddAsync(entity);
+        entity.CreatedAt =  DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(Guid id, UpdateInstituteLabRequest request)
+    public async Task UpdateAsync(Guid id, SaveInstituteLabRequest request)
     {
         var entity = await _instituteLab.GetByIdAsync(id);
         if (entity == null) return;
@@ -50,7 +52,8 @@ public class InstituteLabService : IInstituteLabService
     {
         var entity = await _instituteLab.GetByIdAsync(id);
         if (entity == null) return;
-        _instituteLab.Delete(entity);
+        _instituteLab.Update(entity);
+        entity.DeletedAt =  DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 }

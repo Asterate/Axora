@@ -1,4 +1,4 @@
-﻿@model IEnumerable<App.Modules.Project.Application.DTO.ProjectResponse>
+﻿@model IEnumerable<App.Modules.Project.Application.DTO.ProjectListResponse>
 
 @{
     var items = Model;
@@ -9,7 +9,8 @@
     <tr>
         <th>@Html.DisplayNameFor(m => m.First().ProjectName)</th>
         <th>@Html.DisplayNameFor(m => m.First().Funding)</th>
-        <th>@Html.DisplayNameFor(m => m.First().Requirements)</th>
+        <th>@Html.DisplayNameFor(m => m.First().ProjectTypeName)</th>
+        <th>@Html.DisplayNameFor(m => m.First().CreatedAt)</th>
         <th></th>
     </tr>
     </thead>
@@ -18,11 +19,12 @@
         <tr>
             <td>@Html.DisplayFor(_ => item.ProjectName)</td>
             <td>@Html.DisplayFor(_ => item.Funding)</td>
-            <td>@Html.DisplayFor(_ => item.Requirements)</td>
+            <td>@Html.DisplayFor(_ => item.ProjectTypeName)</td>
+            <td>@Html.DisplayFor(_ => item.CreatedAt)</td>
             <td>
-                <a asp-controller="Project" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-controller="Project" asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-controller="Project" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-controller="HomeDashboard" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-controller="HomeDashboard" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-controller="HomeDashboard" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
     }

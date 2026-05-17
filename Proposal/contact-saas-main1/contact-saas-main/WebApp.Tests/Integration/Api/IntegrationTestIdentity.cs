@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using App.DTO.v1.Identity;
 using App.Helpers;
 using App.Modules.Identity.Application.DTO;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -50,7 +49,7 @@ public class IntegrationTestIdentity : IClassFixture<CustomWebApplicationFactory
 
         var responseString = await response.Content.ReadAsStringAsync();
         var jwtResponse =
-            JsonSerializer.Deserialize<JWTResponse>(responseString, JsonHelpers.JsonSerializerOptionsCamelCase);
+            JsonSerializer.Deserialize<JwtResponse>(responseString, JsonHelpers.JsonSerializerOptionsCamelCase);
         Assert.NotNull(jwtResponse);
     }
 
@@ -96,7 +95,7 @@ public class IntegrationTestIdentity : IClassFixture<CustomWebApplicationFactory
 
         var responseString = await loginResponse.Content.ReadAsStringAsync();
         var jwtResponse =
-            JsonSerializer.Deserialize<JWTResponse>(responseString, JsonHelpers.JsonSerializerOptionsCamelCase);
+            JsonSerializer.Deserialize<JwtResponse>(responseString, JsonHelpers.JsonSerializerOptionsCamelCase);
         Assert.NotNull(jwtResponse);
     }
 }

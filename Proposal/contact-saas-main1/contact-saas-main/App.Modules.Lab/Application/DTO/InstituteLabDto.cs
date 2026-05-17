@@ -8,13 +8,8 @@ public class InstituteLabResponse
     public string LabName { get; set; } = default!;
 }
 
-public class CreateInstituteLabRequest
+public class SaveInstituteLabRequest
 {
     public Guid InstituteId { get; set; }
     public Guid LabId { get; set; }
-}
-
-public class UpdateInstituteLabRequest :  CreateInstituteLabRequest
-{
-    public Guid Id { get; set; }
 }

@@ -35,14 +35,14 @@
             @Html.DisplayFor(model => model.RequirementsFilePath)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ProjectTypeId)
+            @Html.DisplayNameFor(model => model.ProjectTypeName)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ProjectTypeId)
+            @Html.DisplayFor(model => model.ProjectTypeName)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

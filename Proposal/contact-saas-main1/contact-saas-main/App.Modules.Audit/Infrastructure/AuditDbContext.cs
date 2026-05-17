@@ -17,5 +17,6 @@ public sealed class AuditDbContext : DbContext
         builder.HasDefaultSchema("audit"); // keeps tables organized in DB
         builder.ApplyAppConventions();
         builder.ApplyConfigurationsFromAssembly(typeof(AuditDbContext).Assembly);
+        builder.ConfigureLangStrAsJson();
     }
 }

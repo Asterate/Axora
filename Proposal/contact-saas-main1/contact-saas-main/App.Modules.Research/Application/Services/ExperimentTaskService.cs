@@ -31,10 +31,11 @@ public class ExperimentTaskService : IExperimentTaskService
             .Where(t => experimentIds.Contains(t.ExperimentId) && t.DeletedAt == null)
             .Select(ExperimentTaskMapper.ToListResponse);
     }
-    public async Task CreateAsync(CreateExperimentTaskRequest request)
+    public async Task CreateAsync(SaveExperimentTaskRequest request)
     {
         var entity = ExperimentTaskMapper.ToEntity(request);
         await _experimentTaskRepo.AddAsync(entity);
+        entity.CreatedAt = DateTime.Now;
         await _uow.SaveChangesAsync();
     }
 
@@ -45,20 +46,22 @@ public class ExperimentTaskService : IExperimentTaskService
         return ExperimentTaskMapper.ToResponse(entity);
     }
 
-    public async Task<ExperimentTask> CreateAndReturnAsync(CreateExperimentTaskRequest request)
+    public async Task<ExperimentTask> CreateAndReturnAsync(SaveExperimentTaskRequest request)
     {
         var entity = ExperimentTaskMapper.ToEntity(request);
         await _experimentTaskRepo.AddAsync(entity);
         await _uow.SaveChangesAsync();
+        entity.CreatedAt = DateTime.Now;
         return entity;
     }
 
-    public async Task UpdateAsync(Guid id, UpdateExperimentTaskRequest request)
+    public async Task UpdateAsync(Guid id, SaveExperimentTaskRequest request)
     {
         var entity = await _experimentTaskRepo.GetByIdAsync(id);
         if (entity == null) return;
         ExperimentTaskMapper.UpdateEntity(entity, request);
         _experimentTaskRepo.Update(entity);
+        entity.UpdatedAt = DateTime.Now;
         await _uow.SaveChangesAsync();
     }
 
@@ -78,14 +81,15 @@ public class ExperimentTaskService : IExperimentTaskService
             .Select(t => new LookupItem
             {
                 Id = t.Id,
-                Name = t.GetTaskName(culture) ?? "???"
+                Name = t.TaskName.Translate(culture) ?? String.Empty,
             }).ToList();
     }
     public async Task DeleteAsync(Guid id)
     {
         var entity = await _experimentTaskRepo.GetByIdAsync(id);
         if (entity == null) return;
-        _experimentTaskRepo.Delete(entity);
+        entity.DeletedAt = DateTime.Now;
+        _experimentTaskRepo.Update(entity);
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 }

@@ -31,19 +31,21 @@ public class ResultService : IResultService
         return ResultMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateResultRequest request)
+    public async Task CreateAsync(SaveResultRequest request)
     {
         var entity = ResultMapper.ToEntity(request);
         await _result.AddAsync(entity);
+        entity.CreatedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(Guid id, UpdateResultRequest request)
+    public async Task UpdateAsync(Guid id, SaveResultRequest request)
     {
         var entity = await _result.GetByIdAsync(id);
         if (entity == null) return;
         ResultMapper.UpdateEntity(entity, request);
         _result.Update(entity);
+        entity.UpdatedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
@@ -51,7 +53,8 @@ public class ResultService : IResultService
     {
         var entity = await _result.GetByIdAsync(id);
         if (entity == null) return;
-        _result.Delete(entity);
+        _result.Update(entity);
+        entity.DeletedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
     

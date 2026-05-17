@@ -5,7 +5,7 @@ namespace App.Modules.Lab.Domain;
 
 public class Equipment : BaseEntity
 {
-    public string EquipmentName {get; set;} = string.Empty;
+    public LangStr EquipmentName {get; set;} = "??";
     
     public string? EquipmentSerialCode {get; set;}
     
@@ -14,7 +14,4 @@ public class Equipment : BaseEntity
     public Guid EquipmentTypeId {get; set;}
     public EquipmentType EquipmentType { get; set; }  = default!;
     public ICollection<EquipmentCertification>? EquipmentCertificationTypes { get; set; }
-    
-    public string? GetName(string? culture = null)
-        => EquipmentName.GetLocalizedValue(culture);
 }

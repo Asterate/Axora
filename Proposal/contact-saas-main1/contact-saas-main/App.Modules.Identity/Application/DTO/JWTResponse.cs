@@ -1,6 +1,6 @@
-namespace App.DTO.v1.Identity;
+namespace App.Modules.Identity.Application.DTO;
 
-public class JWTResponse
+public class JwtResponse
 {
     public string JWT { get; set; } = default!;
     public string RefreshToken { get; set; } = default!;

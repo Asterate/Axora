@@ -1,4 +1,5 @@
 using App.Domain.Identity;
+using App.Modules.Project.Application.Interfaces.Service;
 using App.Modules.Project.Application.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,15 +12,15 @@ public class RegisterController : Controller
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
-    private readonly InstituteService _instituteService;
-    private readonly InstituteTypeService _instituteTypeService;
+    private readonly IInstituteService _instituteService;
+    private readonly IInstituteTypeService _instituteTypeService;
     private readonly ILogger<RegisterController> _logger;
 
     public RegisterController(
         UserManager<AppUser> userManager,
         SignInManager<AppUser> signInManager,
-        InstituteService instituteService,
-        InstituteTypeService instituteTypeService,
+        IInstituteService instituteService,
+        IInstituteTypeService instituteTypeService,
         ILogger<RegisterController> logger)
     {
         _userManager = userManager;

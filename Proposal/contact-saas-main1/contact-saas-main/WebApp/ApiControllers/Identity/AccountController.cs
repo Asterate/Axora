@@ -3,7 +3,6 @@ using System.Security.Claims;
 using App.Domain.Entities;
 using App.Domain.Identity;
 using App.Dto.v1;
-using App.DTO.v1.Identity;
 using App.Modules.Identity.Application.DTO;
 using App.Modules.Identity.Application.Interfaces;
 using App.Modules.Identity.Domain;
@@ -68,7 +67,7 @@ public class AccountController : ControllerBase
     /// <returns>JWT and refresh token</returns>
     [HttpPost]
     [AllowAnonymous]
-    public async Task<ActionResult<JWTResponse>> Login(
+    public async Task<ActionResult<JwtResponse>> Login(
         [FromBody] Login loginInfo,
         [FromQuery] int? jwtExpiresInSeconds,
         [FromQuery] int? refreshTokenExpiresInSeconds)
@@ -84,7 +83,7 @@ public class AccountController : ControllerBase
             _configuration.GetValue<string>(SettingsJwtAudience)!,
             DateTime.UtcNow.AddSeconds(_configuration.GetValue<int>(SettingsJwtExpiresInSeconds)));
 
-        return Ok(new JWTResponse { JWT = jwt, RefreshToken = result.RefreshToken! });
+        return Ok(new JwtResponse { JWT = jwt, RefreshToken = result.RefreshToken! });
     }
     
     /// <summary>
@@ -96,11 +95,11 @@ public class AccountController : ControllerBase
     /// <returns></returns>
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(JWTResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(JwtResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Message), StatusCodes.Status400BadRequest)]
     [AllowAnonymous]
     [HttpPost]
-    public async Task<ActionResult<JWTResponse>> Register(
+    public async Task<ActionResult<JwtResponse>> Register(
     [FromBody] Register registerModel,
     [FromQuery] int? jwtExpiresInSeconds,
     [FromQuery] int? refreshTokenExpiresInSeconds,
@@ -134,7 +133,7 @@ public class AccountController : ControllerBase
         _configuration.GetValue<string>(SettingsJwtAudience)!,
         _accountService.GetExpirationDateTime(jwtExpiresInSeconds, SettingsJwtExpiresInSeconds));
 
-    return Ok(new JWTResponse
+    return Ok(new JwtResponse
     {
         JWT = jwt,
         RefreshToken = accountResult.RefreshToken!
@@ -150,12 +149,12 @@ public class AccountController : ControllerBase
     /// <returns></returns>
     [Produces("application/json")]
     [Consumes("application/json")]
-    [ProducesResponseType(typeof(JWTResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(JwtResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Message), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [AllowAnonymous]
     [HttpPost]
-    public async Task<ActionResult<JWTResponse>> RenewRefreshToken(
+    public async Task<ActionResult<JwtResponse>> RenewRefreshToken(
     [FromBody] RefreshTokenModel refreshTokenModel,
     [FromQuery] int? jwtExpiresInSeconds,
     [FromQuery] int? refreshTokenExpiresInSeconds)
@@ -225,7 +224,7 @@ public class AccountController : ControllerBase
         _accountService.GetExpirationDateTime(jwtExpiresInSeconds, SettingsJwtExpiresInSeconds)
     );
 
-    return Ok(new JWTResponse
+    return Ok(new JwtResponse
     {
         JWT = jwt,
         RefreshToken = tokenResponse.RefreshToken

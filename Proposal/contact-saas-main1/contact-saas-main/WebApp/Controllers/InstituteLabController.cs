@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
 using App.Domain.Entities;
 using App.Modules.Lab.Application.DTO;
+using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Interfaces.Service;
 using App.Modules.Lab.Application.Mappers;
 using App.Modules.Lab.Application.Services;
 using App.Modules.Lab.Domain;
@@ -19,9 +21,9 @@ namespace WebApp.Controllers
     [Authorize(Roles = "admin")]
     public class InstituteLabController : Controller
     {
-        private readonly InstituteLabService _instituteLabService;
+        private readonly IInstituteLabService _instituteLabService;
 
-        public InstituteLabController(InstituteLabService instituteLabService)
+        public InstituteLabController(IInstituteLabService instituteLabService)
         {
             _instituteLabService = instituteLabService;
         }
@@ -66,7 +68,7 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var newInstituteLab = new CreateInstituteLabRequest()
+                var newInstituteLab = new SaveInstituteLabRequest()
                 {
                     InstituteId = instituteLab.InstituteId,
                     LabId = instituteLab.LabId,

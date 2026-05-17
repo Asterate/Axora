@@ -1,6 +1,7 @@
 ﻿using App.Modules.Equipment.Application.Interfaces;
 using App.Modules.Lab.Application.DTO;
 using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Interfaces.Service;
 using App.Modules.Lab.Application.Mappers;
 using App.Shared.Contracts;
 
@@ -31,19 +32,21 @@ public class CertificationService :  ICertificationService
         return CertificationMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateCertificationRequest request)
+    public async Task CreateAsync(SaveCertificationRequest request)
     {
         var entity = CertificationMapper.ToEntity(request);
         await _certificationRepo.AddAsync(entity);
+        entity.CreatedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(Guid id, UpdateCertificationRequest request)
+    public async Task UpdateAsync(Guid id, SaveCertificationRequest request)
     {
         var entity = await _certificationRepo.GetByIdAsync(id);
         if (entity == null) return;
         CertificationMapper.UpdateEntity(entity, request);
         _certificationRepo.Update(entity);
+        entity.UpdatedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
@@ -51,7 +54,8 @@ public class CertificationService :  ICertificationService
     {
         var entity = await _certificationRepo.GetByIdAsync(id);
         if (entity == null) return;
-        _certificationRepo.Delete(entity);
+        entity.DeletedAt = DateTime.UtcNow;
+        _certificationRepo.Update(entity);
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 }

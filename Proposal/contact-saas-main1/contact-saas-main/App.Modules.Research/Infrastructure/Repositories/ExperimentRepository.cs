@@ -1,8 +1,7 @@
 ﻿using App.Modules.Experiment.Application.Interfaces;
-using App.Modules.Project.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.Modules.Experiment.Infrastructure.Repositories;
+namespace App.Modules.Project.Infrastructure.Repositories;
 
 internal sealed class ExperimentRepository : IExperimentRepository
 {
@@ -14,10 +13,14 @@ internal sealed class ExperimentRepository : IExperimentRepository
     }
 
     public async Task<IEnumerable<Project.Domain.Experiment>> GetAllAsync()
-        => await _context.Experiments.ToListAsync();
+        => await _context.Experiments.Include(e => e.ExperimentType)  // ← add
+            .Include(e => e.Projects).ToListAsync();
 
     public async Task<Project.Domain.Experiment?> GetByIdAsync(Guid id)
-        => await _context.Experiments.FindAsync(id);
+        => await _context.Experiments
+            .Include(e => e.ExperimentType)
+            .Include(e => e.Projects)
+            .FirstOrDefaultAsync(e => e.Id == id);
 
     public async Task AddAsync(Project.Domain.Experiment entity)
         => await _context.Experiments.AddAsync(entity);

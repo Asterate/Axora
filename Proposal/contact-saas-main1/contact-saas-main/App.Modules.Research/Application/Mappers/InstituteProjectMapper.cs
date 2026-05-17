@@ -16,7 +16,7 @@ public static class InstituteProjectMapper
         };
 
     // Create Request → Entity
-    public static InstituteProject ToEntity(CreateInstituteProjectRequest request)
+    public static InstituteProject ToEntity(SaveInstituteProjectRequest request)
         => new ()
         {
             InstituteId = request.InstituteId,
@@ -24,17 +24,15 @@ public static class InstituteProjectMapper
         };
 
     // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(InstituteProject entity, UpdateInstituteProjectRequest request)
+    public static void UpdateEntity(InstituteProject entity, SaveInstituteProjectRequest request)
     {
-        entity.Id = request.Id;
         entity.InstituteId = request.InstituteId;
         entity.ProjectId = request.ProjectId;
     }
-    public static UpdateInstituteProjectRequest ToUpdateRequest(InstituteProject request)
+    public static SaveInstituteProjectRequest ToUpdateRequest(InstituteProject request)
     {
-        return new UpdateInstituteProjectRequest
+        return new SaveInstituteProjectRequest
         {
-            Id = request.Id,
             InstituteId = request.InstituteId,
             ProjectId = request.ProjectId,
             

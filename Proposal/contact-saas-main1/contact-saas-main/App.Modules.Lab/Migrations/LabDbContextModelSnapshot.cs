@@ -23,7 +23,214 @@ namespace App.Modules.Lab.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("App.Domain.Entities.InstituteLab", b =>
+            modelBuilder.Entity("App.Modules.Lab.Domain.Certification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CertificationName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<Guid>("CertificationTypeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("Expired")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("HandedOver")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("InstituteUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CertificationTypeId");
+
+                    b.ToTable("Certifications", "lab", t =>
+                        {
+                            t.HasCheckConstraint("CK_Certification_Dates", "\"Expired\" IS NULL OR \"HandedOver\" < \"Expired\"");
+                        });
+                });
+
+            modelBuilder.Entity("App.Modules.Lab.Domain.CertificationType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CertificationTypes", "lab");
+                });
+
+            modelBuilder.Entity("App.Modules.Lab.Domain.Equipment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EquipmentName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("EquipmentSerialCode")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<Guid>("EquipmentTypeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ManualFilePath")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EquipmentTypeId");
+
+                    b.ToTable("Equipments", "lab");
+                });
+
+            modelBuilder.Entity("App.Modules.Lab.Domain.EquipmentCertification", b =>
+                {
+                    b.Property<Guid>("EquipmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CertificationTypeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("EquipmentId1")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("EquipmentId", "CertificationTypeId");
+
+                    b.HasIndex("CertificationTypeId");
+
+                    b.HasIndex("EquipmentId1");
+
+                    b.ToTable("EquipmentCertificationTypes", "lab");
+                });
+
+            modelBuilder.Entity("App.Modules.Lab.Domain.EquipmentLab", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("EquipmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LabId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LabId");
+
+                    b.HasIndex("EquipmentId", "LabId")
+                        .IsUnique();
+
+                    b.ToTable("EquipmentLabs", "lab", t =>
+                        {
+                            t.HasCheckConstraint("CK_EquipmentLab_Quantity", "\"Quantity\" >= 0");
+                        });
+                });
+
+            modelBuilder.Entity("App.Modules.Lab.Domain.EquipmentType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EquipmentTypes", "lab");
+                });
+
+            modelBuilder.Entity("App.Modules.Lab.Domain.InstituteLab", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -48,10 +255,13 @@ namespace App.Modules.Lab.Migrations
 
                     b.HasIndex("LabId");
 
+                    b.HasIndex("InstituteId", "LabId")
+                        .IsUnique();
+
                     b.ToTable("InstituteLabs", "lab");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.Lab", b =>
+            modelBuilder.Entity("App.Modules.Lab.Domain.Lab", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -65,8 +275,8 @@ namespace App.Modules.Lab.Migrations
 
                     b.Property<string>("LabAddress")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<int>("LabCapacity")
                         .HasColumnType("integer");
@@ -76,8 +286,8 @@ namespace App.Modules.Lab.Migrations
 
                     b.Property<string>("LabName")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<Guid>("LabTypeId")
                         .HasColumnType("uuid");
@@ -89,10 +299,13 @@ namespace App.Modules.Lab.Migrations
 
                     b.HasIndex("LabTypeId");
 
-                    b.ToTable("Labs", "lab");
+                    b.ToTable("Labs", "lab", t =>
+                        {
+                            t.HasCheckConstraint("CK_Lab_LabCapacity", "\"LabCapacity\" > 0");
+                        });
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.LabType", b =>
+            modelBuilder.Entity("App.Modules.Lab.Domain.LabType", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -105,11 +318,13 @@ namespace App.Modules.Lab.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -119,21 +334,23 @@ namespace App.Modules.Lab.Migrations
                     b.ToTable("LabTypes", "lab");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.Reagent", b =>
+            modelBuilder.Entity("App.Modules.Lab.Domain.Reagent", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("CASNumber")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                    b.Property<string>("CasNumber")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
 
                     b.Property<string>("ChemicalFormula")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("Concentration")
-                        .HasColumnType("text");
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -142,29 +359,32 @@ namespace App.Modules.Lab.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("MaterialFilePath")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<float?>("MolecularWeight")
                         .HasColumnType("real");
 
                     b.Property<string>("ReagentDescription")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("ReagentName")
                         .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<Guid>("ReagentTypeId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("SafetyNotes")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("StorageConditions")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -176,7 +396,7 @@ namespace App.Modules.Lab.Migrations
                     b.ToTable("Reagents", "lab");
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.ReagentLab", b =>
+            modelBuilder.Entity("App.Modules.Lab.Domain.ReagentLab", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -212,10 +432,13 @@ namespace App.Modules.Lab.Migrations
                     b.HasIndex("ReagentId", "LabId")
                         .IsUnique();
 
-                    b.ToTable("ReagentLabs", "lab");
+                    b.ToTable("ReagentLabs", "lab", t =>
+                        {
+                            t.HasCheckConstraint("CK_ReagentLab_Quantity", "\"Quantity\" > 0");
+                        });
                 });
 
-            modelBuilder.Entity("App.Domain.Entities.ReagentType", b =>
+            modelBuilder.Entity("App.Modules.Lab.Domain.ReagentType", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -232,15 +455,15 @@ namespace App.Modules.Lab.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("DefaultStorage")
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                    b.Property<int?>("DefaultStorage")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
 
                     b.Property<string>("HazardLevel")
                         .HasMaxLength(64)
@@ -255,7 +478,8 @@ namespace App.Modules.Lab.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("StandardConcentration")
                         .HasMaxLength(64)
@@ -266,251 +490,15 @@ namespace App.Modules.Lab.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ReagentTypes", "lab");
+                    b.ToTable("ReagentTypes", "lab", t =>
+                        {
+                            t.HasCheckConstraint("CK_ReagentType_DefaultStorage", "\"DefaultStorage\" > 0");
+                        });
                 });
 
-            modelBuilder.Entity("App.Modules.Equipment.Domain.Certification", b =>
+            modelBuilder.Entity("App.Modules.Lab.Domain.Certification", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CertificationName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("CertificationTypeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("Expired")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("HandedOver")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("InstituteUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CertificationTypeId");
-
-                    b.ToTable("Certifications", "lab");
-                });
-
-            modelBuilder.Entity("App.Modules.Equipment.Domain.CertificationType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CertificationTypes", "lab");
-                });
-
-            modelBuilder.Entity("App.Modules.Equipment.Domain.EquipmentLab", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("EquipmentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("LabId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LabId");
-
-                    b.HasIndex("EquipmentId", "LabId")
-                        .IsUnique();
-
-                    b.ToTable("EquipmentLabs", "lab");
-                });
-
-            modelBuilder.Entity("App.Modules.Equipment.Domain.EquipmentType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EquipmentTypes", "lab");
-                });
-
-            modelBuilder.Entity("App.Modules.Lab.Domain.Equipment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("EquipmentName")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
-                    b.Property<string>("EquipmentSerialCode")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
-                    b.Property<Guid>("EquipmentTypeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ManualFilePath")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EquipmentTypeId");
-
-                    b.ToTable("Equipments", "lab");
-                });
-
-            modelBuilder.Entity("App.Modules.Lab.Domain.EquipmentCertificationType", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CertificationTypeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("EquipmentId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CertificationTypeId");
-
-                    b.HasIndex("EquipmentId");
-
-                    b.ToTable("EquipmentCertificationTypes", "lab");
-                });
-
-            modelBuilder.Entity("App.Domain.Entities.InstituteLab", b =>
-                {
-                    b.HasOne("App.Domain.Entities.Lab", "Lab")
-                        .WithMany()
-                        .HasForeignKey("LabId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Lab");
-                });
-
-            modelBuilder.Entity("App.Domain.Entities.Lab", b =>
-                {
-                    b.HasOne("App.Domain.Entities.LabType", "LabType")
-                        .WithMany()
-                        .HasForeignKey("LabTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("LabType");
-                });
-
-            modelBuilder.Entity("App.Domain.Entities.Reagent", b =>
-                {
-                    b.HasOne("App.Domain.Entities.ReagentType", "ReagentType")
-                        .WithMany()
-                        .HasForeignKey("ReagentTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ReagentType");
-                });
-
-            modelBuilder.Entity("App.Domain.Entities.ReagentLab", b =>
-                {
-                    b.HasOne("App.Domain.Entities.Lab", "Lab")
-                        .WithMany()
-                        .HasForeignKey("LabId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Lab");
-                });
-
-            modelBuilder.Entity("App.Modules.Equipment.Domain.Certification", b =>
-                {
-                    b.HasOne("App.Modules.Equipment.Domain.CertificationType", "CertificationType")
+                    b.HasOne("App.Modules.Lab.Domain.CertificationType", "CertificationType")
                         .WithMany()
                         .HasForeignKey("CertificationTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -519,20 +507,9 @@ namespace App.Modules.Lab.Migrations
                     b.Navigation("CertificationType");
                 });
 
-            modelBuilder.Entity("App.Modules.Equipment.Domain.EquipmentLab", b =>
-                {
-                    b.HasOne("App.Domain.Entities.Lab", "Lab")
-                        .WithMany()
-                        .HasForeignKey("LabId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Lab");
-                });
-
             modelBuilder.Entity("App.Modules.Lab.Domain.Equipment", b =>
                 {
-                    b.HasOne("App.Modules.Equipment.Domain.EquipmentType", "EquipmentType")
+                    b.HasOne("App.Modules.Lab.Domain.EquipmentType", "EquipmentType")
                         .WithMany()
                         .HasForeignKey("EquipmentTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -541,23 +518,98 @@ namespace App.Modules.Lab.Migrations
                     b.Navigation("EquipmentType");
                 });
 
-            modelBuilder.Entity("App.Modules.Lab.Domain.EquipmentCertificationType", b =>
+            modelBuilder.Entity("App.Modules.Lab.Domain.EquipmentCertification", b =>
                 {
-                    b.HasOne("App.Modules.Equipment.Domain.CertificationType", "CertificationType")
+                    b.HasOne("App.Modules.Lab.Domain.CertificationType", "CertificationType")
                         .WithMany()
                         .HasForeignKey("CertificationTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("App.Modules.Lab.Domain.Equipment", "Equipment")
-                        .WithMany("EquipmentCertificationTypes")
+                        .WithMany()
                         .HasForeignKey("EquipmentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("App.Modules.Lab.Domain.Equipment", null)
+                        .WithMany("EquipmentCertificationTypes")
+                        .HasForeignKey("EquipmentId1");
+
                     b.Navigation("CertificationType");
 
                     b.Navigation("Equipment");
+                });
+
+            modelBuilder.Entity("App.Modules.Lab.Domain.EquipmentLab", b =>
+                {
+                    b.HasOne("App.Modules.Lab.Domain.Equipment", "Equipment")
+                        .WithMany()
+                        .HasForeignKey("EquipmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("App.Modules.Lab.Domain.Lab", "Lab")
+                        .WithMany()
+                        .HasForeignKey("LabId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Equipment");
+
+                    b.Navigation("Lab");
+                });
+
+            modelBuilder.Entity("App.Modules.Lab.Domain.InstituteLab", b =>
+                {
+                    b.HasOne("App.Modules.Lab.Domain.Lab", "Lab")
+                        .WithMany()
+                        .HasForeignKey("LabId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Lab");
+                });
+
+            modelBuilder.Entity("App.Modules.Lab.Domain.Lab", b =>
+                {
+                    b.HasOne("App.Modules.Lab.Domain.LabType", "LabType")
+                        .WithMany()
+                        .HasForeignKey("LabTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("LabType");
+                });
+
+            modelBuilder.Entity("App.Modules.Lab.Domain.Reagent", b =>
+                {
+                    b.HasOne("App.Modules.Lab.Domain.ReagentType", "ReagentType")
+                        .WithMany()
+                        .HasForeignKey("ReagentTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ReagentType");
+                });
+
+            modelBuilder.Entity("App.Modules.Lab.Domain.ReagentLab", b =>
+                {
+                    b.HasOne("App.Modules.Lab.Domain.Lab", "Lab")
+                        .WithMany()
+                        .HasForeignKey("LabId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("App.Modules.Lab.Domain.Reagent", "Reagent")
+                        .WithMany()
+                        .HasForeignKey("ReagentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Lab");
+
+                    b.Navigation("Reagent");
                 });
 
             modelBuilder.Entity("App.Modules.Lab.Domain.Equipment", b =>

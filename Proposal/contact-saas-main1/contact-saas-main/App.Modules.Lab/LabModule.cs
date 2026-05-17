@@ -1,14 +1,15 @@
 ﻿using App.Modules.Equipment.Application.Interfaces;
 using App.Modules.Equipment.Infrastructure.Repositories;
 using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Interfaces.Service;
 using App.Modules.Lab.Application.Services;
+using App.Modules.Lab.Infrastructure;
 using App.Modules.Lab.Infrastructure.Repositories;
 using App.Modules.Reagent.Application.Interfaces;
 using App.Shared.Contracts;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace App.Modules.Lab.Infrastructure;
+namespace App.Modules.Lab;
 
 public static class LabDbModule
 {
@@ -32,18 +33,18 @@ public static class LabDbModule
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         
-        services.AddScoped<LabService>();
-        services.AddScoped<LabTypeService>();
-        services.AddScoped<InstituteLabService>();
-        services.AddScoped<EquipmentLabService>();
-        services.AddScoped<ReagentLabService>();
-        services.AddScoped<EquipmentService>();
-        services.AddScoped<EquipmentTypeService>();
-        services.AddScoped<CertificationService>();
-        services.AddScoped<CertificationTypeService>();
-        services.AddScoped<EquipmentCertificationTypeService>();
-        services.AddScoped<ReagentService>();
-        services.AddScoped<ReagentTypeService>();
+        services.AddScoped<ILabService, LabService>();
+        services.AddScoped<ILabTypeService, LabTypeService>();
+        services.AddScoped<IInstituteLabService, InstituteLabService>();
+        services.AddScoped<IEquipmentLabService, EquipmentLabService>();
+        services.AddScoped<IReagentLabService, ReagentLabService>();
+        services.AddScoped<IEquipmentService, EquipmentService>();
+        services.AddScoped<IEquipmentTypeService, EquipmentTypeService>();
+        services.AddScoped<ICertificationService, CertificationService>();
+        services.AddScoped<ICertificationTypeService, CertificationTypeService>();
+        services.AddScoped<IEquipmentCertificationService, EquipmentCertificationService>();
+        services.AddScoped<IReagentService, ReagentService>();
+        services.AddScoped<IReagentTypeService, ReagentTypeService>();
         
         return services;
     }

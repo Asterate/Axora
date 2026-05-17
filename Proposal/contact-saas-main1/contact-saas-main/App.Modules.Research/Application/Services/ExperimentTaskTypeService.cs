@@ -1,4 +1,5 @@
 ﻿using App.Modules.Experiment.Application.Interfaces;
+using App.Modules.Project.Application.DTO;
 using App.Modules.Project.Application.Interfaces.Service;
 using App.Modules.Project.Application.Mappers;
 using App.Shared.Contracts;
@@ -17,10 +18,10 @@ public class ExperimentTaskTypeService : IExperimentTaskTypeService
         _experimentTaskTypeRepo = experimentTaskTypeRepo;
         _uow = uow;
     }
-    public async Task<IEnumerable<ExperimentTaskTypeListResponse>> GetAllAsync()
+    public async Task<IEnumerable<ExperimentTaskTypeResponse>> GetAllAsync()
     {
         var entities = await _experimentTaskTypeRepo.GetAllAsync();
-        return entities.Select(ExperimentTaskTypeMapper.ToListResponse);
+        return entities.Select(ExperimentTaskTypeMapper.ToResponse);
     }
 
     public async Task<ExperimentTaskTypeResponse?> GetByIdAsync(Guid id)
@@ -30,19 +31,21 @@ public class ExperimentTaskTypeService : IExperimentTaskTypeService
         return ExperimentTaskTypeMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateExperimentTaskTypeRequest request)
+    public async Task CreateAsync(SaveExperimentTaskTypeRequest request)
     {
         var entity = ExperimentTaskTypeMapper.ToEntity(request);
         await _experimentTaskTypeRepo.AddAsync(entity);
+        entity.CreatedAt = DateTime.Now;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(Guid id, UpdateExperimentTaskTypeRequest request)
+    public async Task UpdateAsync(Guid id, SaveExperimentTaskTypeRequest request)
     {
         var entity = await _experimentTaskTypeRepo.GetByIdAsync(id);
         if (entity == null) return;
         ExperimentTaskTypeMapper.UpdateEntity(entity, request);
         _experimentTaskTypeRepo.Update(entity);
+        entity.UpdatedAt = DateTime.Now;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
@@ -50,7 +53,8 @@ public class ExperimentTaskTypeService : IExperimentTaskTypeService
     {
         var entity = await _experimentTaskTypeRepo.GetByIdAsync(id);
         if (entity == null) return;
-        _experimentTaskTypeRepo.Delete(entity);
+        _experimentTaskTypeRepo.Update(entity);
+        entity.DeletedAt = DateTime.Now;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
     // ExperimentTypeService
@@ -62,7 +66,7 @@ public class ExperimentTaskTypeService : IExperimentTaskTypeService
             .Select(t => new LookupItem
             {
                 Id = t.Id,
-                Name = t.GetName(culture) ?? "???"
+                Name = t.Name.Translate(culture) ??  String.Empty,
             }).ToList();
     }
 }

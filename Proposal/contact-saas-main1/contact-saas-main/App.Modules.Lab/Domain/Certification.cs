@@ -4,7 +4,7 @@ namespace App.Modules.Lab.Domain;
 
 public class Certification : BaseEntity
 {
-    public string CertificationName { get; set; }  = default!;
+    public LangStr CertificationName { get; set; }  = default!;
     public DateTime HandedOver { get; set; }
     public DateTime? Expired { get; set; }
     public Guid InstituteUserId { get; set; }

@@ -5,10 +5,10 @@ namespace App.Modules.Project.Application.Interfaces.Service;
 
 public interface IDocumentTypeService
 {
-    Task<IEnumerable<DocumentTypeListResponse>> GetAllAsync();
+    Task<IEnumerable<DocumentTypeResponse>> GetAllAsync();
     Task<DocumentTypeResponse?> GetByIdAsync(Guid id);
-    Task CreateAsync(CreateDocumentTypeRequest request);
-    Task UpdateAsync(Guid id, UpdateDocumentTypeRequest request);
+    Task CreateAsync(SaveDocumentTypeRequest request);
+    Task UpdateAsync(Guid id, SaveDocumentTypeRequest request);
     Task DeleteAsync(Guid id);
     Task<List<LookupItem>> GetActivesAsync(string? culture = null);
 }

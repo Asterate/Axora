@@ -33,19 +33,21 @@ public class DocumentService : IDocumentService
         return DocumentMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateDocumentRequest request)
+    public async Task CreateAsync(SaveDocumentRequest request)
     {
         var entity = DocumentMapper.ToEntity(request);
         await _document.AddAsync(entity);
+        entity.CreatedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(Guid id, UpdateDocumentRequest request)
+    public async Task UpdateAsync(Guid id, SaveDocumentRequest request)
     {
         var entity = await _document.GetByIdAsync(id);
         if (entity == null) return;
         DocumentMapper.UpdateEntity(entity, request);
         _document.Update(entity);
+        entity.UpdatedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
@@ -55,6 +57,7 @@ public class DocumentService : IDocumentService
         if (entity == null) return;
         entity.DeletedAt = DateTime.Now;
         _document.Update(entity);
+        entity.DeletedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync();
     }
     public async Task<IEnumerable<DocumentResponse>> FindDeletedAsync()
@@ -72,7 +75,7 @@ public class DocumentService : IDocumentService
             .Select(t => new LookupItem
             {
                 Id = t.Id,
-                Name = t.GetName(culture) ?? "???"
+                Name = t.DocumentName.Translate(culture) ?? String.Empty,
             }).ToList();
     }
 }

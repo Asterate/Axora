@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.Domain.Entities;
 using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces.Service;
 using App.Modules.Project.Application.Mappers;
 using App.Modules.Project.Application.Services;
 using App.Modules.Project.Domain;
@@ -13,9 +14,9 @@ namespace WebApp.Controllers
     [Authorize]
     public class InstituteProjectController : Controller
     {
-        private readonly InstituteProjectService _instituteProjectService;
+        private readonly IInstituteProjectService _instituteProjectService;
 
-        public InstituteProjectController(InstituteProjectService instituteProjectService)
+        public InstituteProjectController(IInstituteProjectService instituteProjectService)
         {
             _instituteProjectService = instituteProjectService;
         }
@@ -59,7 +60,7 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var newInstituteProject = new CreateInstituteProjectRequest()
+                var newInstituteProject = new SaveInstituteProjectRequest()
                 {
                     InstituteId = instituteProject.InstituteId,
                     ProjectId = instituteProject.ProjectId,

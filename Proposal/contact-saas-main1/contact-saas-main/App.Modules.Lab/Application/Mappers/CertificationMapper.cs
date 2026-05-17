@@ -1,6 +1,7 @@
 ﻿using App.Modules.Lab.Application.DTO;
 using App.Modules.Lab.Domain;
 using App.Shared.Domain;
+using App.Shared.Helpers;
 
 namespace App.Modules.Lab.Application.Mappers;
 
@@ -12,7 +13,7 @@ public static class CertificationMapper
         => new ()
         {
             Id = entity.Id,
-            CertificationName = entity.CertificationName,
+            CertificationName = entity.CertificationName.Translate() ?? "??",
             HandedOver = entity.HandedOver,
             Expired = entity.Expired,
             InstituteUserId = entity.InstituteUserId,
@@ -20,10 +21,14 @@ public static class CertificationMapper
         };
 
     // Create Request → Entity
-    public static Certification ToEntity(CreateCertificationRequest request)
+    public static Certification ToEntity(SaveCertificationRequest request)
         => new ()
         {
-            CertificationName = new LangStr { ["en"] = request.CertificationName ?? "" },
+            CertificationName = new LangStr
+            {
+                [Cultures.English] = request.CertificationNameEn ?? "",
+                [Cultures.Estonian] = request.CertificationNameEt ?? ""
+            },
             HandedOver = request.HandedOver,
             Expired = request.Expired,
             InstituteUserId = request.InstituteUserId,
@@ -31,9 +36,10 @@ public static class CertificationMapper
         };
 
     // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(Certification entity, UpdateCertificationRequest request)
+    public static void UpdateEntity(Certification entity, SaveCertificationRequest request)
     {
-        entity.CertificationName = new LangStr { ["en"] = request.CertificationName ?? "" };
+        entity.CertificationName.SetTranslation(request.CertificationNameEn ?? "", Cultures.English);
+        entity.CertificationName.SetTranslation(request.CertificationNameEt ?? "", Cultures.Estonian);
         entity.HandedOver = request.HandedOver;
         entity.Expired = request.Expired;
         entity.InstituteUserId = request.InstituteUserId;

@@ -1,13 +1,12 @@
-﻿using App.Domain.Entities;
-using App.Shared.Domain;
+﻿using App.Shared.Domain;
 
 namespace App.Modules.Project.Domain;
 
 public class Experiment : BaseEntity
 {
-    public string ExperimentName { get; set; }  = default!;
+    public LangStr ExperimentName { get; set; }  = default!;
     
-    public string ExperimentNotes { get; set; }  = default!;
+    public LangStr ExperimentNotes { get; set; }  = default!;
     
     public Guid ExperimentTypeId { get; set; }
     public ExperimentType ExperimentType { get; set; } = default!;

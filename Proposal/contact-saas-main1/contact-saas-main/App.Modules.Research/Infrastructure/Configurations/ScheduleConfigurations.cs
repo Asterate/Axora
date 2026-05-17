@@ -26,12 +26,12 @@ internal sealed class ScheduleConfiguration : IEntityTypeConfiguration<Schedule>
         {
             t.HasCheckConstraint(
                 "CK_Schedule_TimeRange",
-                "[EndTime] > [StartTime]");
+                "\"ScheduleEndTime\" > \"ScheduleStartTime\"");
         });
 
         builder.HasOne<ExperimentTask>()
             .WithMany()
-            .HasForeignKey(x => x.ExperimentTaskId)
+            .HasForeignKey(x => x.ExperimentId)
             .OnDelete(DeleteBehavior.Restrict);
         builder.ToTable(t => t.HasCheckConstraint("CK_Schedule_EndAfterStart", "\"ScheduleEndTime\" > \"ScheduleStartTime\""));
     }

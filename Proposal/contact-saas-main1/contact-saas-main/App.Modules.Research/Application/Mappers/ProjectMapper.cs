@@ -1,4 +1,6 @@
 ﻿using App.Modules.Project.Application.DTO;
+using App.Shared.Domain;
+using App.Shared.Helpers;
 
 namespace App.Modules.Project.Application.Mappers;
 
@@ -9,9 +11,9 @@ public static class ProjectMapper
         => new ()
         {
             Id = entity.Id,
-            ProjectName = entity.ProjectName,
+            ProjectName = entity.ProjectName.Translate() ?? String.Empty,
             Funding = entity.Funding,
-            ProjectTypeName = entity.ProjectType.Name,
+            ProjectTypeName = entity.ProjectType.Name.Translate() ?? String.Empty,
             CreatedAt = entity.CreatedAt,
         };
 
@@ -20,31 +22,52 @@ public static class ProjectMapper
         => new ()
         {
             Id = entity.Id,
-            ProjectTypeId = entity.ProjectTypeId,
-            ProjectName = entity.ProjectName,
+            ProjectTypeName = entity.ProjectType.Name.Translate() ?? String.Empty,
+            ProjectName = entity.ProjectName.Translate() ?? String.Empty,
             Funding = entity.Funding,
-            Requirements = entity.Requirements,
+            Requirements = entity.Requirements?.Translate() ?? String.Empty,
             RequirementsFilePath = entity.RequirementsFilePath
         };
 
     // Create Request → Entity
-    public static Domain.Project ToEntity(CreateProjectRequest request)
+    public static Domain.Project ToEntity(SaveProjectRequest request)
         => new ()
         {
             ProjectTypeId = request.ProjectTypeId,
-            ProjectName = request.ProjectName,
+            ProjectName = new LangStr()
+            {
+              [Cultures.Estonian] = request.ProjectNameEn,
+              [Cultures.English] = request.ProjectNameEt,
+            },
             Funding = request.Funding,
-            Requirements = request.Requirements,
+            Requirements = new LangStr()
+            {
+            [Cultures.Estonian] = request.RequirementsEt ?? String.Empty,
+            [Cultures.English] = request.RequirementsEn ?? String.Empty,
+        },
             RequirementsFilePath = request.RequirementsFilePath
         };
-
-    // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(Domain.Project entity, UpdateProjectRequest request)
+    public static SaveProjectRequest ToRequest(Domain.Project entity) => new()
     {
-        entity.Id = request.Id;
-        entity.ProjectName = request.ProjectName;
+        ProjectTypeId = entity.ProjectTypeId,
+        ProjectNameEn = entity.ProjectName[Cultures.English],
+        ProjectNameEt = entity.ProjectName[Cultures.Estonian],
+        Funding = entity.Funding,
+        RequirementsEn = entity.Requirements?[Cultures.English],
+        RequirementsEt = entity.Requirements?[Cultures.Estonian],
+        RequirementsFilePath = entity.RequirementsFilePath
+    };
+
+    public static void UpdateEntity(Domain.Project entity, SaveProjectRequest request)
+    {
+        entity.ProjectName.SetTranslation(request.ProjectNameEt, Cultures.Estonian);
+        entity.ProjectName.SetTranslation(request.ProjectNameEn, Cultures.English);
+
+        entity.Requirements ??= new LangStr();
+        entity.Requirements.SetTranslation(request.RequirementsEt ?? String.Empty, Cultures.Estonian);
+        entity.Requirements.SetTranslation(request.RequirementsEn ?? String.Empty, Cultures.English);
+        
         entity.Funding = request.Funding;
-        entity.Requirements = request.Requirements;
         entity.RequirementsFilePath = request.RequirementsFilePath;
         entity.ProjectTypeId = request.ProjectTypeId;
     }

@@ -15,7 +15,7 @@ public static class ExperimentEquipmentMapper
         };
 
     // Create Request → Entity
-    public static ExperimentEquipment ToEntity(CreateExperimentEquipmentRequest request)
+    public static ExperimentEquipment ToEntity(SaveExperimentEquipmentRequest request)
         => new ()
         {
             ExperimentId = request.EquipementId,
@@ -23,9 +23,8 @@ public static class ExperimentEquipmentMapper
         };
 
     // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(ExperimentEquipment entity, UpdateExperimentEquipmentRequest request)
+    public static void UpdateEntity(ExperimentEquipment entity, SaveExperimentEquipmentRequest request)
     {
-        request.Id = entity.Id;
         entity.ExperimentId = request.EquipementId;
         entity.EquipmentId = request.EquipementId;
     }

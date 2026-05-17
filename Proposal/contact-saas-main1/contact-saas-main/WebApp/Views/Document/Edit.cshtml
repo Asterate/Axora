@@ -27,7 +27,7 @@
                 <select asp-for="Request.DocumentTypeId" class="form-control" asp-items="ViewBag.DocumentTypeId"></select>
                 <span asp-validation-for="Request.DocumentTypeId" class="text-danger"></span>
             </div>
-            <input type="hidden" asp-for="Request.Id" />
+            <input type="hidden" asp-for="Request" />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

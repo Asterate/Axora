@@ -26,7 +26,7 @@ internal sealed class ProjectConfiguration : IEntityTypeConfiguration<Domain.Pro
         {
             t.HasCheckConstraint(
                 "CK_Project_Funding",
-                "[Funding] IS NULL OR [Funding] >= 0");
+                "\"Funding\" IS NULL OR \"Funding\" >= 0");
         });
         
     }

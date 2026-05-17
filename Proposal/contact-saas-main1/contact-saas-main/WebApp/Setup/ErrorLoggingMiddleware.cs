@@ -1,6 +1,8 @@
-﻿
-using App.Modules.Audit.Application.DTO;
+﻿using App.Modules.Audit.Application.DTO;
+using App.Modules.Audit.Application.Interface;
 using App.Modules.Audit.Application.Services;
+
+namespace WebApp.Setup;
 
 public class ErrorLoggingMiddleware
 {
@@ -11,7 +13,7 @@ public class ErrorLoggingMiddleware
         _next = next;
     }
 
-    public async Task InvokeAsync(HttpContext context, SystemLogService systemLogService)
+    public async Task InvokeAsync(HttpContext context, ISystemLogService systemLogService)
     {
         await _next(context);
 

@@ -1,50 +1,45 @@
-﻿// App.Modules.Equipment/Application/Mapper/EquipmentMapper.cs
-
-using System.Text.Json;
-using App.Modules.Lab.Application.DTO;
+﻿using App.Modules.Lab.Application.DTO;
 using App.Modules.Lab.Domain;
+using App.Shared.Domain;
+using App.Shared.Helpers;
 
 namespace App.Modules.Lab.Application.Mappers;
 
 public static class CertificationTypeMapper
 {
-    // Entity → List Response
-    public static CertificationTypeListResponse ToListResponse(CertificationType entity)
-        => new ()
-        {
-            Id = entity.Id,
-            Name = entity.GetName(),
-            Description = entity.GetDescription()
-        };
 
     // Entity → Full Response
     public static CertificationTypeResponse ToResponse(CertificationType entity)
         => new ()
-        {
+        { 
             Id = entity.Id,
-            NameEn = entity.GetName("en"),
-            NameEt = entity.GetName("et"),
-            DescriptionEn = entity.GetDescription("en"),
-            DescriptionEt = entity.GetDescription("et")
+           Name =  entity.Name.Translate() ?? "??",
+           Description =  entity.Description?.Translate()
         };
 
     // Create Request → Entity
-    public static CertificationType ToEntity(CreateCertificationTypeRequest request)
+    public static CertificationType ToEntity(SaveCertificationTypeRequest request)
         => new ()
         {
-            Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.NameEn ?? "", ["et"] = request.NameEt ?? "" }),
-            Description = request.DescriptionEn == null && request.DescriptionEt == null ? null
-                : JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.DescriptionEn ?? "", ["et"] = request.DescriptionEt ?? "" })
+            Name = new LangStr
+            {
+                [Cultures.English] = request.NameEn ?? "",
+                [Cultures.Estonian] = request.NameEt ?? ""
+            },
+            Description = new LangStr
+            {
+                [Cultures.English] = request.DescriptionEn ?? "",
+                [Cultures.Estonian] = request.DescriptionEt ?? ""
+            }
         };
 
     // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(CertificationType entity, UpdateCertificationTypeRequest request)
+    public static void UpdateEntity(CertificationType entity, SaveCertificationTypeRequest request)
     {
-        entity.Id = request.Id;
-        entity.Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.NameEn ?? "", ["et"] = request.NameEt ?? "" });
-        if (request.DescriptionEn != null || request.DescriptionEt != null)
-        {
-            entity.Description = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.DescriptionEn ?? "", ["et"] = request.DescriptionEt ?? "" });
-        }
+        entity.Name.SetTranslation(request.NameEn ?? "", Cultures.English);
+        entity.Name.SetTranslation(request.NameEt ?? "", Cultures.Estonian);
+        entity.Description ??= new LangStr();
+        entity.Description.SetTranslation(request.DescriptionEn ?? "", Cultures.English);
+        entity.Description.SetTranslation(request.DescriptionEt ?? "", Cultures.Estonian);
     }
 }

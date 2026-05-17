@@ -1,10 +1,8 @@
-﻿using App.Domain.Entities;
-using App.Modules.Project.Application.Interfaces;
+﻿using App.Modules.Project.Application.Interfaces;
 using App.Modules.Project.Domain;
-using App.Modules.Project.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.Modules.Lab.Infrastructure.Repositories;
+namespace App.Modules.Project.Infrastructure.Repositories;
 
 internal sealed class ScheduleRepository : IScheduleRepository
 {
@@ -16,10 +14,14 @@ internal sealed class ScheduleRepository : IScheduleRepository
     }
 
     public async Task<IEnumerable<Schedule>> GetAllAsync()
-        => await _context.Schedules.ToListAsync();
+        => await _context.Schedules
+            .Include(p => p.Experiment)
+            .ToListAsync();
 
     public async Task<Schedule?> GetByIdAsync(Guid id)
-        => await _context.Schedules.FindAsync(id);
+        => await _context.Schedules
+            .Include(p => p.Experiment)
+            .FirstOrDefaultAsync(s => s.Id == id);
 
     public async Task AddAsync(Schedule entity)
         => await _context.Schedules.AddAsync(entity);

@@ -12,15 +12,15 @@ public static class EquipmentLabMapper
             Id = entity.Id,
             Quantity =  entity.Quantity,
             LabId = entity.LabId,
-            LabName = entity.Lab.LabName,
+            LabName = entity.Lab.LabName.Translate() ?? "??",
             EquipmentId =  entity.EquipmentId,
-            EquipmentName = entity.Equipment.EquipmentName,
+            EquipmentName = entity.Equipment.EquipmentName.Translate() ?? "??",
             CreatedAt = entity.CreatedAt,
             DeletedAt = entity.DeletedAt
         };
 
     // Create Request → Entity
-    public static EquipmentLab ToEntity(CreateEquipmentLabRequest request)
+    public static EquipmentLab ToEntity(SaveEquipmentLabRequest request)
         => new ()
         {
             Quantity =  request.Quantity,
@@ -31,9 +31,8 @@ public static class EquipmentLabMapper
         };
 
     // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(EquipmentLab entity, UpdateEquipmentLabRequest request)
+    public static void UpdateEntity(EquipmentLab entity, SaveEquipmentLabRequest request)
     {
-        entity.Id = request.Id;
         entity.Quantity = request.Quantity;
         entity.LabId = request.LabId;
         entity.EquipmentId = request.EquipmentId;

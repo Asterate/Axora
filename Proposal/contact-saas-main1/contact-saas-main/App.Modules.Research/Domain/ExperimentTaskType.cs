@@ -1,17 +1,11 @@
 ﻿using App.Shared.Domain;
-using App.Shared.Helpers;
 
 namespace App.Modules.Project.Domain;
 
 public class ExperimentTaskType : BaseEntity
 {
-    public string Name { get; set; } = "{}";
+    public LangStr Name { get; set; } = "??";
 
-    public string? Description { get; set; }
-
-    public string? GetName(string? culture = null)
-        => Name.GetLocalizedValue(culture);
-
-    public string? GetDescription(string? culture = null)
-        => Description.GetLocalizedValue(culture);
+    public LangStr? Description { get; set; }
+    
 }

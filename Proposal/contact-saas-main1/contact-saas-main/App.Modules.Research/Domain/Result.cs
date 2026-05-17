@@ -4,12 +4,12 @@ namespace App.Modules.Project.Domain;
 
 public class Result : BaseEntity
 {
-    public string ResultName { get; set; }  = default!;
-    public string ResultDescription { get; set; }  = default!;
-    public string? MeasurementName { get; set; }
-    public string? MeasurementValue { get; set; }
-    public string? Unit { get; set; }
-    public string? Notes { get; set; }
+    public LangStr ResultName { get; set; }  = default!;
+    public LangStr ResultDescription { get; set; }  = default!;
+    public LangStr? MeasurementName { get; set; }
+    public float? MeasurementValue { get; set; }
+    public LangStr? Unit { get; set; }
+    public LangStr? Notes { get; set; }
     public string? FilePath { get; set; }
     
     public Guid ExperimentId { get; set; }

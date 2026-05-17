@@ -34,5 +34,6 @@ public sealed class ResearchDbContext : DbContext
         builder.HasDefaultSchema("project"); // keeps tables organized in DB
         builder.ApplyAppConventions();
         builder.ApplyConfigurationsFromAssembly(typeof(ResearchDbContext).Assembly);
+        builder.ConfigureLangStrAsJson();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using App.Modules.Lab.Application.DTO;
 using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Interfaces.Service;
 using App.Modules.Lab.Application.Mappers;
 using App.Shared.Contracts;
 
@@ -30,19 +31,21 @@ public class EquipmentLabService : IEquipmentLabService
         return EquipmentLabMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateEquipmentLabRequest request)
+    public async Task CreateAsync(SaveEquipmentLabRequest request)
     {
         var entity = EquipmentLabMapper.ToEntity(request);
         await _equipmentLab.AddAsync(entity);
+        entity.CreatedAt  = DateTime.UtcNow;
         await _uow.SaveChangesAsync();
     }
 
-    public async Task UpdateAsync(Guid id, UpdateEquipmentLabRequest request)
+    public async Task UpdateAsync(Guid id, SaveEquipmentLabRequest request)
     {
         var entity = await _equipmentLab.GetByIdAsync(id);
         if (entity == null) return;
         EquipmentLabMapper.UpdateEntity(entity, request);
         _equipmentLab.Update(entity);
+        entity.UpdatedAt  = DateTime.UtcNow;
         await _uow.SaveChangesAsync();
     }
 
@@ -50,7 +53,8 @@ public class EquipmentLabService : IEquipmentLabService
     {
         var entity = await _equipmentLab.GetByIdAsync(id);
         if (entity == null) return;
-        _equipmentLab.Delete(entity);
+        _equipmentLab.Update(entity);
+        entity.DeletedAt  = DateTime.UtcNow;
         await _uow.SaveChangesAsync();
     }
 }

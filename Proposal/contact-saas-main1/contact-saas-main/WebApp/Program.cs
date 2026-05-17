@@ -1,4 +1,5 @@
 using System.Text;
+using App.Modules.Audit;
 using App.Modules.Audit.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.IdentityModel.Tokens;
@@ -6,7 +7,9 @@ using WebApp.Helpers;
 using WebApp.Setup;
 using App.Modules.Identity;
 using App.Modules.Identity.Infrastructure;
+using App.Modules.Lab;
 using App.Modules.Lab.Infrastructure;
+using App.Modules.Project;
 using App.Modules.Project.Infrastructure;
 using App.Shared.Domain;
 using Microsoft.AspNetCore.DataProtection;

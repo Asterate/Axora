@@ -4,6 +4,7 @@ namespace WebApp.ViewModels
 {
     public class InstituteTypeViewModel
     {
-        public InstituteTypeResponse InstituteTypes { get; set; } =  new ();
+        public InstituteTypeResponse InstituteTypesResponse { get; set; } =  new ();
+        public SaveInstituteTypeRequest InstituteTypesRequest { get; set; } =  new ();
     }
 }

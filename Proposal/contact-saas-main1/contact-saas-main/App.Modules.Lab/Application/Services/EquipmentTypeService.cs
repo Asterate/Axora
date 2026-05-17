@@ -1,7 +1,8 @@
 ﻿using App.Modules.Equipment.Application.Interfaces;
-using App.Modules.Equipment.Application.Mapper;
 using App.Modules.Lab.Application.DTO;
 using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Interfaces.Service;
+using App.Modules.Lab.Application.Mappers;
 using App.Shared.Contracts;
 
 namespace App.Modules.Lab.Application.Services;
@@ -18,10 +19,10 @@ public class EquipmentTypeService :  IEquipmentTypeService
         _equipmentTypeRepo = equipmentTypeRepo;
         _uow = uow;
     }
-    public async Task<IEnumerable<EquipmentTypeListResponse>> GetAllAsync()
+    public async Task<IEnumerable<EquipmentTypeResponse>> GetAllAsync()
     {
         var entities = await _equipmentTypeRepo.GetAllAsync();
-        return entities.Select(EquipmentTypeMapper.ToListResponse);
+        return entities.Select(EquipmentTypeMapper.ToResponse);
     }
 
     public async Task<EquipmentTypeResponse?> GetByIdAsync(Guid id)
@@ -31,14 +32,15 @@ public class EquipmentTypeService :  IEquipmentTypeService
         return EquipmentTypeMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateEquipmentTypeRequest request)
+    public async Task CreateAsync(SaveEquipmentTypeRequest request)
     {
         var entity = EquipmentTypeMapper.ToEntity(request);
         await _equipmentTypeRepo.AddAsync(entity);
+        entity.CreatedAt =  DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(Guid id, UpdateEquipmentTypeRequest request)
+    public async Task UpdateAsync(Guid id, SaveEquipmentTypeRequest request)
     {
         var entity = await _equipmentTypeRepo.GetByIdAsync(id);
         if (entity == null) return;
@@ -51,7 +53,8 @@ public class EquipmentTypeService :  IEquipmentTypeService
     {
         var entity = await _equipmentTypeRepo.GetByIdAsync(id);
         if (entity == null) return;
-        _equipmentTypeRepo.Delete(entity);
+        _equipmentTypeRepo.Update(entity);
+        entity.DeletedAt =  DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
     public async Task<List<LookupItem>> GetActivesAsync(string? culture = null)
@@ -62,7 +65,7 @@ public class EquipmentTypeService :  IEquipmentTypeService
             .Select(t => new LookupItem
             {
                 Id = t.Id,
-                Name = t.GetName(culture) ?? "???"
+                Name = t.Name.Translate() ?? "??"
             }).ToList();
     }
 }

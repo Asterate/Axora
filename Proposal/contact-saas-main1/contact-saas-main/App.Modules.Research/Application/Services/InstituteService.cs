@@ -1,8 +1,7 @@
-﻿using App.Modules.Institute.Application.Interfaces;
-using App.Modules.Institute.Application.Mapper;
+﻿
+using App.Modules.Institute.Application.Interfaces;
 using App.Modules.Project.Application.DTO;
-using App.Modules.Project.Application.Interfaces;
-using App.Modules.Project.Application.Interfaces.Repository;
+using App.Modules.Project.Application.Interfaces.Service;
 using App.Modules.Project.Application.Mappers;
 using App.Shared.Contracts;
 
@@ -33,7 +32,7 @@ public class InstituteService : IInstituteService
         return InstituteMapper.ToResponse(entity);
     }
 
-    public async Task<InstituteResponse> CreateAsync(CreateInstituteRequest request)
+    public async Task<InstituteResponse> CreateAsync(SaveInstituteRequest request)
     {
         var entity = InstituteMapper.ToEntity(request);
         await _instituteRepo.AddAsync(entity);
@@ -41,7 +40,7 @@ public class InstituteService : IInstituteService
         return InstituteMapper.ToResponse(entity);
     }
 
-    public async Task UpdateAsync(Guid id, UpdateInstituteRequest request)
+    public async Task UpdateAsync(Guid id, SaveInstituteRequest request)
     {
         var entity = await _instituteRepo.GetByIdAsync(id);
         if (entity == null) return;
@@ -94,11 +93,12 @@ public class InstituteService : IInstituteService
     }
 
 // For CreateNew branch
-    public async Task<Domain.Institute> CreateAndReturnAsync(CreateInstituteRequest request)
+    public async Task<Domain.Institute> CreateAndReturnAsync(SaveInstituteRequest request)
     {
         var entity = InstituteMapper.ToEntity(request);
         await _instituteRepo.AddAsync(entity);
         await _uow.SaveChangesAsync();
+        entity.CreatedAt =  DateTime.Now;
         return entity;
     }
 
@@ -119,7 +119,7 @@ public class InstituteService : IInstituteService
         return entities.Select(i => new LookupItem 
         { 
             Id = i.Id, 
-            Name = i.GetInstituteName() ?? "???"
+            Name = i.InstituteName.Translate(culture) ?? String.Empty,
         }).ToList();
     }
 }

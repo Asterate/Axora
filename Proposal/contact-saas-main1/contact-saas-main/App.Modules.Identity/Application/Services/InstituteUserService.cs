@@ -1,5 +1,6 @@
-﻿using App.Modules.Equipment.Application.Mapper;
+﻿using App.Modules.Identity.Application.DTO;
 using App.Modules.Identity.Application.Interfaces;
+using App.Modules.Identity.Application.Mappers;
 using App.Modules.Identity.Applications.Interfaces;
 using App.Shared.Contracts;
 
@@ -30,19 +31,21 @@ public class InstituteUserService : IInstituteUserService
         return InstituteUserMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateInstituteUserRequest request)
+    public async Task CreateAsync(SaveInstituteUserRequest request)
     {
         var entity = InstituteUserMapper.ToEntity(request);
         await _instituteUserRepo.AddAsync(entity);
+        request.CreatedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(Guid id, UpdateInstituteUserRequest request)
+    public async Task UpdateAsync(Guid id, SaveInstituteUserRequest request)
     {
         var entity = await _instituteUserRepo.GetByIdAsync(id);
         if (entity == null) return;
         InstituteUserMapper.UpdateEntity(entity, request);
         _instituteUserRepo.Update(entity);
+        entity.UpdatedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
@@ -50,8 +53,11 @@ public class InstituteUserService : IInstituteUserService
     {
         var entity = await _instituteUserRepo.GetByIdAsync(id);
         if (entity == null) return;
-        _instituteUserRepo.Delete(entity);
-        await _uow.SaveChangesAsync(); // ← actually saves now
+    
+        entity.DeletedAt = DateTime.UtcNow;
+    
+        _instituteUserRepo.Update(entity);
+        await _uow.SaveChangesAsync();
     }
     public async Task<bool> HasInstituteAsync(Guid userId)
     {

@@ -2,8 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.DAL.EF;
 using App.Domain.Entities;
-using App.Modules.Institute.Application.Mapper;
 using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces.Service;
+using App.Modules.Project.Application.Mappers;
 using App.Modules.Project.Application.Services;
 using App.Shared.Domain;
 using Microsoft.AspNetCore.Authorization;
@@ -15,9 +16,9 @@ namespace WebApp.Controllers
     [Authorize(Roles = "admin")]
     public class InstituteTypeController : Controller
     {
-        private readonly InstituteTypeService _instituteTypeService;
+        private readonly IInstituteTypeService _instituteTypeService;
 
-        public InstituteTypeController(InstituteTypeService instituteTypeService)
+        public InstituteTypeController(IInstituteTypeService instituteTypeService)
         {
             _instituteTypeService = instituteTypeService;
         }
@@ -60,20 +61,14 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var name = new LangStr();
-                name.SetTranslation(viewModel.InstituteTypes.NameEn ?? "??", "en");
-                name.SetTranslation(viewModel.InstituteTypes.NameEt ?? "??", "et");
                 
-                var description = new LangStr();
-                description.SetTranslation(viewModel.InstituteTypes.DescriptionEn ?? string.Empty, "en");
-                description.SetTranslation(viewModel.InstituteTypes.DescriptionEt ?? string.Empty, "et");
-                
-                var instituteType = new CreateInstituteTypeRequest()
+                var instituteType = new SaveInstituteTypeRequest
                 {
-                    NameEn = viewModel.InstituteTypes.NameEn,
-                    NameEt = viewModel.InstituteTypes.NameEt,
-                    DescriptionEn = viewModel.InstituteTypes.DescriptionEn,
-                    DescriptionEt = viewModel.InstituteTypes.DescriptionEt
+                    //issue here with viewmodel
+                    NameEn = viewModel.InstituteTypesResponse.Name ?? string.Empty,
+                    NameEt = viewModel.InstituteTypesResponse.Name ?? string.Empty,
+                    DescriptionEn = viewModel.InstituteTypesResponse.Description ?? string.Empty,
+                    DescriptionEt = viewModel.InstituteTypesResponse.Description ?? string.Empty,
                 };
                 await _instituteTypeService.CreateAsync(instituteType);
                 return RedirectToAction("Index", "LookupData");
@@ -96,7 +91,7 @@ namespace WebApp.Controllers
             }
             var viewModel = new InstituteTypeViewModel
             {
-                InstituteTypes = instituteType 
+                InstituteTypesResponse = instituteType 
             };
             return View(viewModel);
         }
@@ -108,7 +103,7 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, InstituteTypeViewModel viewModel)
         {
-            if (id != viewModel.InstituteTypes.Id)
+            if (id != viewModel.InstituteTypesResponse.Id)
             {
                 return NotFound();
             }
@@ -139,7 +134,7 @@ namespace WebApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await InstituteTypeExists(viewModel.InstituteTypes.Id))
+                    if (!await InstituteTypeExists(viewModel.InstituteTypesResponse.Id))
                     {
                         return NotFound();
                     }

@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using App.Domain.Entities;
-using App.Modules.Equipment.Application.Mapper;
 using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces.Service;
 using App.Modules.Project.Application.Mappers;
-using App.Modules.Project.Application.Services;
 using App.Modules.Project.Domain;
 using Microsoft.AspNetCore.Authorization;
 
@@ -14,9 +12,9 @@ namespace WebApp.Controllers
     [Authorize]
     public class ExperimentTaskController : Controller
     {
-        private readonly ExperimentTaskService _experimentTask;
+        private readonly IExperimentTaskService _experimentTask;
 
-        public ExperimentTaskController(ExperimentTaskService experimentTaskService)
+        public ExperimentTaskController(IExperimentTaskService experimentTaskService)
         {
             _experimentTask = experimentTaskService;
         }
@@ -61,15 +59,17 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _experimentTask.CreateAsync(new CreateExperimentTaskRequest
+                await _experimentTask.CreateAsync(new SaveExperimentTaskRequest
                 {
-                    TaskName = experimentTask.TaskName,
+                    TaskNameEn = experimentTask.TaskName.Translate("en") ?? string.Empty,
+                    TaskNameEt = experimentTask.TaskName.Translate("et") ?? string.Empty,
+                    TaskDescriptionEn = experimentTask.TaskDescription?.Translate("en") ?? string.Empty,
+                    TaskDescriptionEt = experimentTask.TaskDescription?.Translate("et") ?? string.Empty,
                     Status = experimentTask.Status,
                     Priority = experimentTask.Priority,
                     ExperimentId = experimentTask.ExperimentId,
                     TaskTypeId = experimentTask.TaskTypeId,
                     AssignedUserId = experimentTask.AssignedUserId,
-                    
                 });
             }
             return View(experimentTask);

@@ -3,47 +3,43 @@ using App.Domain.Entities;
 using App.Modules.Project.Application.DTO;
 using App.Modules.Project.Domain;
 using App.Shared.Domain;
+using App.Shared.Helpers;
 
 namespace App.Modules.Project.Application.Mapper;
 
 public static class ProjectTypeMapper
 {
     // Entity → List Response
-    public static ProjectTypeListResponse ToListResponse(ProjectType entity)
+    public static ProjectTypeResponse ToResponse(ProjectType entity)
         => new()
         {
             Id = entity.Id,
-            Name = entity.GetName(),
-            Description = entity.GetDescription()
+            Name = entity.Name.Translate(),
+            Description = entity.Description?.Translate()
         };
 
-    // Entity → Full Response
-    public static ProjectTypeResponse ToResponse(ProjectType entity) => new()
-    {
-        Id = entity.Id,
-        NameEn = entity.GetName("en"),
-        NameEt = entity.GetName("et"),
-        DescriptionEn = entity.GetDescription("en"),
-        DescriptionEt = entity.GetDescription("et")
-    };
-
     // Create Request → Entity
-    public static ProjectType ToEntity(CreateProjectTypeRequest request)
+    public static ProjectType ToEntity(SaveProjectTypeRequest request)
         => new ()
         {
-            Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.NameEn ?? "", ["et"] = request.NameEt ?? "" }),
-            Description = request.DescriptionEn == null && request.DescriptionEt == null ? null
-                : JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.DescriptionEn ?? "", ["et"] = request.DescriptionEt ?? "" })
+            Name = new LangStr()
+            {
+                [Cultures.English] =  request.NameEn,
+                [Cultures.Estonian] =   request.NameEt,
+            },
+            Description = new LangStr()
+            {
+                [Cultures.English] =  request.DescriptionEn ?? String.Empty,
+                [Cultures.Estonian] =   request.DescriptionEt ?? String.Empty,
+            }
         };
 
     // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(ProjectType entity, UpdateProjectTypeRequest request)
+    public static void UpdateEntity(ProjectType entity, SaveProjectTypeRequest request)
     {
-        entity.Id = request.Id;
-        entity.Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.NameEn ?? "", ["et"] = request.NameEt ?? "" });
-        if (request.DescriptionEn != null || request.DescriptionEt != null)
-        {
-            entity.Description = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.DescriptionEn ?? "", ["et"] = request.DescriptionEt ?? "" });
-        }
+        entity.Name.SetTranslation(request.NameEn, Cultures.English);
+        entity.Description ??= new LangStr();
+        entity.Description.SetTranslation(request.DescriptionEt ?? String.Empty, Cultures.Estonian);
+        entity.Description.SetTranslation(request.DescriptionEn ?? String.Empty, Cultures.English);
     }
 }

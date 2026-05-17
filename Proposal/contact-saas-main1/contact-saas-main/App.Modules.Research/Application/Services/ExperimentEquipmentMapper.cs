@@ -31,19 +31,21 @@ public class ExperimentEquipmentService : IExperimentEquipmentService
         return ExperimentEquipmentMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateExperimentEquipmentRequest request)
+    public async Task CreateAsync(SaveExperimentEquipmentRequest request)
     {
         var entity = ExperimentEquipmentMapper.ToEntity(request);
         await _experimentEquipmentRepo.AddAsync(entity);
+        entity.CreatedAt = DateTime.Now;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(Guid id, UpdateExperimentEquipmentRequest request)
+    public async Task UpdateAsync(Guid id, SaveExperimentEquipmentRequest request)
     {
         var entity = await _experimentEquipmentRepo.GetByIdAsync(id);
         if (entity == null) return;
         ExperimentEquipmentMapper.UpdateEntity(entity, request);
         _experimentEquipmentRepo.Update(entity);
+        entity.UpdatedAt = DateTime.Now;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
@@ -51,7 +53,8 @@ public class ExperimentEquipmentService : IExperimentEquipmentService
     {
         var entity = await _experimentEquipmentRepo.GetByIdAsync(id);
         if (entity == null) return;
-        _experimentEquipmentRepo.Delete(entity);
+        _experimentEquipmentRepo.Update(entity);
+        entity.DeletedAt = DateTime.Now;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 }

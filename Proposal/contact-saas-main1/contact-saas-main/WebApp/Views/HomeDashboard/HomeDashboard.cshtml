@@ -1,10 +1,10 @@
 @using App.Modules.Project.Application.DTO
 @using App.Resources.Views.HomeDashboard
-@model IEnumerable<App.Modules.Project.Application.DTO.ProjectResponse>
+@model IEnumerable<App.Modules.Project.Application.DTO.ProjectListResponse>
 
 @{
     Layout = "_Layout";
-    var items = Model?.ToList() ?? new List<ProjectResponse>();
+    var items = Model?.ToList() ?? new List<ProjectListResponse>();
 }
 
 <!DOCTYPE html>

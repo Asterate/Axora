@@ -5,6 +5,7 @@ namespace WebApp.ViewModels;
 
 public class ProjectViewModel
 {
-    public UpdateProjectRequest  Request { get; set; } = new();
+    public SaveProjectRequest  ProjectRequest { get; set; } = new();
+    public ProjectResponse  RequestResponse { get; set; } = new();
     public List<LookupItem> ProjectTypes { get; set; } = new();
 }

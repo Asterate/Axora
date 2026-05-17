@@ -1,4 +1,5 @@
 using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces.Service;
 using App.Modules.Project.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -10,10 +11,10 @@ namespace WebApp.Controllers
     [Authorize]
     public class DocumentController : Controller
     {
-        private readonly DocumentService _document;
-        private readonly DocumentTypeService _documentTypeService;
+        private readonly IDocumentService _document;
+        private readonly IDocumentTypeService _documentTypeService;
 
-        public DocumentController(DocumentService documentService, DocumentTypeService documentTypeService)
+        public DocumentController(IDocumentService documentService, IDocumentTypeService documentTypeService)
         {
             _document = documentService;
             _documentTypeService = documentTypeService;
@@ -83,9 +84,8 @@ namespace WebApp.Controllers
 
             var model = new DocumentationViewModel
             {
-                Request = new UpdateDocumentRequest
+                Request = new SaveDocumentRequest
                 {
-                    Id = document.Id,
                     DocumentName = document.DocumentName,
                     Description = document.Description,
                     FilePath = document.FilePath,

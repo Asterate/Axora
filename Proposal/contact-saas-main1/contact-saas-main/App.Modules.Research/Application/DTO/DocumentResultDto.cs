@@ -7,13 +7,8 @@ public class DocumentResultResponse
     public string? ResultName { get; set; }
 }
 
-public class CreateDocumentResultRequest
+public class SaveDocumentResultRequest
 {
     public Guid ResultId { get; set; }
     public Guid DocumentId { get; set; }
-}
-
-public class UpdateDocumentResultRequest :  CreateDocumentResultRequest
-{
-    public Guid Id { get; set; }
 }

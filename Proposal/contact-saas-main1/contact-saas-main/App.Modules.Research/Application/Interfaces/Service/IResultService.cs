@@ -6,7 +6,7 @@ public interface IResultService
 {
     Task<IEnumerable<ResultListResponse>> GetAllAsync();
     Task<ResultResponse?> GetByIdAsync(Guid id);
-    Task CreateAsync(CreateResultRequest request);
-    Task UpdateAsync(Guid id, UpdateResultRequest request);
+    Task CreateAsync(SaveResultRequest request);
+    Task UpdateAsync(Guid id, SaveResultRequest request);
     Task DeleteAsync(Guid id);
 }

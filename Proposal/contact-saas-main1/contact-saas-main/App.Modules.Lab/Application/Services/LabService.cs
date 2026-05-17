@@ -1,5 +1,6 @@
 ﻿using App.Modules.Lab.Application.DTO;
 using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Interfaces.Service;
 using App.Modules.Lab.Application.Mappers;
 using App.Shared.Contracts;
 
@@ -30,19 +31,21 @@ public class LabService : ILabService
         return LabMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateLabRequest request)
+    public async Task CreateAsync(SaveLabRequest request)
     {
         var entity = LabMapper.ToEntity(request);
         await _lab.AddAsync(entity);
+        entity.CreatedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(Guid id, UpdateLabRequest request)
+    public async Task UpdateAsync(Guid id, SaveLabRequest request)
     {
         var entity = await _lab.GetByIdAsync(id);
         if (entity == null) return;
         LabMapper.UpdateEntity(entity, request);
         _lab.Update(entity);
+        entity.UpdatedAt =  DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
@@ -50,7 +53,8 @@ public class LabService : ILabService
     {
         var entity = await _lab.GetByIdAsync(id);
         if (entity == null) return;
-        _lab.Delete(entity);
+        _lab.Update(entity);
+        entity.DeletedAt =  DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
@@ -58,5 +62,16 @@ public class LabService : ILabService
     {
         var all = await _lab.GetAllAsync();
         return all.Count(i => i.DeletedAt == null);
+    }
+    public async Task<List<LookupItem>> GetActivesAsync(string? culture = null)
+    {
+        var entities = await _lab.GetAllAsync();
+        return entities
+            .Where(t => t.DeletedAt == null)
+            .Select(t => new LookupItem
+            {
+                Id = t.Id,
+                Name = t.LabName.Translate(culture) ?? String.Empty,
+            }).ToList();
     }
 }

@@ -159,6 +159,7 @@
       <_ContentIncludedByDefault Remove="Views\InstituteLab\Details.cshtml" />
       <_ContentIncludedByDefault Remove="Views\InstituteLab\Edit.cshtml" />
       <_ContentIncludedByDefault Remove="Views\InstituteLab\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Schedule\Index.cshtml" />
     </ItemGroup>
 
 

@@ -1,63 +1,55 @@
-﻿using System.Text.Json;
-using App.Domain.Entities;
-using App.Modules.Project.Application.DTO;
+﻿using App.Modules.Project.Application.DTO;
 using App.Modules.Project.Domain;
 using App.Shared.Domain;
+using App.Shared.Helpers;
 
-namespace App.Modules.Institute.Application.Mapper;
+namespace App.Modules.Project.Application.Mappers;
 
 public static class InstituteTypeMapper
 {
     // Entity → List Response
-    public static InstituteTypeListResponse ToListResponse(InstituteType entity)
-        => new ()
-        {
-            Id = entity.Id,
-            Name = entity.GetName(),
-            Description = entity.GetDescription()
-        };
-
-    // Entity → Full Response
     public static InstituteTypeResponse ToResponse(InstituteType entity)
         => new ()
         {
             Id = entity.Id,
-            NameEn = entity.GetName("en"),
-            NameEt = entity.GetName("et"),
-            DescriptionEn = entity.GetDescription("en"),
-            DescriptionEt = entity.GetDescription("et")
+            Name = entity.Name.Translate(),
+            Description = entity.Description?.Translate()
         };
+    
 
     // Create Request → Entity
-    public static InstituteType ToEntity(CreateInstituteTypeRequest request)
+    public static InstituteType ToEntity(SaveInstituteTypeRequest request)
         => new ()
         {
-            Id = request.Id,
-            Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.NameEn ?? "", ["et"] = request.NameEt ?? "" }),
-            Description = request.DescriptionEn == null && request.DescriptionEt == null ? null
-                : JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.DescriptionEn ?? "", ["et"] = request.DescriptionEt ?? "" })
+            Name = new LangStr()
+            {
+                [Cultures.English] =  request.NameEn,
+                [Cultures.Estonian] =   request.NameEt,
+            },
+            Description = new LangStr()
+            {
+                [Cultures.English] =  request.DescriptionEn ?? String.Empty,
+                [Cultures.Estonian] =   request.DescriptionEt ?? String.Empty,
+            }
         };
 
     // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(InstituteType entity, UpdateInstituteTypeRequest request)
+    public static void UpdateEntity(InstituteType entity, SaveInstituteTypeRequest request)
     {
-        entity.Id = request.Id;
-        entity.Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.NameEn ?? "", ["et"] = request.NameEt ?? "" });
-        entity.Description = JsonSerializer.Serialize(new Dictionary<string, string> 
-        { 
-            ["en"] = request.DescriptionEn ?? "", 
-            ["et"] = request.DescriptionEt ?? "" 
-        });
+        entity.Name.SetTranslation(request.NameEn, Cultures.English);
+        entity.Description ??= new LangStr();
+        entity.Description.SetTranslation(request.DescriptionEt ?? String.Empty, Cultures.Estonian);
+        entity.Description.SetTranslation(request.DescriptionEn ?? String.Empty, Cultures.English);
     }
-    public static UpdateInstituteTypeRequest ToUpdateRequest(InstituteTypeResponse request)
+    public static SaveInstituteTypeRequest ToUpdateRequest(InstituteTypeResponse entity)
     {
-        return new UpdateInstituteTypeRequest
+        return new SaveInstituteTypeRequest
         {
-            Id = request.Id,
-            NameEn = request.NameEn,
-            NameEt = request.NameEt,
-            DescriptionEn = request.DescriptionEn,
-            DescriptionEt = request.DescriptionEt
+            //issue here
+            NameEn = entity.Name ?? String.Empty,
+            NameEt = entity.Name ?? String.Empty,
+            DescriptionEn = entity.Description ?? String.Empty,
+            DescriptionEt = entity.Description ?? String.Empty,
         };
     }
 }

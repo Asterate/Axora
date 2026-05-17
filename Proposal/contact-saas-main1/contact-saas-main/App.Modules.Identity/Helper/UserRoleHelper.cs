@@ -1,8 +1,8 @@
-﻿using App.Domain.Entities;
-using App.Domain.Identity;
+﻿using App.Domain.Identity;
+using App.Modules.Identity.Domain;
 using Microsoft.AspNetCore.Identity;
 
-namespace App.Helpers;
+namespace App.Modules.Identity.Helper;
 
 public static class UserRoleHelper
 {
@@ -26,9 +26,7 @@ public static class UserRoleHelper
         {
             EInstituteUserRole.Owner => "owner",
             EInstituteUserRole.Administrator => "instituteadmin",
-            EInstituteUserRole.Manager => "institutemanager",
             EInstituteUserRole.Guest => "guest",
-            EInstituteUserRole.Technician => "Technician",
             EInstituteUserRole.Employee => "employee",
             _ => "None"
         };

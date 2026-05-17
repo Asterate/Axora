@@ -26,18 +26,18 @@ public static class DocumentMapper
         };
 
     // Create Request → Entity
-    public static Document ToEntity(CreateDocumentRequest request)
+    public static Document ToEntity(SaveDocumentRequest request)
         => new ()
         {
-            DocumentName = request.DocumentName ?? "Document",
+            DocumentName = request.DocumentName,
             FilePath = request.FilePath ?? "None",
             DocumentTypeId = request.DocumentTypeId
         };
 
     // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(Document entity, UpdateDocumentRequest request)
+    public static void UpdateEntity(Document entity, SaveDocumentRequest request)
     {
-        entity.DocumentName = request.DocumentName ?? "Document";
+        entity.DocumentName = request.DocumentName;
         entity.FilePath = request.FilePath ?? "None";
         entity.DocumentTypeId = request.DocumentTypeId;
     }

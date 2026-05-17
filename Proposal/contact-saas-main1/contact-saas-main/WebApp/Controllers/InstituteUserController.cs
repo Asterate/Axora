@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
-using App.Domain.Entities;
+using App.Modules.Identity.Application.DTO;
+using App.Modules.Identity.Application.Interfaces;
+using App.Modules.Identity.Application.Mappers;
 using App.Modules.Identity.Application.Services;
 using App.Modules.Identity.Domain;
 using Microsoft.AspNetCore.Authorization;
@@ -13,9 +13,9 @@ namespace WebApp.Controllers
     [Authorize]
     public class InstituteUserController : Controller
     {
-        private readonly InstituteUserService _instituteUserService;
+        private readonly IInstituteUserService _instituteUserService;
 
-        public InstituteUserController(InstituteUserService instituteUserService)
+        public InstituteUserController(IInstituteUserService instituteUserService)
         {
             _instituteUserService = instituteUserService;
         }
@@ -66,7 +66,7 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                var newInstituteUser = new CreateInstituteUserRequest()
+                var newInstituteUser = new SaveInstituteUserRequest()
                 {
                     Id =  instituteUser.Id,
                     InstituteId = instituteUser.InstituteId,
@@ -110,7 +110,7 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    var update = new UpdateInstituteUserRequest(instituteUser);
+                    var update = InstituteUserMapper.ToUpdateRequest(instituteUser);
                     await _instituteUserService.UpdateAsync(id, update);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -118,10 +118,6 @@ namespace WebApp.Controllers
                     if (!await InstituteUserExists(instituteUser.Id))
                     {
                         return NotFound();
-                    }
-                    else
-                    {
-                        throw;
                     }
                 }
                 return RedirectToAction(nameof(Index));

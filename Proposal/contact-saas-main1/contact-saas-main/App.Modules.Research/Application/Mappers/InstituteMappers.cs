@@ -31,7 +31,7 @@ public static class InstituteMapper
         };
 
     // Create Request → Entity
-    public static Project.Domain.Institute ToEntity(CreateInstituteRequest request)
+    public static Project.Domain.Institute ToEntity(SaveInstituteRequest request)
         => new ()
         {
             InstituteName = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.InstituteName?.ToString() ?? "" }),
@@ -43,7 +43,7 @@ public static class InstituteMapper
         };
 
     // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(Project.Domain.Institute entity, UpdateInstituteRequest request)
+    public static void UpdateEntity(Project.Domain.Institute entity, SaveInstituteRequest request)
     {
         entity.InstituteName = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.InstituteName?.ToString() ?? "" });
         entity.InstituteCountry = request.InstituteCountry;
@@ -52,11 +52,10 @@ public static class InstituteMapper
         entity.InstituteTypeId = request.InstituteTypeId;
         entity.Active = request.Active;
     }
-    public static UpdateInstituteRequest ToUpdateRequest(Domain.Institute request)
+    public static SaveInstituteRequest ToUpdateRequest(Domain.Institute request)
     {
-        return new UpdateInstituteRequest
+        return new SaveInstituteRequest
         {
-            Id = request.Id,
             InstituteName = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.InstituteName?.ToString() ?? "" }),
             InstituteCountry =  request.InstituteCountry,
             InstituteAddress = request.InstituteAddress ?? String.Empty,

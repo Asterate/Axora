@@ -31,19 +31,21 @@ public class InstituteProjectService : IInstituteProjectService
         return InstituteProjectMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateInstituteProjectRequest request)
+    public async Task CreateAsync(SaveInstituteProjectRequest request)
     {
         var entity = InstituteProjectMapper.ToEntity(request);
         await _instituteProject.AddAsync(entity);
+        entity.CreatedAt = DateTime.Now;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(Guid id, UpdateInstituteProjectRequest request)
+    public async Task UpdateAsync(Guid id, SaveInstituteProjectRequest request)
     {
         var entity = await _instituteProject.GetByIdAsync(id);
         if (entity == null) return;
         InstituteProjectMapper.UpdateEntity(entity, request);
         _instituteProject.Update(entity);
+        entity.UpdatedAt = DateTime.Now;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
@@ -51,7 +53,8 @@ public class InstituteProjectService : IInstituteProjectService
     {
         var entity = await _instituteProject.GetByIdAsync(id);
         if (entity == null) return;
-        _instituteProject.Delete(entity);
+        _instituteProject.Update(entity);
+        entity.DeletedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 }

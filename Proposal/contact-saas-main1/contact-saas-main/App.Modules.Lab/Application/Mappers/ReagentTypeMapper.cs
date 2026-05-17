@@ -1,6 +1,7 @@
-﻿using System.Text.Json;
-using App.Modules.Lab.Application.DTO;
+﻿using App.Modules.Lab.Application.DTO;
 using App.Modules.Lab.Domain;
+using App.Shared.Domain;
+using App.Shared.Helpers;
 
 namespace App.Modules.Lab.Application.Mappers;
 
@@ -11,12 +12,12 @@ public class ReagentTypeMapper
         => new ()
         {
             Id = entity.Id,
-            Name = entity.GetName() ?? String.Empty,
-            Description = entity.GetDescription(),
-            Category =  entity.GetCategory(),
-            HazardLevel = entity.GetHazardLevel(),
+            Name = entity.Name.Translate() ?? "??",
+            Description = entity.Description?.Translate() ?? "??",
+            Category =  entity.Category?.Translate() ?? "??",
+            HazardLevel = entity.HazardLevel?.Translate() ?? "??",
             IsHazardous = entity.IsHazardous,
-            ColorCode = entity.GetColorCode()
+            ColorCode = entity.ColorCode?.Translate() ?? "??",
         };
 
     // Entity → Full Response
@@ -24,51 +25,77 @@ public class ReagentTypeMapper
         => new ()
         {
             Id = entity.Id,
-            NameEn = entity.GetName("en") ?? String.Empty,
-            NameEt = entity.GetName("et") ?? String.Empty,
-            DescriptionEn = entity.GetDescription("en"),
-            DescriptionEt = entity.GetDescription("et"),
-            Category =  entity.GetCategory("en"),
-            HazardLevel = entity.GetHazardLevel("en"),
+            Name = entity.Name.Translate() ?? "??",
+            Description = entity.Description?.Translate() ?? "??",
+            Category =  entity.Category?.Translate() ?? "??",
+            HazardLevel = entity.HazardLevel?.Translate() ?? "??",
             IsHazardous = entity.IsHazardous,
-            ColorCode = entity.GetColorCode("en"),
+            ColorCode = entity.ColorCode?.Translate() ?? "??",
             DefaultStorage = entity.DefaultStorage,
             StandardConcentration = entity.StandardConcentration,
             MaterialFilePath = entity.MaterialFilePath
         };
 
     // Create Request → Entity
-    public static ReagentType ToEntity(CreateReagentTypeRequest request)
+    public static ReagentType ToEntity(SaveReagentTypeRequest request)
         => new ()
         {
-            Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.NameEn ?? "", ["et"] = request.NameEt ?? "" }),
-            Description = request.DescriptionEn == null && request.DescriptionEt == null ? null
-                : JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.DescriptionEn ?? "", ["et"] = request.DescriptionEt ?? "" }),
-            Category = request.Category,
-            HazardLevel = request.HazardLevel,
+            Name = new LangStr
+            {
+                [Cultures.English] = request.NameEn ?? "",
+                [Cultures.Estonian] = request.NameEt ?? ""
+            },
+            Description = new LangStr
+            {
+                [Cultures.English] = request.DescriptionEn ?? "",
+                [Cultures.Estonian] = request.DescriptionEt ?? ""
+            },
+            Category = new LangStr
+            {
+                [Cultures.English] = request.CategoryEn ?? "",
+                [Cultures.Estonian] = request.CategoryEt ?? ""
+            },
+            HazardLevel = new LangStr
+            {
+                [Cultures.English] = request.HazardLevelEn ?? "",
+                [Cultures.Estonian] = request.DescriptionEt ?? ""
+            },
             DefaultStorage =  request.DefaultStorage,
             IsHazardous = request.IsHazardous,
-            ColorCode = request.ColorCode,
+            ColorCode = new LangStr
+            {
+                [Cultures.English] = request.ColorCodeEn ?? "",
+                [Cultures.Estonian] = request.ColorCodeEt ?? ""
+            },
             StandardConcentration = request.StandardConcentration,
             MaterialFilePath = request.MaterialFilePath
             
         };
 
     // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(ReagentType entity, UpdateReagentTypeRequest request)
+    public static void UpdateEntity(ReagentType entity, SaveReagentTypeRequest request)
     {
-        entity.Id = request.Id;
-        entity.Name = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.NameEn ?? "", ["et"] = request.NameEt ?? "" });
-        if (request.DescriptionEn != null || request.DescriptionEt != null)
-        {
-            entity.Description = JsonSerializer.Serialize(new Dictionary<string, string> { ["en"] = request.DescriptionEn ?? "", ["et"] = request.DescriptionEt ?? "" });
-        }
+        entity.Name.SetTranslation(request.NameEn ?? "", Cultures.English);
+        entity.Name.SetTranslation(request.NameEt ?? "", Cultures.Estonian);
 
-        entity.Category = request.Category;
-        entity.HazardLevel = request.HazardLevel;
+        entity.Description ??= new LangStr();
+        entity.Description.SetTranslation(request.DescriptionEn ?? "", Cultures.English);
+        entity.Description.SetTranslation(request.DescriptionEt ?? "", Cultures.Estonian);
+
+        entity.Category ??= new LangStr();
+        entity.Category.SetTranslation(request.CategoryEn ?? "", Cultures.English);
+        entity.Category.SetTranslation(request.CategoryEt ?? "", Cultures.Estonian);
+
+        entity.HazardLevel ??= new LangStr();
+        entity.HazardLevel.SetTranslation(request.HazardLevelEn ?? "", Cultures.English);
+        entity.HazardLevel.SetTranslation(request.HazardLevelEt ?? "", Cultures.Estonian);
+
+        entity.ColorCode ??= new LangStr();
+        entity.ColorCode.SetTranslation(request.ColorCodeEn ?? "", Cultures.English);
+        entity.ColorCode.SetTranslation(request.ColorCodeEt ?? "", Cultures.Estonian);
+
         entity.DefaultStorage = request.DefaultStorage;
         entity.IsHazardous = request.IsHazardous;
-        entity.ColorCode = request.ColorCode;
         entity.StandardConcentration = request.StandardConcentration;
         entity.MaterialFilePath = request.MaterialFilePath;
     }

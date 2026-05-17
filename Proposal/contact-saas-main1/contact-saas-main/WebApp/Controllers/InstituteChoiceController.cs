@@ -13,8 +13,13 @@ using App.DAL.EF;
 using App.Domain.Entities;
 using App.Domain.Identity;
 using App.Helpers;
+using App.Modules.Identity.Application.DTO;
+using App.Modules.Identity.Application.Interfaces;
 using App.Modules.Identity.Application.Services;
+using App.Modules.Identity.Domain;
+using App.Modules.Identity.Helper;
 using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces.Service;
 using App.Modules.Project.Application.Services;
 using App.Shared.Contracts;
 
@@ -26,16 +31,16 @@ public class InstituteChoiceController : Controller
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
-    private readonly InstituteService _instituteService;
-    private readonly InstituteUserService _instituteUserService;
-    private readonly InstituteTypeService _instituteTypeService;
+    private readonly IInstituteService _instituteService;
+    private readonly IInstituteUserService _instituteUserService;
+    private readonly IInstituteTypeService _instituteTypeService;
 
     public InstituteChoiceController(
         UserManager<AppUser> userManager,
         SignInManager<AppUser> signInManager,
-        InstituteService instituteService,
-        InstituteUserService instituteUserService,
-        InstituteTypeService instituteTypeService)
+        IInstituteService instituteService,
+        IInstituteUserService instituteUserService,
+        IInstituteTypeService instituteTypeService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -105,7 +110,7 @@ public class InstituteChoiceController : Controller
                 else
                 {
                     // Create new institute user record
-                    var newInstituteUser = new CreateInstituteUserRequest
+                    var newInstituteUser = new SaveInstituteUserRequest
                     {
                         Id = userId,
                         UserId = userId,
@@ -137,7 +142,7 @@ public class InstituteChoiceController : Controller
             if (model.InstituteSelection == 1)
             {
                 // Create new institute
-                var newInstitute = new CreateInstituteRequest
+                var newInstitute = new SaveInstituteRequest
                 {
                     InstituteName = model.InstituteName ?? "",
                     InstituteCountry = model.InstituteCountry ?? "",
@@ -151,7 +156,7 @@ public class InstituteChoiceController : Controller
                 var createdInstitute = await _instituteService.CreateAsync(newInstitute);
 
                 // Create institute user record
-                var newInstituteUser = new CreateInstituteUserRequest
+                var newInstituteUser = new SaveInstituteUserRequest
                 {
                     UserId = userId,
                     InstituteId = createdInstitute.Id,

@@ -1,11 +1,9 @@
-﻿namespace App.Domain.Entities;
+﻿namespace App.Modules.Identity.Domain;
 
 public enum EInstituteUserRole
 {
     Employee,
-    Manager, //should not exist
     Administrator,
     Guest,
-    Technician, //no need to exist
     Owner
 }

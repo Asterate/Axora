@@ -1,7 +1,9 @@
 using System.Diagnostics;
 using System.Security.Claims;
 using App.Domain.Identity;
+using App.Modules.Identity.Application.Interfaces;
 using App.Modules.Identity.Application.Services;
+using App.Modules.Project.Application.Interfaces.Service;
 using App.Modules.Project.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -17,10 +19,10 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly UserManager<AppUser> _userManager;
-    private readonly ProjectService _projectService;
-    private readonly InstituteUserService _instituteUserService;
-    public HomeController(ILogger<HomeController> logger , UserManager<AppUser> userManager, ProjectService projectService,
-        InstituteUserService instituteUserService)
+    private readonly IProjectService _projectService;
+    private readonly IInstituteUserService _instituteUserService;
+    public HomeController(ILogger<HomeController> logger , UserManager<AppUser> userManager, IProjectService projectService,
+        IInstituteUserService instituteUserService)
     {
         _logger = logger;
         _userManager = userManager;

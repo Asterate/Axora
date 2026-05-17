@@ -1,5 +1,6 @@
 ﻿using App.Modules.Lab.Application.DTO;
 using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Interfaces.Service;
 using App.Modules.Lab.Application.Mappers;
 using App.Modules.Reagent.Application.Interfaces;
 using App.Shared.Contracts;
@@ -31,19 +32,21 @@ public class ReagentService : IReagentService
         return ReagentMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateReagentRequest request)
+    public async Task CreateAsync(SaveReagentRequest request)
     {
         var entity = ReagentMapper.ToEntity(request);
         await _reagent.AddAsync(entity);
+        entity.CreatedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(Guid id, UpdateReagentRequest request)
+    public async Task UpdateAsync(Guid id, SaveReagentRequest request)
     {
         var entity = await _reagent.GetByIdAsync(id);
         if (entity == null) return;
         ReagentMapper.UpdateEntity(entity, request);
         _reagent.Update(entity);
+        entity.UpdatedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
@@ -51,7 +54,8 @@ public class ReagentService : IReagentService
     {
         var entity = await _reagent.GetByIdAsync(id);
         if (entity == null) return;
-        _reagent.Delete(entity);
+        _reagent.Update(entity);
+        entity.DeletedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 }

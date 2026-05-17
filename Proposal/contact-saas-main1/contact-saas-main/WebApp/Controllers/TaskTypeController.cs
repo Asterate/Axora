@@ -1,6 +1,6 @@
-using App.Modules.Project.Application.Services;
+using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces.Service;
 using Microsoft.AspNetCore.Mvc;
-using App.Shared.Domain;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels;
 
@@ -10,9 +10,9 @@ namespace WebApp.Controllers
     [Authorize(Roles = "admin")]
     public class TaskTypeController : Controller
     {
-        private readonly ExperimentTaskTypeService _experimentTaskTypeService;
+        private readonly IExperimentTaskTypeService _experimentTaskTypeService;
 
-        public TaskTypeController(ExperimentTaskTypeService experimentTaskTypeService)
+        public TaskTypeController(IExperimentTaskTypeService experimentTaskTypeService)
         {
             _experimentTaskTypeService = experimentTaskTypeService;
         }
@@ -53,7 +53,7 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var taskType = new CreateExperimentTaskTypeRequest
+                var taskType = new SaveExperimentTaskTypeRequest
                 {
                     NameEn = viewModel.TaskTypeNameEn,
                     NameEt = viewModel.TaskTypeNameEt,
@@ -82,12 +82,12 @@ namespace WebApp.Controllers
             
             // Convert entity to ViewModel for display
             var viewModel = new TaskTypeViewModel
-            {
+            {//issue
                 Id = taskType.Id,
-                TaskTypeNameEn = taskType.NameEn ?? string.Empty,
-                TaskTypeNameEt = taskType.NameEt ?? string.Empty,
-                TaskTypeDescriptionEn = taskType.DescriptionEn,
-                TaskTypeDescriptionEt = taskType.DescriptionEt
+                TaskTypeNameEn = taskType.Name ?? string.Empty,
+                TaskTypeNameEt = taskType.Name ?? string.Empty,
+                TaskTypeDescriptionEn = taskType.Description,
+                TaskTypeDescriptionEt = taskType.Description
             };
             return View(viewModel);
         }
@@ -101,9 +101,8 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                var update = new UpdateExperimentTaskTypeRequest
+                var update = new SaveExperimentTaskTypeRequest
                 {
-                    Id = id,
                     NameEn = viewModel.TaskTypeNameEn,
                     NameEt = viewModel.TaskTypeNameEt,
                     DescriptionEn = viewModel.TaskTypeDescriptionEn,

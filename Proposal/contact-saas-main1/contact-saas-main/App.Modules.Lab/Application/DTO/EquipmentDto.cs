@@ -20,16 +20,12 @@ public class EquipmentResponse
     public ICollection<EquipmentCertification>? EquipmentCertificationTypes { get; set; }
 }
 
-public class CreateEquipmentRequest
+public class SaveEquipmentRequest
 {
-    public string? EquipmentName { get; set; }
+    public string? EquipmentNameEn { get; set; }
+    public string? EquipmentNameEt { get; set; }
     public string? EquipmentSerialCode {get; set;}
     public string? ManualFilePath { get; set; }
     public Guid EquipmentTypeId {get; set;}
     public ICollection<EquipmentCertification>? EquipmentCertificationTypes { get; set; }
-}
-
-public class UpdateEquipmentRequest :  CreateEquipmentRequest
-{
-    public Guid Id { get; set; }
 }

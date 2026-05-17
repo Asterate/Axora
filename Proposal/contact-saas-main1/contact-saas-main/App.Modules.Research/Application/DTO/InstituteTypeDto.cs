@@ -1,35 +1,16 @@
 ﻿namespace App.Modules.Project.Application.DTO;
 
-public class InstituteTypeListResponse
+public class InstituteTypeResponse
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }
     public string? Description { get; set; }
 }
 
-public class InstituteTypeResponse
+public class SaveInstituteTypeRequest
 {
-    public Guid Id { get; set; }
-    public string? NameEn { get; set; }
-    public string? NameEt { get; set; }
-    public string? DescriptionEn { get; set; }
-    public string? DescriptionEt { get; set; }
-}
-
-public class CreateInstituteTypeRequest
-{
-    public Guid Id { get; set; }
-    public string? NameEn { get; set; }
-    public string? NameEt { get; set; }
-    public string? DescriptionEn { get; set; }
-    public string? DescriptionEt { get; set; }
-}
-
-public class UpdateInstituteTypeRequest
-{
-    public Guid Id { get; set; }
-    public string? NameEn { get; set; }
-    public string? NameEt { get; set; }
+    public string NameEn { get; set; } = String.Empty;
+    public string NameEt { get; set; } = String.Empty;
     public string? DescriptionEn { get; set; }
     public string? DescriptionEt { get; set; }
 }

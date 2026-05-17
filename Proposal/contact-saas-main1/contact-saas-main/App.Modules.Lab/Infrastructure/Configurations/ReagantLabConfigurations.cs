@@ -12,12 +12,12 @@ internal sealed class ReagantLabConfiguration : IEntityTypeConfiguration<Reagent
         {
             t.HasCheckConstraint(
                 "CK_ReagentLab_Quantity",
-                "[Quantity] > 0");
+                "\"Quantity\" > 0");
         });
         builder.Property(l => l.Unit).IsRequired().HasMaxLength(10);
         builder.HasOne(x => x.Reagent)
             .WithMany()
-            .HasForeignKey(x => x.Reagent)
+            .HasForeignKey(x => x.ReagentId)
             .OnDelete(DeleteBehavior.Restrict);
         builder.HasIndex(x => new { x.ReagentId, x.LabId })
             .IsUnique();

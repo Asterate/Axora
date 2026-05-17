@@ -1,5 +1,4 @@
-﻿using App.Domain.Entities;
-using App.Shared.Domain;
+﻿using App.Shared.Domain;
 
 namespace App.Modules.Project.Domain;
 

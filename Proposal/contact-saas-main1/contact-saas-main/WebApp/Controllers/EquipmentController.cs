@@ -1,14 +1,15 @@
 ﻿using App.Modules.Lab.Application.DTO;
-using App.Modules.Lab.Application.Services;
+using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Interfaces.Service;
 using Microsoft.AspNetCore.Mvc;
 
-namespace App.WebApp.Controllers;
+namespace WebApp.Controllers;
 
 public class EquipmentController : Controller
 {
-    private readonly EquipmentService _equipmentService;
+    private readonly IEquipmentService _equipmentService;
 
-    public EquipmentController(EquipmentService equipmentService)
+    public EquipmentController(IEquipmentService equipmentService)
     {
         _equipmentService = equipmentService;
     }
@@ -37,7 +38,7 @@ public class EquipmentController : Controller
     // POST: /Equipment/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CreateEquipmentRequest request)
+    public async Task<IActionResult> Create(SaveEquipmentRequest request)
     {
         if (!ModelState.IsValid) return View(request);
         await _equipmentService.CreateAsync(request);
@@ -55,7 +56,7 @@ public class EquipmentController : Controller
     // POST: /Equipment/Edit/id
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(Guid id, UpdateEquipmentRequest request)
+    public async Task<IActionResult> Edit(Guid id, SaveEquipmentRequest request)
     {
         if (!ModelState.IsValid) return View(request);
         await _equipmentService.UpdateAsync(id, request);

@@ -6,7 +6,7 @@ public interface IInstituteProjectService
 {
     Task<IEnumerable<InstituteProjectResponse>> GetAllAsync();
     Task<InstituteProjectResponse?> GetByIdAsync(Guid id);
-    Task CreateAsync(CreateInstituteProjectRequest request);
-    Task UpdateAsync(Guid id, UpdateInstituteProjectRequest request);
+    Task CreateAsync(SaveInstituteProjectRequest request);
+    Task UpdateAsync(Guid id, SaveInstituteProjectRequest request);
     Task DeleteAsync(Guid id);
 }

@@ -22,7 +22,7 @@ internal sealed class ReagentConfigurationType : IEntityTypeConfiguration<Reagen
         {
             t.HasCheckConstraint(
                 "CK_ReagentType_DefaultStorage",
-                "[DefaultStorage] > 0");
+                "\"DefaultStorage\" > 0");
         });
     }   
 }

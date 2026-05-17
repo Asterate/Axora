@@ -6,29 +6,29 @@ namespace WebApp.ViewModels;
 public class LookupDataViewModel
 {
     // Certification Types
-    public IEnumerable<CertificationTypeListResponse> CertificationTypes { get; set; } = new  List<CertificationTypeListResponse>();
+    public IEnumerable<CertificationTypeResponse> CertificationTypes { get; set; } = new  List<CertificationTypeResponse>();
     
     // Document Types
-    public IEnumerable<DocumentTypeListResponse> DocumentTypes { get; set; } = new   List<DocumentTypeListResponse>();
+    public IEnumerable<DocumentTypeResponse> DocumentTypes { get; set; } = new   List<DocumentTypeResponse>();
     
     // Equipment Types
-    public IEnumerable<EquipmentTypeListResponse> EquipmentTypes { get; set; } = new List<EquipmentTypeListResponse>();
+    public IEnumerable<EquipmentTypeResponse> EquipmentTypes { get; set; } = new List<EquipmentTypeResponse>();
     
     // Experiment Types
-    public IEnumerable<ExperimentTypeListResponse> ExperimentTypes { get; set; } = new  List<ExperimentTypeListResponse>();
+    public IEnumerable<ExperimentTypeResponse> ExperimentTypes { get; set; } = new  List<ExperimentTypeResponse>();
     
     // Institute Types
-    public IEnumerable<InstituteTypeListResponse> InstituteTypes { get; set; } = new   List<InstituteTypeListResponse>();
+    public IEnumerable<InstituteTypeResponse> InstituteTypes { get; set; } = new   List<InstituteTypeResponse>();
     
     // Lab Types
-    public IEnumerable<LabTypeListResponse> LabTypes { get; set; } = new List<LabTypeListResponse>();
+    public IEnumerable<LabTypeResponse> LabTypes { get; set; } = new List<LabTypeResponse>();
     
     // Project Types
-    public IEnumerable<ProjectTypeListResponse> ProjectTypes { get; set; } = new   List<ProjectTypeListResponse>();
+    public IEnumerable<ProjectTypeResponse> ProjectTypes { get; set; } = new   List<ProjectTypeResponse>();
     
     // Reagent Types
-    public IEnumerable<ReagentTypeListResponse> ReagentTypes { get; set; } = new   List<ReagentTypeListResponse>();
+    public IEnumerable<ReagentTypeResponse> ReagentTypes { get; set; } = new   List<ReagentTypeResponse>();
     
     // Task Types
-    public IEnumerable<ExperimentTaskTypeListResponse> TaskTypes { get; set; } = new List<ExperimentTaskTypeListResponse>();
+    public IEnumerable<ExperimentTaskTypeResponse> TaskTypes { get; set; } = new List<ExperimentTaskTypeResponse>();
 }

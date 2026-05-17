@@ -20,7 +20,7 @@ public class InstituteResponse
     
 }
 
-public class CreateInstituteRequest
+public class SaveInstituteRequest
 {
     public string? InstituteName { get; set; }
     public string InstituteCountry {get; set;}  = default!;
@@ -30,9 +30,4 @@ public class CreateInstituteRequest
 
     public Boolean Active { get; set; } =  true;
     public Guid InstituteTypeId { get; set; }
-}
-
-public class UpdateInstituteRequest :  CreateInstituteRequest
-{
-    public Guid Id { get; set; }
 }

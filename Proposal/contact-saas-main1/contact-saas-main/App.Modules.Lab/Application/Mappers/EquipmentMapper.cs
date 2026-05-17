@@ -2,6 +2,7 @@
 
 using App.Modules.Lab.Application.DTO;
 using App.Shared.Domain;
+using App.Shared.Helpers;
 
 namespace App.Modules.Lab.Application.Mappers;
 
@@ -12,7 +13,7 @@ public static class EquipmentMapper
         => new ()
         {
             Id = entity.Id,
-            EquipmentName = entity.EquipmentName,
+            EquipmentName = entity.EquipmentName.Translate() ?? "??",
             EquipmentSerialCode = entity.EquipmentSerialCode,
             EquipmentTypeId = entity.EquipmentTypeId,
         };
@@ -22,7 +23,7 @@ public static class EquipmentMapper
         => new ()
         {
             Id = entity.Id,
-            EquipmentName = entity.EquipmentName,
+            EquipmentName = entity.EquipmentName.Translate() ?? "??",
             EquipmentSerialCode = entity.EquipmentSerialCode,
             EquipmentTypeId = entity.EquipmentTypeId,
             ManualFilePath =  entity.ManualFilePath,
@@ -30,10 +31,11 @@ public static class EquipmentMapper
         };
 
     // Create Request → Entity
-    public static Lab.Domain.Equipment ToEntity(CreateEquipmentRequest request)
+    public static Lab.Domain.Equipment ToEntity(SaveEquipmentRequest request)
         => new()
         {
-            EquipmentName = new LangStr { ["en"] = request.EquipmentName ?? "" },
+            EquipmentName = new LangStr { [Cultures.English] = request.EquipmentNameEn ?? "??", 
+                [Cultures.Estonian] =  request.EquipmentNameEt ?? "??", },
             EquipmentSerialCode = request.EquipmentSerialCode,
             EquipmentTypeId = request.EquipmentTypeId,
             ManualFilePath =  request.ManualFilePath,
@@ -41,10 +43,10 @@ public static class EquipmentMapper
         };
 
     // Update Request → existing Entity (modifies in place)
-    public static void UpdateEntity(Lab.Domain.Equipment entity, UpdateEquipmentRequest request)
+    public static void UpdateEntity(Lab.Domain.Equipment entity, SaveEquipmentRequest request)
     {
-        entity.Id = request.Id;
-        entity.EquipmentName = new LangStr { ["en"] = request.EquipmentName ?? "" };
+        entity.EquipmentName.SetTranslation( request.EquipmentNameEn ?? "", Cultures.English );
+        entity.EquipmentName.SetTranslation( request.EquipmentNameEt ?? "", Cultures.Estonian );
         entity.EquipmentSerialCode = request.EquipmentSerialCode;
         entity.EquipmentTypeId = request.EquipmentTypeId;
         entity.ManualFilePath = request.ManualFilePath;

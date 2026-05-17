@@ -2,8 +2,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.Domain.Identity;
+using App.Modules.Audit.Application.Interface;
 using App.Modules.Audit.Application.Services;
+using App.Modules.Lab.Application.Interfaces;
+using App.Modules.Lab.Application.Interfaces.Service;
 using App.Modules.Lab.Application.Services;
+using App.Modules.Project.Application.Interfaces.Service;
 using App.Modules.Project.Application.Services;
 using Microsoft.AspNetCore.Identity;
 using WebApp.ViewModels;
@@ -14,18 +18,18 @@ namespace WebApp.Controllers;
 [Authorize(Roles = "admin")]
 public class AdminDashboardController : Controller
 {
-    private readonly InstituteService _institute;
-    private readonly LabService _lab;
-    private readonly ProjectService _project;
-    private readonly SystemLogService _audit;
+    private readonly IInstituteService _institute;
+    private readonly ILabService _lab;
+    private readonly IProjectService _project;
+    private readonly ISystemLogService _audit;
     private readonly UserManager<AppUser> _userManager;
 
 
     public AdminDashboardController(
-        InstituteService instituteService,
-        LabService labService,
-        ProjectService projectService,
-        SystemLogService auditService,
+        IInstituteService instituteService,
+        ILabService labService,
+        IProjectService projectService,
+        ISystemLogService auditService,
         UserManager<AppUser> userManager)
     {
         _institute = instituteService;

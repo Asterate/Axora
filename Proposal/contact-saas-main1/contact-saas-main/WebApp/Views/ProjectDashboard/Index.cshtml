@@ -1,6 +1,5 @@
 @model WebApp.ViewModels.ProjectDashboardViewModel
 @using App.Resources.Views.ProjectDashboard
-@using WebApp.Controllers
 
 @{
     Layout = "_Layout";
@@ -15,7 +14,7 @@
     <div class="container-fluid">
         <h1>@ProjectDashboardIndex.Project_Dashboard</h1>
         <p>
-            <a asp-controller="Experiment" asp-action="Create" class="btn btn-success">@ProjectDashboardIndex.Create_new_experiment</a>
+            <a asp-controller="ProjectDashboard" asp-action="Create" class="btn btn-success">@ProjectDashboardIndex.Create_new_experiment</a>
         </p>
         <div class="row">
             <!-- Left Column - Experiments Table -->
@@ -31,16 +30,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var experiment in Model.Experiments)
+                        @foreach (var experiment in Model.ExperimentsResponses)
                         {
                             <tr>
                                 <td>@experiment.ExperimentName</td>
                                 <td>@experiment.ExperimentTypeName?</td>
                                 <td>@experiment.CreatedAt.ToShortDateString()</td>
+                                <td>@experiment.ProjectName</td>
+                                <td>@experiment.UpdatedAt</td>
                                 <td>
-                                    <a asp-controller="Experiment" asp-action="Edit" asp-route-id="@experiment.Id">@ProjectDashboardIndex.Edit</a> |
-                                    <a asp-controller="Experiment" asp-action="Details" asp-route-id="@experiment.Id">@ProjectDashboardIndex.Details</a> |
-                                    <a asp-controller="Experiment" asp-action="Delete" asp-route-id="@experiment.Id">@ProjectDashboardIndex.Delete</a>
+                                    <a asp-controller="ProjectDashboard" asp-action="Edit" asp-route-id="@experiment.Id">@ProjectDashboardIndex.Edit</a> |
+                                    <a asp-controller="ProjectDashboard" asp-action="Details" asp-route-id="@experiment.Id">@ProjectDashboardIndex.Details</a> |
+                                    <a asp-controller="ProjectDashboard" asp-action="Delete" asp-route-id="@experiment.Id">@ProjectDashboardIndex.Delete</a>
                                 </td>
                             </tr>
                         }
@@ -59,7 +60,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var schedule in Model.Schedules)
+                        @foreach (var schedule in Model.ScheduleListsResponses)
                         {
                             <tr>
                                 <td>@schedule.ScheduleName</td>

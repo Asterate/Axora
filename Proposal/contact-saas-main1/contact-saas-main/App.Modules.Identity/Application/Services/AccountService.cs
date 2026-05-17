@@ -1,5 +1,4 @@
 ﻿using App.Domain.Identity;
-using App.DTO.v1.Identity;
 using App.Modules.Identity.Application.DTO;
 using App.Modules.Identity.Application.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -127,7 +126,7 @@ public class AccountService : IAccountService
     }
 
 
-    public Task<JWTResponse> RenewRefreshTokenAsync(RefreshTokenModel model)
+    public Task<JwtResponse> RenewRefreshTokenAsync(RefreshTokenModel model)
     {
         throw new NotImplementedException();
     }

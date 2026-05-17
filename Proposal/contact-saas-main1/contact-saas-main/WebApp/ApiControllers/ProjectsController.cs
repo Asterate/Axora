@@ -51,7 +51,7 @@ public class ProjectsController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(ProjectResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ProjectResponse>> CreateProject([FromBody] CreateProjectRequest dto)
+    public async Task<ActionResult<ProjectResponse>> CreateProject([FromBody] SaveProjectRequest dto)
     {
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
@@ -71,7 +71,7 @@ public class ProjectsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateProject(Guid id, [FromBody] UpdateProjectRequest dto)
+    public async Task<IActionResult> UpdateProject(Guid id, [FromBody] SaveProjectRequest dto)
     {
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");

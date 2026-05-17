@@ -1,5 +1,5 @@
 using App.Modules.Project.Application.DTO;
-using App.Modules.Project.Application.Services;
+using App.Modules.Project.Application.Interfaces.Service;
 using App.Shared.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -11,9 +11,9 @@ namespace WebApp.Controllers
     [Authorize(Roles = "admin")]
     public class ProjectTypeController : Controller
     {
-        private readonly ProjectTypeService _projectTypeService;
+        private readonly IProjectTypeService _projectTypeService;
 
-        public ProjectTypeController(ProjectTypeService projectTypeService)
+        public ProjectTypeController(IProjectTypeService projectTypeService)
         {
             _projectTypeService = projectTypeService;
         }
@@ -54,7 +54,7 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var projectType = new CreateProjectTypeRequest
+                var projectType = new SaveProjectTypeRequest
                 {
                     NameEn = viewModel.NameEn,
                     NameEt = viewModel.NameEt,
@@ -84,11 +84,12 @@ namespace WebApp.Controllers
             // Convert entity to ViewModel for display
             var viewModel = new ProjectTypeViewModel
             {
+                //issue
                 Id = projectType.Id,
-                NameEn = projectType.NameEn ?? string.Empty,
-                NameEt = projectType.NameEt ?? string.Empty,
-                DescriptionEn = projectType.DescriptionEn,
-                DescriptionEt = projectType.DescriptionEt
+                NameEn = projectType.Name ?? string.Empty,
+                NameEt = projectType.Name ?? string.Empty,
+                DescriptionEn = projectType.Description,
+                DescriptionEt = projectType.Description
             };
             return View(viewModel);
         }
@@ -110,9 +111,8 @@ namespace WebApp.Controllers
                 description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
                 description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
 
-                var update = new UpdateProjectTypeRequest
+                var update = new SaveProjectTypeRequest
                 {
-                    Id = Guid.NewGuid(),
                     NameEn = viewModel.NameEn,
                     NameEt = viewModel.NameEt,
                     DescriptionEn = viewModel.DescriptionEn,

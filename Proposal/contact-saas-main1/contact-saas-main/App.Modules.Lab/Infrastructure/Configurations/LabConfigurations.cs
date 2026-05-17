@@ -11,13 +11,13 @@ internal sealed class LabConfiguration : IEntityTypeConfiguration<Domain.Lab>
         builder.Property(l => l.LabAddress).IsRequired().HasMaxLength(200);
         builder.HasOne(x => x.LabType)
             .WithMany()
-            .HasForeignKey(x => x.LabType)
+            .HasForeignKey(x => x.LabTypeId)
             .OnDelete(DeleteBehavior.Restrict);
         builder.ToTable(t =>
         {
             t.HasCheckConstraint(
                 "CK_Lab_LabCapacity",
-                "[LabCapacity] > 0");
+                "\"LabCapacity\" > 0");
         });
         
     }

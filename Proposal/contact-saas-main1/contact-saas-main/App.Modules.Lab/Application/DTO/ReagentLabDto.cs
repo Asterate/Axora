@@ -11,15 +11,10 @@ public class ReagentLabResponse
     public string? ReagentName { get; set; }
 }
 
-public class CreateReagentLabRequest
+public class SaveReagentLabRequest
 {
     public int Quantity { get; set; }
     public string Unit { get; set; }  = default!;
     public Guid LabId { get; set; }
     public Guid ReagentId { get; set; }
-}
-
-public class UpdateReagentLabRequest :  CreateReagentLabRequest
-{
-    public Guid Id { get; set; }
 }

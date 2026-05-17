@@ -16,7 +16,7 @@ internal sealed class ExperimentTaskConfiguration : IEntityTypeConfiguration<Exp
         {
             t.HasCheckConstraint(
                 "CK_ExperimentTask_Priority",
-                "[Priority] IS NULL OR [Priority] BETWEEN 0 AND 5");
+                "\"Priority\" IS NULL OR \"Priority\" BETWEEN 0 AND 5");
         });
         builder.HasOne(x => x.Experiment)
             .WithMany()

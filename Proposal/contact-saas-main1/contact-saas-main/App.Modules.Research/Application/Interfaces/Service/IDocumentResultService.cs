@@ -6,7 +6,7 @@ public interface IDocumentResultService
 {
     Task<IEnumerable<DocumentResultResponse>> GetAllAsync();
     Task<DocumentResultResponse?> GetByIdAsync(Guid id);
-    Task CreateAsync(CreateDocumentResultRequest request);
-    Task UpdateAsync(Guid id, UpdateDocumentResultRequest request);
+    Task CreateAsync(SaveDocumentResultRequest request);
+    Task UpdateAsync(Guid id, SaveDocumentResultRequest request);
     Task DeleteAsync(Guid id);
 }

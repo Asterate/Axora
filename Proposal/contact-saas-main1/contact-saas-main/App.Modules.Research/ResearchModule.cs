@@ -5,13 +5,13 @@ using App.Modules.Institute.Infrastructure.Repositories;
 using App.Modules.Lab.Infrastructure;
 using App.Modules.Lab.Infrastructure.Repositories;
 using App.Modules.Project.Application.Interfaces;
+using App.Modules.Project.Application.Interfaces.Service;
 using App.Modules.Project.Application.Services;
 using App.Modules.Project.Infrastructure.Repositories;
 using App.Shared.Contracts;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace App.Modules.Project.Infrastructure;
+namespace App.Modules.Project;
 
 public static class ProjectDbModule
 {
@@ -37,21 +37,21 @@ public static class ProjectDbModule
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         
-        services.AddScoped<DocumentService>();
-        services.AddScoped<DocumentTypeService>();
-        services.AddScoped<ProjectService>();
-        services.AddScoped<ScheduleService>();
-        services.AddScoped<ProjectTypeService>();
-        services.AddScoped<ResultService>();
-        services.AddScoped<DocumentResultService>();
-        services.AddScoped<InstituteService>();
-        services.AddScoped<InstituteProjectService>();
-        services.AddScoped<InstituteTypeService>();
-        services.AddScoped<ExperimentService>();
-        services.AddScoped<ExperimentTypeService>();
-        services.AddScoped<ExperimentTaskService>();
-        services.AddScoped<ExperimentTaskTypeService>();
-        services.AddScoped<ExperimentEquipmentService>();
+        services.AddScoped<IDocumentService,DocumentService>();
+        services.AddScoped<IDocumentTypeService, DocumentTypeService>();
+        services.AddScoped<IProjectService, ProjectService>();
+        services.AddScoped<IScheduleService, ScheduleService>();
+        services.AddScoped<IProjectTypeService, ProjectTypeService>();
+        services.AddScoped<IResultService, ResultService>();
+        services.AddScoped<IDocumentResultService, DocumentResultService>();
+        services.AddScoped<IInstituteService, InstituteService>();
+        services.AddScoped<IInstituteProjectService, InstituteProjectService>();
+        services.AddScoped<IInstituteTypeService,InstituteTypeService>();
+        services.AddScoped<IExperimentService,ExperimentService>();
+        services.AddScoped<IExperimentTypeService,ExperimentTypeService>();
+        services.AddScoped<IExperimentTaskService, ExperimentTaskService>();
+        services.AddScoped<IExperimentTaskTypeService, ExperimentTaskTypeService>();
+        services.AddScoped<IExperimentEquipmentService, ExperimentEquipmentService>();
 
         
         return services;

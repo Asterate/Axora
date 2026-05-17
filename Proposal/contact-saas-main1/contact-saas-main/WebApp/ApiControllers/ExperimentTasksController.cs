@@ -1,14 +1,9 @@
-﻿using App.BLL.Services;
-using App.DAL.EF;
-using App.DTO.v1;
-using App.Domain.Entities;
-using Asp.Versioning;
+﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using App.Modules.Experiment.Application.Mapper;
 using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces.Repository;
 using App.Modules.Project.Application.Mappers;
 using App.Modules.Project.Application.Services;
 using ExperimentTaskResponse = App.Modules.Project.Application.DTO.ExperimentTaskResponse;
@@ -40,7 +35,7 @@ public class ExperimentTasksController : ControllerBase
         if (userId == null) return BadRequest("Invalid user token");
         
         // Get all experiments for this user (service handles IDOR protection)
-        var experiments = await _experimentService.GetAllAsync(userId.Value);
+        var experiments = await _experimentService.GetAllAsync();
         var experimentIds = experiments.Select(e => e.Id);
         var tasks = await _experimentTaskService.GetAllByExperimentIdsAsync(experimentIds);
         return Ok(tasks);
@@ -59,7 +54,7 @@ public class ExperimentTasksController : ControllerBase
         
         var task = await _experimentTaskService.GetByIdAsync(id);
         if (task == null) return NotFound();
-        var experiment = await _experimentService.GetByIdAsync(task.ExperimentId, userId.Value);
+        var experiment = await _experimentService.GetByIdAsync(task.ExperimentId);
         if (experiment == null) return NotFound();
         return Ok(task);
     }
@@ -68,13 +63,13 @@ public class ExperimentTasksController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(ExperimentTaskResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ExperimentTaskResponse>> CreateExperimentTask([FromBody] CreateExperimentTaskRequest dto)
+    public async Task<ActionResult<ExperimentTaskResponse>> CreateExperimentTask([FromBody] SaveExperimentTaskRequest dto)
     {
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
         
         // Verify user has access to the experiment via the service
-        var experiment = await _experimentService.GetByIdAsync(dto.ExperimentId, userId.Value);
+        var experiment = await _experimentService.GetByIdAsync(dto.ExperimentId);
         if (experiment == null) return BadRequest("No access to this experiment");
         var created = await _experimentTaskService.CreateAndReturnAsync(dto);
         return CreatedAtAction(nameof(GetExperimentTask), new { id = created.Id }, ExperimentTaskMapper.ToResponse(created));
@@ -85,7 +80,7 @@ public class ExperimentTasksController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateExperimentTask(Guid id, [FromBody] UpdateExperimentTaskRequest dto)
+    public async Task<IActionResult> UpdateExperimentTask(Guid id, [FromBody] SaveExperimentTaskRequest dto)
     {
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
@@ -93,7 +88,7 @@ public class ExperimentTasksController : ControllerBase
         var task = await _experimentTaskService.GetByIdAsync(id);
         if (task == null) return NotFound();
 
-        var experiment = await _experimentService.GetByIdAsync(task.ExperimentId, userId.Value);
+        var experiment = await _experimentService.GetByIdAsync(task.ExperimentId);
         if (experiment == null) return NotFound();
 
         await _experimentTaskService.UpdateAsync(id, dto);
@@ -114,7 +109,7 @@ public class ExperimentTasksController : ControllerBase
         if (task == null) return NotFound();
         
         // Verify user has access to this experiment via the service
-        var experiment = await _experimentService.GetByIdAsync(task.ExperimentId, userId.Value);
+        var experiment = await _experimentService.GetByIdAsync(task.ExperimentId);
         if (experiment == null) return NotFound();
 
         // Soft delete

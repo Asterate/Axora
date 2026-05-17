@@ -1,5 +1,4 @@
-﻿using App.Domain.Entities;
-using App.Domain.Identity;
+﻿using App.Domain.Identity;
 using App.Shared.Domain;
 
 namespace App.Modules.Identity.Domain;

@@ -18,10 +18,10 @@ public class ProjectTypeService : IProjectTypeService
         _projectType = projectType;
         _uow = uow;
     }
-    public async Task<IEnumerable<ProjectTypeListResponse>> GetAllAsync()
+    public async Task<IEnumerable<ProjectTypeResponse>> GetAllAsync()
     {
         var entities = await _projectType.GetAllAsync();
-        return entities.Select(ProjectTypeMapper.ToListResponse);
+        return entities.Select(ProjectTypeMapper.ToResponse);
     }
 
     public async Task<ProjectTypeResponse?> GetByIdAsync(Guid id)
@@ -31,19 +31,21 @@ public class ProjectTypeService : IProjectTypeService
         return ProjectTypeMapper.ToResponse(entity);
     }
 
-    public async Task CreateAsync(CreateProjectTypeRequest request)
+    public async Task CreateAsync(SaveProjectTypeRequest request)
     {
         var entity = ProjectTypeMapper.ToEntity(request);
         await _projectType.AddAsync(entity);
+        entity.CreatedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task UpdateAsync(Guid id, UpdateProjectTypeRequest request)
+    public async Task UpdateAsync(Guid id, SaveProjectTypeRequest request)
     {
         var entity = await _projectType.GetByIdAsync(id);
         if (entity == null) return;
         ProjectTypeMapper.UpdateEntity(entity, request);
         _projectType.Update(entity);
+        entity.UpdatedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
@@ -51,7 +53,8 @@ public class ProjectTypeService : IProjectTypeService
     {
         var entity = await _projectType.GetByIdAsync(id);
         if (entity == null) return;
-        _projectType.Delete(entity);
+        _projectType.Update(entity);
+        entity.DeletedAt = DateTime.UtcNow;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
     // ExperimentTypeService
@@ -63,7 +66,7 @@ public class ProjectTypeService : IProjectTypeService
             .Select(t => new LookupItem
             {
                 Id = t.Id,
-                Name = t.GetName(culture) ?? "???"
+                Name = t.Name.Translate(culture) ??  String.Empty,
             }).ToList();
     }
 }

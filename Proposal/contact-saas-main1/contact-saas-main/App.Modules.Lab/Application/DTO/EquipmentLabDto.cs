@@ -12,16 +12,11 @@ public class EquipmentLabResponse
     public DateTime? DeletedAt { get; set; }
 }
 
-public class CreateEquipmentLabRequest
+public class SaveEquipmentLabRequest
 {
     public int Quantity { get; set; }
     public Guid LabId { get; set; }
     public Guid EquipmentId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
-}
-
-public class UpdateEquipmentLabRequest :  CreateEquipmentLabRequest
-{
-    public Guid Id { get; set; }
 }

@@ -4,54 +4,90 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<div style="max-width: 720px;">
+    <h4 class="mb-1">Create project</h4>
+    <p class="text-muted small mb-4">Fill in the details below to register a new project.</p>
 
-<h4>Project</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-controller="HomeDashboard" asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="ProjectName" class="control-label"></label>
-                <input asp-for="ProjectName" class="form-control" />
-                <span asp-validation-for="ProjectName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Funding" class="control-label"></label>
-                <input asp-for="Funding" class="form-control" />
-                <span asp-validation-for="Funding" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Requirements" class="control-label"></label>
-                <input asp-for="Requirements" class="form-control" />
-                <span asp-validation-for="Requirements" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RequirementsFilePath" class="control-label"></label>
-                <input asp-for="RequirementsFilePath" class="form-control" />
-                <span asp-validation-for="RequirementsFilePath" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ProjectTypeId" class="control-label"></label>
-                <select name="ProjectTypeId" class="form-control">
-                    <option value="">-- Select Project Type --</option>
-                    @foreach (var type in Model.ProjectTypes)
-                    {
-                        <option value="@type.Id">@type.Name</option>
-                    }
-                </select>
-                <span asp-validation-for="ProjectTypeId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-<div>
-    <a asp-controller="HomeDashboard" asp-action="Index">Back to List</a>
+        <div class="card mb-3">
+            <div class="card-body">
+                <p class="text-uppercase text-muted small fw-semibold mb-3">Translations</p>
+
+                <ul class="nav nav-tabs mb-4" id="langTabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#tab-en">🇬🇧 English</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#tab-et">🇪🇪 Estonian</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="tab-en">
+                        <div class="mb-3">
+                            <label asp-for="ProjectRequest.ProjectNameEn" class="form-label">Project name</label>
+                            <input asp-for="ProjectRequest.ProjectNameEn" class="form-control" />
+                            <span asp-validation-for="ProjectRequest.ProjectNameEn" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ProjectRequest.RequirementsEn" class="form-label">Requirements</label>
+                            <textarea asp-for="ProjectRequest.RequirementsEn" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="ProjectRequest.RequirementsEn" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="tab-et">
+                        <div class="mb-3">
+                            <label asp-for="ProjectRequest.ProjectNameEt" class="form-label">Project name</label>
+                            <input asp-for="ProjectRequest.ProjectNameEt" class="form-control" />
+                            <span asp-validation-for="ProjectRequest.ProjectNameEt" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ProjectRequest.RequirementsEt" class="form-label">Requirements</label>
+                            <textarea asp-for="ProjectRequest.RequirementsEt" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="ProjectRequest.RequirementsEt" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <p class="text-uppercase text-muted small fw-semibold mb-3">General</p>
+
+                <div class="mb-3">
+                    <label asp-for="ProjectRequest.ProjectTypeId" class="form-label">Project type</label>
+                    <select asp-for="ProjectRequest.ProjectTypeId" class="form-select"
+                            asp-items="@(new SelectList(Model.ProjectTypes, "Id", "Name"))">
+                        <option value="">-- Select project type --</option>
+                    </select>
+                    <span asp-validation-for="ProjectRequest.ProjectTypeId" class="text-danger"></span>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="ProjectRequest.Funding" class="form-label">Funding</label>
+                        <input asp-for="ProjectRequest.Funding" class="form-control" />
+                        <span asp-validation-for="ProjectRequest.Funding" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="ProjectRequest.RequirementsFilePath" class="form-label">Requirements file</label>
+                        <input asp-for="ProjectRequest.RequirementsFilePath" class="form-control" />
+                        <span asp-validation-for="ProjectRequest.RequirementsFilePath" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+            <input type="submit" value="Create project" class="btn btn-primary" />
+        </div>
+
+    </form>
 </div>
 
 @section Scripts {

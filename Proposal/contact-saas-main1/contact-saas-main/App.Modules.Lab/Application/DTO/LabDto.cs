@@ -13,9 +13,10 @@ public class LabResponse
     public string LabTypeName { get; set; } = "??";
 }
 
-public class CreateLabRequest
+public class SaveLabRequest
 {
-    public string LabName { get; set; }  = default!;
+    public string LabNameEn { get; set; }  = default!;
+    public string LabNameEt { get; set; }  = default!;
     public string LabAddress { get; set; }  = default!;
     
     public int LabCapacity { get; set; }
@@ -23,9 +24,4 @@ public class CreateLabRequest
     public bool LabIsActive { get; set; } = true;
     
     public Guid LabTypeId { get; set; }
-}
-
-public class UpdateLabRequest :  CreateLabRequest
-{
-    public Guid Id { get; set; }
 }

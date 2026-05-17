@@ -28,7 +28,7 @@ public class UserRegisteredHandler : INotificationHandler<UserRegisteredEvent>
 
         if (e.IsNewInstitute)
         {
-            institute = await _instituteService.CreateAndReturnAsync(new CreateInstituteRequest
+            institute = await _instituteService.CreateAndReturnAsync(new SaveInstituteRequest
             {
                 InstituteName = e.NewInstituteName ?? "??",
                 InstituteCountry = e.NewInstituteCountry ?? "??",

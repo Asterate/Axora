@@ -1,10 +1,10 @@
-﻿using App.BLL.Services;
-using App.DAL.EF;
+﻿using App.DAL.EF;
 using App.DTO.v1;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces.Repository;
 using Asp.Versioning;
 
 namespace WebApp.ApiControllers;
@@ -30,7 +30,7 @@ public class ExperimentsController : ControllerBase
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
         
-        var experiments = await _experimentService.GetAllAsync(userId.Value);
+        var experiments = await _experimentService.GetAllAsync();
         return Ok(experiments);
     }
 
@@ -43,7 +43,7 @@ public class ExperimentsController : ControllerBase
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
         
-        var experiment = await _experimentService.GetByIdAsync(id, userId.Value);
+        var experiment = await _experimentService.GetByIdAsync(id);
         if (experiment == null) return NotFound();
 
         return Ok(experiment);
@@ -53,14 +53,14 @@ public class ExperimentsController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(ExperimentResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ExperimentResponse>> CreateExperiment([FromBody] CreateExperimentRequest dto)
+    public async Task<ActionResult<ExperimentResponse>> CreateExperiment([FromBody] SaveExperimentRequest dto)
     {
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
 
         try
         {
-            var result = await _experimentService.CreateAsync(dto, userId.Value);
+            var result = await _experimentService.CreateAsync(dto);
             return CreatedAtAction(nameof(GetExperiment), new { id = result.Id }, result);
         }
         catch (InvalidOperationException ex)
@@ -74,14 +74,14 @@ public class ExperimentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateExperiment(Guid id, [FromBody] UpdateExperimentRequest dto)
+    public async Task<IActionResult> UpdateExperiment(Guid id, [FromBody] SaveExperimentRequest dto)
     {
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
 
         try
         {
-            var success = await _experimentService.UpdateAsync(id, dto, userId.Value);
+            var success = await _experimentService.UpdateAsync(id, dto);
             if (!success) return NotFound();
             return NoContent();
         }
@@ -100,7 +100,7 @@ public class ExperimentsController : ControllerBase
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
 
-        var success = await _experimentService.DeleteAsync(id, userId.Value);
+        var success = await _experimentService.DeleteAsync(id);
         if (!success) return NotFound();
 
         return NoContent();

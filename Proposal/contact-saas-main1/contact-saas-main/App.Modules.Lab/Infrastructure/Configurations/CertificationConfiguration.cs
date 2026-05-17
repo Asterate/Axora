@@ -22,7 +22,7 @@ internal sealed class CertificationConfiguration : IEntityTypeConfiguration<Cert
         {
             t.HasCheckConstraint(
                 "CK_Certification_Dates",
-                "[Expired] IS NULL OR [HandedOver] < [Expired]");
+                "\"Expired\" IS NULL OR \"HandedOver\" < \"Expired\"");
         });
     }
 }

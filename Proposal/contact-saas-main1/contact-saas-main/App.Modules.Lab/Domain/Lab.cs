@@ -4,8 +4,8 @@ namespace App.Modules.Lab.Domain;
 
 public class Lab : BaseEntity
 {
-    public string LabName { get; set; }  = default!;
-    public string LabAddress { get; set; }  = default!;
+    public LangStr LabName { get; set; }  = String.Empty;
+    public string LabAddress { get; set; }  = String.Empty;
     
     public int LabCapacity { get; set; }
     

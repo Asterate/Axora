@@ -1,34 +1,16 @@
 ﻿namespace App.Modules.Project.Application.DTO;
 
-public class ProjectTypeListResponse
+public class ProjectTypeResponse
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }
     public string? Description { get; set; }
 }
 
-public class ProjectTypeResponse
+public class SaveProjectTypeRequest
 {
-    public Guid Id { get; set; }
-    public string? NameEn { get; set; }
-    public string? NameEt { get; set; }
-    public string? DescriptionEn { get; set; }
-    public string? DescriptionEt { get; set; }
-}
-
-public class CreateProjectTypeRequest
-{
-    public string? NameEn { get; set; }
-    public string? NameEt { get; set; }
-    public string? DescriptionEn { get; set; }
-    public string? DescriptionEt { get; set; }
-}
-
-public class UpdateProjectTypeRequest
-{
-    public Guid Id { get; set; }
-    public string? NameEn { get; set; }
-    public string? NameEt { get; set; }
+    public string NameEn { get; set; } = String.Empty;
+    public string NameEt { get; set; } = String.Empty;
     public string? DescriptionEn { get; set; }
     public string? DescriptionEt { get; set; }
 }

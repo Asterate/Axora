@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using App.Domain.Entities;
 using App.Modules.Project.Application.DTO;
+using App.Modules.Project.Application.Interfaces.Service;
 using App.Modules.Project.Application.Mappers;
-using App.Modules.Project.Application.Services;
 using App.Modules.Project.Domain;
 using Microsoft.AspNetCore.Authorization;
 
@@ -13,11 +13,11 @@ namespace WebApp.Controllers
     [Authorize]
     public class InstituteController : Controller
     {
-        private readonly InstituteTypeService _instituteTypeService;
-        private readonly InstituteService _instituteService;
+        private readonly IInstituteTypeService _instituteTypeService;
+        private readonly IInstituteService _instituteService;
 
-        public InstituteController(InstituteTypeService instituteTypeService,
-            InstituteService instituteService)
+        public InstituteController(IInstituteTypeService instituteTypeService,
+            IInstituteService instituteService)
         {
             _instituteTypeService = instituteTypeService;
             _instituteService = instituteService;
@@ -87,7 +87,7 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    var institute = new CreateInstituteRequest()
+                    var institute = new SaveInstituteRequest()
                     {
                         InstituteName = name,
                         InstituteCountry = country,

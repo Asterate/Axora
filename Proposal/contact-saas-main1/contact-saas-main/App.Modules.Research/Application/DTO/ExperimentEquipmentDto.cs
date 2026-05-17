@@ -7,14 +7,8 @@ public class ExperimentEquipmentResponse
     public Guid EquipementId { get; set; }
 }
 
-public class CreateExperimentEquipmentRequest
+public class SaveExperimentEquipmentRequest
 {
     public string? ExperimentName { get; set; }
     public Guid EquipementId { get; set; }
-}
-
-public class UpdateExperimentEquipmentRequest :  CreateExperimentEquipmentRequest
-{
-    public Guid Id { get; set; }
-    
 }

@@ -30,20 +30,30 @@ public class ExperimentService : IExperimentService
         if (entity == null) return null;
         return ExperimentMapper.ToResponse(entity);
     }
+    public async Task<SaveExperimentRequest?> GetByIdEditAsync(Guid id)
+    {
+        var entity = await _experimentRepo.GetByIdAsync(id);
+        if (entity == null) return null;
+        return ExperimentMapper.ToRequest(entity);
+    }
 
-    public async Task CreateAsync(CreateExperimentRequest request)
+    public async Task<ExperimentResponse> CreateAsync(SaveExperimentRequest request)
     {
         var entity = ExperimentMapper.ToEntity(request);
         await _experimentRepo.AddAsync(entity);
-        await _uow.SaveChangesAsync(); // ← actually saves now
+        entity.CreatedAt = DateTime.Now;
+        await _uow.SaveChangesAsync();
+
+        return ExperimentMapper.ToResponse(entity);
     }
 
-  public async Task UpdateAsync(Guid id, UpdateExperimentRequest request)
+  public async Task UpdateAsync(Guid id, SaveExperimentRequest request)
     {
         var entity = await _experimentRepo.GetByIdAsync(id);
         if (entity == null) return;
         ExperimentMapper.UpdateEntity(entity, request);
         _experimentRepo.Update(entity);
+        entity.UpdatedAt = DateTime.Now;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
@@ -51,7 +61,19 @@ public class ExperimentService : IExperimentService
     {
         var entity = await _experimentRepo.GetByIdAsync(id);
         if (entity == null) return;
-        _experimentRepo.Delete(entity);
+        _experimentRepo.Update(entity);
+        entity.DeletedAt = DateTime.Now;
         await _uow.SaveChangesAsync(); // ← actually saves now
+    }
+    public async Task<List<LookupItem>> GetActivesAsync(string? culture = null)
+    {
+        var entities = await _experimentRepo.GetAllAsync();
+        return entities
+            .Where(t => t.DeletedAt == null)
+            .Select(t => new LookupItem
+            {
+                Id = t.Id,
+                Name = t.ExperimentName.Translate(culture) ?? String.Empty,
+            }).ToList();
     }
 }
