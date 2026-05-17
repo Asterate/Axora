@@ -1,5 +1,4 @@
-﻿using App.Domain.Entities;
-using App.Modules.Institute.Application.Interfaces;
+﻿using App.Modules.Institute.Application.Interfaces;
 using App.Modules.Project.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +14,7 @@ internal sealed class InstituteTypeRepository : IInstituteTypeRepository
     }
 
     public async Task<IEnumerable<InstituteType>> GetAllAsync()
-        => await _context.InstituteTypes.ToListAsync();
+        => await _context.InstituteTypes.Where(x => x.DeletedAt != null).ToListAsync();
 
     public async Task<InstituteType?> GetByIdAsync(Guid id)
         => await _context.InstituteTypes.FindAsync(id);

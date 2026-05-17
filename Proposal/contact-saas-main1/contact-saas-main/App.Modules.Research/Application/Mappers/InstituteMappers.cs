@@ -22,7 +22,7 @@ public static class InstituteMapper
         => new ()
         {
             Id = entity.Id,
-            InstituteTypeName = entity.InstituteType.Name,
+            //InstituteTypeName = entity.InstituteType.Name,
             Active = entity.Active,
             InstituteName = entity.InstituteName,
             InstituteAddress = entity.InstituteAddress,

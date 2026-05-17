@@ -53,8 +53,9 @@ public class HomeController : Controller
 
 
     public async Task<IActionResult> HomeDashboard()
-    {
-        var projects = await _projectService.GetAllAsync(); // never null
+    {   if (!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+            return Unauthorized();
+        var projects = await _projectService.GetAllAsync(userId); // never null
         return View("Views/AppPages/HomeDashboard/HomeDashboard.cshtml", projects);
     }
 

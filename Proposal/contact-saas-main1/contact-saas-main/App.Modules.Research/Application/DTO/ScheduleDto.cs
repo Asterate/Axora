@@ -13,6 +13,8 @@ public class ScheduleListResponse
     public DateTime ScheduleEndTime { get; set; }
     public DateTime ScheduleStartTime { get; set; }
     public string? ExperimentTaskName { get; set; }
+    public string? LabName { get; set; }
+    public string? EquipmentName { get; set; }
 }
 
 public class ScheduleResponse
@@ -24,9 +26,9 @@ public class ScheduleResponse
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public DateTime DeletedAt { get; set; }
-    public Guid LabId { get; set; }
+    public string? LabName { get; set; }
     public Guid InstituteUserId { get; set; }
-    public Guid EquipmentId { get; set; }
+    public string? EquipmentName { get; set; }
     public string? ExperimentTaskName { get; set; }
     public DateTime ScheduleEndTime { get; set; }
     public DateTime ScheduleStartTime { get; set; }

@@ -5,9 +5,9 @@ namespace App.Modules.Project.Application.Interfaces.Service;
 
 public interface IProjectService
 {
-    Task<IEnumerable<ProjectListResponse>> GetAllAsync();
+    Task<IEnumerable<ProjectListResponse>> GetAllAsync(Guid userId);
     Task<ProjectResponse?> GetByIdAsync(Guid id);
-    Task<ProjectResponse> CreateAsync(SaveProjectRequest request);
+    Task<ProjectResponse> CreateAsync(SaveProjectRequest request, Guid userId);
     Task UpdateAsync(Guid id, SaveProjectRequest request);
     Task DeleteAsync(Guid id);
     Task<int> CountAsync();

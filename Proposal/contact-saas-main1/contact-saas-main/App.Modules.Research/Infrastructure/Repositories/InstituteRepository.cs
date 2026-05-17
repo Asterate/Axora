@@ -1,8 +1,7 @@
 ﻿using App.Modules.Institute.Application.Interfaces;
-using App.Modules.Project.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.Modules.Institute.Infrastructure.Repositories;
+namespace App.Modules.Project.Infrastructure.Repositories;
 
 internal sealed class InstituteRepository : IInstituteRepository
 {
@@ -14,7 +13,7 @@ internal sealed class InstituteRepository : IInstituteRepository
     }
 
     public async Task<IEnumerable<Project.Domain.Institute>> GetAllAsync()
-        => await _context.Institutes.ToListAsync();
+        => await _context.Institutes.Include(x => x.InstituteType).ToListAsync();
 
     public async Task<Project.Domain.Institute?> GetByIdAsync(Guid id)
         => await _context.Institutes.FindAsync(id);

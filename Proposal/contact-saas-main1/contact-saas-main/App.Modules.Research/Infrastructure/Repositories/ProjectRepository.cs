@@ -15,11 +15,13 @@ internal sealed class ProjectRepository : IProjectRepository
     public async Task<IEnumerable<Domain.Project>> GetAllAsync()
         => await _context.Projects
             .Include(p => p.ProjectType)
+            .Include(p => p.InstituteProjects)
             .ToListAsync();
 
     public async Task<Domain.Project?> GetByIdAsync(Guid id)
         => await _context.Projects
-            .Include(p => p.ProjectType) // ← missing
+            .Include(p => p.ProjectType)
+            .Include(p => p.InstituteProjects)// ← missing
             .FirstOrDefaultAsync(p => p.Id == id);
 
     public async Task AddAsync(Domain.Project entity)

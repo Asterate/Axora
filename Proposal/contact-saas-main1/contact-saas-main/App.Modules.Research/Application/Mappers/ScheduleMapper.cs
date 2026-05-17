@@ -19,9 +19,11 @@ public static class ScheduleMapper
             Status = entity.Status,
             ColorCode =  entity.ColorCode?.Translate(),
             CreatedAt = entity.CreatedAt,
-            ExperimentTaskName = entity.Experiment.ExperimentName.Translate(),
+            ExperimentTaskName = entity.ExperimentTask.TaskName.Translate(),
             ScheduleStartTime = entity.ScheduleStartTime,
             ScheduleEndTime =  entity.ScheduleEndTime,
+            LabName = lab?.Name,
+            EquipmentName =  equipment?.Name,
         };
 
     // Entity → Full Response
@@ -35,10 +37,10 @@ public static class ScheduleMapper
             Status = entity.Status,
             ColorCode =  entity.ColorCode?.Translate(),
             CreatedAt = entity.CreatedAt,
-            ExperimentTaskName = entity.Experiment.ExperimentName.Translate(),
-            LabId = entity.LabId,
+            ExperimentTaskName = entity.ExperimentTask.TaskName.Translate(),
+            LabName = lab?.Name,
             InstituteUserId = entity.InstituteUserId,
-            EquipmentId =  entity.EquipmentId,
+            EquipmentName =  equipment?.Name,
             ScheduleStartTime = entity.ScheduleStartTime,
             ScheduleEndTime =  entity.ScheduleEndTime,
         };
@@ -58,7 +60,7 @@ public static class ScheduleMapper
                 [Cultures.English] =  request.ColorCodeEn ?? String.Empty,
                 [Cultures.Estonian] =  request.ColorCodeEt ?? String.Empty,
             },
-            ExperimentId = request.ExperimentId,
+            ExperimentTaskId = request.ExperimentId,
             LabId = request.LabId,
             InstituteUserId = request.InstituteUserId,
             EquipmentId =  request.EquipmentId,
@@ -75,7 +77,7 @@ public static class ScheduleMapper
         entity.ColorCode ??= new LangStr();
         entity.ColorCode.SetTranslation(request.ColorCodeEn ?? "??", Cultures.English);
         entity.ColorCode.SetTranslation(request.ColorCodeEt ?? "??", Cultures.Estonian);
-        entity.ExperimentId = request.ExperimentId;
+        entity.ExperimentTaskId = request.ExperimentId;
         entity.LabId = request.LabId;
         entity.InstituteUserId = request.InstituteUserId;
         entity.EquipmentId = request.EquipmentId;

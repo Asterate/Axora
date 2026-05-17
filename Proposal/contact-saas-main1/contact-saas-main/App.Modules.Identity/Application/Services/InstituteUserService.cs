@@ -1,7 +1,7 @@
 ﻿using App.Modules.Identity.Application.DTO;
 using App.Modules.Identity.Application.Interfaces;
 using App.Modules.Identity.Application.Mappers;
-using App.Modules.Identity.Applications.Interfaces;
+using App.Modules.Identity.Domain;
 using App.Shared.Contracts;
 
 namespace App.Modules.Identity.Application.Services;
@@ -64,5 +64,9 @@ public class InstituteUserService : IInstituteUserService
         var entities = await _instituteUserRepo.GetAllAsync();
         return entities.Any(iu => iu.UserId == userId);
     }
-    
+
+    public async Task<InstituteUser?> GetByUserIdAsync(Guid userId)
+    {
+        return await _instituteUserRepo.GetByUserIdAsync(userId);
+    }
 }

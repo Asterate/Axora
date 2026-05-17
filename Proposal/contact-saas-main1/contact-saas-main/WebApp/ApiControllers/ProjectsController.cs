@@ -27,8 +27,8 @@ public class ProjectsController : ControllerBase
     {
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
-        
-        var projects = await _projectService.GetAllAsync();
+
+        var projects = await _projectService.GetAllAsync(userId.Value);
         return Ok(projects);
     }
 
@@ -58,7 +58,7 @@ public class ProjectsController : ControllerBase
 
         try
         {
-            var result = await _projectService.CreateAsync(dto);
+            var result = await _projectService.CreateAsync(dto, userId.Value);
             return CreatedAtAction(nameof(GetProject), new { id = result.Id }, result);
         }
         catch (InvalidOperationException ex)

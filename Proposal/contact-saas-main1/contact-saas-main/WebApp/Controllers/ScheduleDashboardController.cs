@@ -1,13 +1,8 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using App.DAL.EF;
 using App.Modules.Lab.Application.Interfaces.Service;
-using App.Modules.Project.Application.DTO;
 using App.Modules.Project.Application.Interfaces.Service;
-using App.Modules.Project.Application.Mappers;
-using App.Modules.Project.Application.Services;
-using App.Modules.Project.Domain;
 using WebApp.ViewModels;
 
 namespace WebApp.Controllers;
@@ -33,8 +28,8 @@ public class ScheduleDashboardController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var projects = await _scheduleService.GetAllAsync();
-        return View("Index", projects);
+        var schedules = await ScheduleDashboardViewModel.ForIndex(_scheduleService);
+        return View("Index", schedules);
     }
        // GET: Schedule/Details/5
        public async Task<IActionResult> Details(Guid id)
@@ -46,7 +41,10 @@ public class ScheduleDashboardController : Controller
 
         // GET: Schedule/Create
         public async Task<IActionResult> Create()
-            => View(await ScheduleDashboardViewModel.ForCreate(_labService, _experimentService, _equipmentService));
+        {
+            var instituteId = Guid.Parse(User.FindFirstValue("InstituteId")!);
+            return View(await ScheduleDashboardViewModel.ForCreate(_labService, _experimentService, _equipmentService, instituteId));
+        }
 
         // POST: Schedule/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -60,9 +58,10 @@ public class ScheduleDashboardController : Controller
                 await _scheduleService.CreateAsync(dto.ScheduleRequest);
                 return RedirectToAction(nameof(Index));
             }
+            var instituteId = Guid.Parse(User.FindFirstValue("InstituteId")!);
             dto.Labs = await _labService.GetActivesAsync();
             dto.Equipments = await _equipmentService.GetActivesAsync();
-            dto.Experiments = await _experimentService.GetActivesAsync();
+            dto.Experiments = await _experimentService.GetActivesAsync(instituteId);
             return View(dto);
         }
 
@@ -71,7 +70,8 @@ public class ScheduleDashboardController : Controller
         {
             var item = await _scheduleService.GetByIdEditAsync(id);
             if (item == null) return NotFound();
-            var model = await ScheduleDashboardViewModel.ForEdit(item, _labService, _experimentService, _equipmentService);
+            var instituteId = Guid.Parse(User.FindFirstValue("InstituteId")!);
+            var model = await ScheduleDashboardViewModel.ForEdit(item, _labService, _experimentService, _equipmentService, instituteId);
             return View(model);
         }
 

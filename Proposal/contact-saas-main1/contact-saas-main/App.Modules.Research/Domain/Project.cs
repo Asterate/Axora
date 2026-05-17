@@ -14,5 +14,7 @@ public class Project : BaseEntity
 
     public Guid ProjectTypeId { get; set; }
     public ProjectType ProjectType { get; set; } = default!;
+    public ICollection<InstituteProject> InstituteProjects { get; set; } = default!; // ← this?
+
     
 }

@@ -64,7 +64,7 @@
                     <label asp-for="ScheduleRequest.LabId" class="form-label">Project type</label>
                     <select asp-for="ScheduleRequest.LabId" class="form-select"
                             asp-items="@(new SelectList(Model.Labs, "Id", "Name"))">
-                        <option value="">-- Select project type --</option>
+                        <option value="">-- Select lab --</option>
                     </select>
                     <span asp-validation-for="ScheduleRequest.LabId" class="text-danger"></span>
                 </div>
@@ -72,7 +72,7 @@
                     <label asp-for="ScheduleRequest.EquipmentId" class="form-label">Project type</label>
                     <select asp-for="ScheduleRequest.EquipmentId" class="form-select"
                             asp-items="@(new SelectList(Model.Equipments, "Id", "Name"))">
-                        <option value="">-- Select project type --</option>
+                        <option value="">-- Select equipment --</option>
                     </select>
                     <span asp-validation-for="ScheduleRequest.EquipmentId" class="text-danger"></span>
                 </div> 
@@ -80,14 +80,14 @@
                     <label asp-for="ScheduleRequest.ExperimentId" class="form-label">Project type</label>
                     <select asp-for="ScheduleRequest.ExperimentId" class="form-select"
                             asp-items="@(new SelectList(Model.Experiments, "Id", "Name"))">
-                        <option value="">-- Select project type --</option>
+                        <option value="">-- Select experiment --</option>
                     </select>
                     <span asp-validation-for="ScheduleRequest.ExperimentId" class="text-danger"></span>
                 </div>
 
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label asp-for="ScheduleRequest.Status" class="form-label">Funding</label>
+                        <label asp-for="ScheduleRequest.Status" class="form-label">Status</label>
                         <input asp-for="ScheduleRequest.Status" class="form-control" />
                         <span asp-validation-for="ScheduleRequest.Status" class="text-danger"></span>
                     </div>

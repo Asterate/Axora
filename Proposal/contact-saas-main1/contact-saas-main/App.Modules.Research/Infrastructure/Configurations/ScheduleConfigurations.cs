@@ -31,7 +31,7 @@ internal sealed class ScheduleConfiguration : IEntityTypeConfiguration<Schedule>
 
         builder.HasOne<ExperimentTask>()
             .WithMany()
-            .HasForeignKey(x => x.ExperimentId)
+            .HasForeignKey(x => x.ExperimentTaskId)
             .OnDelete(DeleteBehavior.Restrict);
         builder.ToTable(t => t.HasCheckConstraint("CK_Schedule_EndAfterStart", "\"ScheduleEndTime\" > \"ScheduleStartTime\""));
     }

@@ -14,6 +14,6 @@ public class Schedule : BaseEntity
     public Guid LabId { get; set; }
     public Guid InstituteUserId { get; set; }
     public Guid EquipmentId { get; set; }
-    public Guid ExperimentId { get; set; }
-    public Experiment Experiment { get; set; } = default!;
+    public Guid ExperimentTaskId { get; set; }
+    public ExperimentTask ExperimentTask { get; set; } = default!;
 }

@@ -1,27 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using WebApp.ViewModels;
-using App.DAL.EF;
-using App.Domain.Entities;
 using App.Domain.Identity;
-using App.Helpers;
 using App.Modules.Identity.Application.DTO;
 using App.Modules.Identity.Application.Interfaces;
-using App.Modules.Identity.Application.Services;
 using App.Modules.Identity.Domain;
 using App.Modules.Identity.Helper;
 using App.Modules.Project.Application.DTO;
 using App.Modules.Project.Application.Interfaces.Service;
-using App.Modules.Project.Application.Services;
-using App.Shared.Contracts;
 
 namespace WebApp.Controllers;
 
@@ -106,14 +92,15 @@ public class InstituteChoiceController : Controller
                 {
                     // Update existing user's institute
                     existingUser.Id = model.InstituteId.Value;
+
                 }
                 else
                 {
                     // Create new institute user record
                     var newInstituteUser = new SaveInstituteUserRequest
                     {
-                        Id = userId,
                         UserId = userId,
+                        InstituteId = model.InstituteId!.Value,
                         Role = EInstituteUserRole.Employee
                     };
                     await _instituteUserService.CreateAsync(newInstituteUser);

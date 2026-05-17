@@ -2,7 +2,10 @@
 using App.Modules.Project.Application.Interfaces;
 using App.Modules.Project.Application.Interfaces.Service;
 using App.Modules.Project.Application.Mappers;
+using App.Modules.Project.Domain;
 using App.Shared.Contracts;
+using App.Shared.Contracts.Events;
+using MediatR;
 
 namespace App.Modules.Project.Application.Services;
 
@@ -10,20 +13,27 @@ public class ProjectService : IProjectService
 {
     private readonly IProjectRepository _project;
     private readonly IUnitOfWork _uow;
+    private readonly IMediator _mediator;
 
     public ProjectService(
         IProjectRepository project, 
-        IUnitOfWork uow)
+        IUnitOfWork uow, IMediator mediator)
     {
         _project = project;
         _uow = uow;
+        _mediator = mediator;
     }
-    public async Task<IEnumerable<ProjectListResponse>> GetAllAsync()
+    public async Task<IEnumerable<ProjectListResponse>> GetAllAsync(Guid userId)
     {
-        var projects = await _project.GetAllAsync();
+        var instituteId = await _mediator.Send(new InstituteUserEvent.GetInstituteIdByUserIdQuery(userId));
     
-        return projects.Select(ProjectMapper.ToListResponse);
+        var entities = await _project.GetAllAsync();
+    
+        return entities
+            .Where(p => p.InstituteProjects.Any(ip => ip.InstituteId == instituteId))
+            .Select(ProjectMapper.ToListResponse);
     }
+    
 
     public async Task<ProjectResponse?> GetByIdAsync(Guid id)
     {
@@ -38,14 +48,27 @@ public class ProjectService : IProjectService
         return ProjectMapper.ToRequest(entity);
     }
 
-    public async Task<ProjectResponse> CreateAsync(SaveProjectRequest request)
+    public async Task<ProjectResponse> CreateAsync(SaveProjectRequest request, Guid userId)
     {
+        var instituteId = await _mediator.Send(new InstituteUserEvent.GetInstituteIdByUserIdQuery(userId));
+    
         var entity = ProjectMapper.ToEntity(request);
-        await _project.AddAsync(entity);
         entity.CreatedAt = DateTime.UtcNow;
+        entity.InstituteProjects = new List<InstituteProject>
+        {
+            new ()
+            {
+                InstituteId = instituteId!.Value,
+                ProjectId = entity.Id
+            }
+        };
+    
+        await _project.AddAsync(entity);
         await _uow.SaveChangesAsync();
 
-        return ProjectMapper.ToResponse(entity);
+        var saved = await _project.GetByIdAsync(entity.Id);
+        if (saved == null) throw new InvalidOperationException("Project not found after save");
+        return ProjectMapper.ToResponse(saved);
     }
 
     public async Task UpdateAsync(Guid id, SaveProjectRequest request)

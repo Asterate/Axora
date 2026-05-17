@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using App.Modules.Project.Application.Interfaces.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,9 @@ public class HomeDashboardController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var projects = await _projectService.GetAllAsync();
+        if (!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+            return Unauthorized();
+        var projects = await _projectService.GetAllAsync(userId);
         return View("HomeDashboard", projects);
     }
 
@@ -35,7 +38,9 @@ public class HomeDashboardController : Controller
     {
         if (ModelState.IsValid)
         {
-            await _projectService.CreateAsync(dto.ProjectRequest);
+            if (!Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+                return Unauthorized();
+            await _projectService.CreateAsync(dto.ProjectRequest, userId);
             return RedirectToAction(nameof(Index));
         }
         dto.ProjectTypes = await _projectTypeService.GetActivesAsync();

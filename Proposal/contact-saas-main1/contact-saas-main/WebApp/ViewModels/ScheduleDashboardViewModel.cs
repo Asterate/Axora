@@ -13,22 +13,28 @@ public class ScheduleDashboardViewModel
     public IEnumerable<LookupItem> Labs { get; set; } = [];
     public IEnumerable<LookupItem> Equipments { get; set; } = [];
     public IEnumerable<LookupItem> Experiments { get; set; } = [];
-    public static async Task<ScheduleDashboardViewModel> ForCreate(ILabService labService, IExperimentService experimentService, IEquipmentService equipmentService) => new()
+    public static async Task<ScheduleDashboardViewModel> ForCreate(ILabService labService, IExperimentService experimentService, IEquipmentService equipmentService,
+        Guid instituteId) => new()
     {
         Labs = await labService.GetActivesAsync(),
         Equipments = await equipmentService.GetActivesAsync(),
-        Experiments = await experimentService.GetActivesAsync(),
+        Experiments = await experimentService.GetActivesAsync(instituteId),
     };
     public static async Task<ScheduleDashboardViewModel> ForEdit(
         SaveScheduleRequest schedule,
         ILabService labService,
         IExperimentService experimentService,
-        IEquipmentService equipmentService) => new()
+        IEquipmentService equipmentService, Guid instituteId) => new()
     {
         ScheduleRequest = schedule,
         Labs = await labService.GetActivesAsync(),
-        Experiments = await experimentService.GetActivesAsync(),
+        Experiments = await experimentService.GetActivesAsync(instituteId),
         Equipments = await equipmentService.GetActivesAsync(),
+    };
+
+    public static async Task<ScheduleDashboardViewModel> ForIndex(IScheduleService scheduleService) => new()
+    {
+        Schedules = await scheduleService.GetAllAsync()
     };
 
 }

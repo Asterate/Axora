@@ -1,7 +1,5 @@
 ﻿using App.Modules.Lab.Application.Interfaces.Service;
-using App.Modules.Lab.Application.Services;
 using App.Modules.Project.Application.Interfaces.Service;
-using App.Modules.Project.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.ViewModels;

@@ -1,4 +1,5 @@
-﻿using App.Domain.Identity;
+﻿using System.Security.Claims;
+using App.Domain.Identity;
 using App.Modules.Identity.Application.DTO;
 using App.Modules.Identity.Application.Interfaces;
 using Microsoft.AspNetCore.Identity;

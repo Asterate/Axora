@@ -5,12 +5,12 @@ namespace App.Modules.Project.Application.Interfaces.Service;
 
 public interface IExperimentService
 {
-    Task<IEnumerable<ExperimentResponse>> GetAllAsync();
-    Task<ExperimentResponse?> GetByIdAsync(Guid id);
-    Task<ExperimentResponse> CreateAsync(SaveExperimentRequest request);
-    Task UpdateAsync(Guid id, SaveExperimentRequest request);
-    Task DeleteAsync(Guid id);
-    Task<List<LookupItem>> GetActivesAsync(string? culture = null);
-    Task<SaveExperimentRequest?> GetByIdEditAsync(Guid id);
+    Task<IEnumerable<ExperimentResponse>> GetAllAsync(Guid currentUserId);
+    Task<ExperimentResponse?> GetByIdAsync(Guid id, Guid currentUserId);
+    Task<ExperimentResponse> CreateAsync(SaveExperimentRequest request, Guid currentUserId);
+    Task UpdateAsync(Guid id, SaveExperimentRequest request, Guid currentUserId);
+    Task DeleteAsync(Guid id, Guid currentUserId);
+    Task<List<LookupItem>> GetActivesAsync(Guid currentUserId, string? culture = null);
+    Task<SaveExperimentRequest?> GetByIdEditAsync(Guid id, Guid currentUserId);
 
 }

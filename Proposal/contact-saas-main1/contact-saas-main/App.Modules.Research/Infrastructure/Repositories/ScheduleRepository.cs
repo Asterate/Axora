@@ -15,12 +15,12 @@ internal sealed class ScheduleRepository : IScheduleRepository
 
     public async Task<IEnumerable<Schedule>> GetAllAsync()
         => await _context.Schedules
-            .Include(p => p.Experiment)
+            .Include(p => p.ExperimentTask)
             .ToListAsync();
 
     public async Task<Schedule?> GetByIdAsync(Guid id)
         => await _context.Schedules
-            .Include(p => p.Experiment)
+            .Include(p => p.ExperimentTask)
             .FirstOrDefaultAsync(s => s.Id == id);
 
     public async Task AddAsync(Schedule entity)

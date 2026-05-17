@@ -1,7 +1,7 @@
 ﻿using App.Modules.Equipment.Infrastructure.Repositories;
+using App.Modules.Identity.Application.Handlers;
 using App.Modules.Identity.Application.Interfaces;
 using App.Modules.Identity.Application.Services;
-using App.Modules.Identity.Applications.Interfaces;
 using App.Modules.Identity.Infrastructure;
 using App.Modules.Identity.Infrastructure.Repositories;
 using App.Shared.Contracts;
@@ -22,6 +22,8 @@ public static class IdentityModule
     
         services.AddScoped<IAppRefreshTokenService,AppRefreshTokenService>();
         services.AddScoped<IInstituteUserService, InstituteUserService>();
+        services.AddMediatR(cfg => 
+            cfg.RegisterServicesFromAssembly(typeof(GetInstituteUserIdHandler.GetInstituteIdByUserIdHandler).Assembly));
     
         return services;
     }

@@ -1,4 +1,4 @@
-﻿using App.Modules.Identity.Applications.Interfaces;
+﻿using App.Modules.Identity.Application.Interfaces;
 using App.Modules.Identity.Domain;
 using App.Modules.Identity.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -28,4 +28,7 @@ internal sealed class InstituteUserRepository : IInstituteUserRepository
 
     public void Delete(InstituteUser entity)
         => _context.InstituteUsers.Remove(entity);
+    public async Task<InstituteUser?> GetByUserIdAsync(Guid userId)
+        => await _context.InstituteUsers
+            .FirstOrDefaultAsync(iu => iu.UserId == userId);
 }

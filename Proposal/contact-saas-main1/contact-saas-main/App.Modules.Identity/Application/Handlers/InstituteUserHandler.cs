@@ -1,4 +1,5 @@
 ﻿using App.Modules.Identity.Application.DTO;
+using App.Modules.Identity.Application.Interfaces;
 using App.Modules.Identity.Application.Services;
 using App.Modules.Identity.Domain;
 using App.Shared.Contracts.Events;
@@ -10,11 +11,11 @@ namespace App.Modules.Identity.Application.Handlers;
 // Modules/Identity/Application/Handlers/InstituteUserHandler.cs
 public class InstituteUserHandler : INotificationHandler<InstituteReadyEvent>
 {
-    private readonly InstituteUserService _instituteUserService;
+    private readonly IInstituteUserService _instituteUserService;
     private readonly ILogger<InstituteUserHandler> _logger;
 
     public InstituteUserHandler(
-        InstituteUserService instituteUserService,
+        IInstituteUserService instituteUserService,
         ILogger<InstituteUserHandler> logger)
     {
         _instituteUserService = instituteUserService;
@@ -34,4 +35,5 @@ public class InstituteUserHandler : INotificationHandler<InstituteReadyEvent>
         _logger.LogInformation("InstituteUser created for user {UserId} in institute {InstituteId}",
             e.UserId, e.InstituteId);
     }
+    
 }

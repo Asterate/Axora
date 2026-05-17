@@ -61,16 +61,23 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                var name = new LangStr();
+                name.SetTranslation(viewModel.InstituteTypesRequest.NameEn, "en");
+                name.SetTranslation(viewModel.InstituteTypesRequest.NameEt, "et");
                 
-                var instituteType = new SaveInstituteTypeRequest
+                var description = new LangStr();
+                description.SetTranslation(viewModel.InstituteTypesRequest.DescriptionEn ?? string.Empty, "en");
+                description.SetTranslation(viewModel.InstituteTypesRequest.DescriptionEt ?? string.Empty, "et");
+                
+                var experimentType = new SaveInstituteTypeRequest()
                 {
-                    //issue here with viewmodel
-                    NameEn = viewModel.InstituteTypesResponse.Name ?? string.Empty,
-                    NameEt = viewModel.InstituteTypesResponse.Name ?? string.Empty,
-                    DescriptionEn = viewModel.InstituteTypesResponse.Description ?? string.Empty,
-                    DescriptionEt = viewModel.InstituteTypesResponse.Description ?? string.Empty,
+                    NameEn = viewModel.InstituteTypesRequest.NameEn,
+                    NameEt = viewModel.InstituteTypesRequest.NameEt,
+                    DescriptionEn = viewModel.InstituteTypesRequest.DescriptionEn,
+                    DescriptionEt = viewModel.InstituteTypesRequest.DescriptionEt
                 };
-                await _instituteTypeService.CreateAsync(instituteType);
+                
+                await _instituteTypeService.CreateAsync(experimentType);
                 return RedirectToAction("Index", "LookupData");
             }
             return View(viewModel);
@@ -112,25 +119,7 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    var instituteType = await _instituteTypeService.GetByIdAsync(id);
-                    if (instituteType == null)
-                    {
-                        return NotFound();
-                    }
-                    
-                    // Update translations
-                    //instituteType.Name.SetTranslation(viewModel.NameEn, "en");
-                    //instituteType.Name.SetTranslation(viewModel.NameEt, "et");
-                    
-                    /*if (instituteType.Description == null)
-                    {
-                        instituteType.Description = new LangStr();
-                    }
-                    instituteType.Description.SetTranslation(viewModel.DescriptionEn ?? string.Empty, "en");
-                    instituteType.Description.SetTranslation(viewModel.DescriptionEt ?? string.Empty, "et");
-                    */
-                    var instituteTypeUpdate = InstituteTypeMapper.ToUpdateRequest(instituteType);
-                    await _instituteTypeService.UpdateAsync(id, instituteTypeUpdate);
+                    await _instituteTypeService.UpdateAsync(id, viewModel.InstituteTypesRequest);
                 }
                 catch (DbUpdateConcurrencyException)
                 {

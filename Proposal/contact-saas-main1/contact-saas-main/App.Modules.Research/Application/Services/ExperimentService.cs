@@ -3,6 +3,8 @@ using App.Modules.Project.Application.DTO;
 using App.Modules.Project.Application.Interfaces.Service;
 using App.Modules.Project.Application.Mappers;
 using App.Shared.Contracts;
+using App.Shared.Contracts.Events;
+using MediatR;
 
 namespace App.Modules.Project.Application.Services;
 
@@ -10,34 +12,38 @@ public class ExperimentService : IExperimentService
 {
     private readonly IExperimentRepository _experimentRepo;
     private readonly IUnitOfWork _uow;
+    private readonly IMediator _mediator;
 
     public ExperimentService(
         IExperimentRepository experimentRepo,
-        IUnitOfWork uow)
+        IUnitOfWork uow, IMediator mediator)
     {
         _experimentRepo = experimentRepo;
         _uow = uow;
+        _mediator = mediator;
     }
-    public async Task<IEnumerable<ExperimentResponse>> GetAllAsync()
+    public async Task<IEnumerable<ExperimentResponse>> GetAllAsync(Guid userId)
     {
         var entities = await _experimentRepo.GetAllAsync();
-        return entities.Select(ExperimentMapper.ToResponse);
+        return entities
+            .Where(e => e.InstituteUserId == userId)
+            .Select(ExperimentMapper.ToResponse);
     }
 
-    public async Task<ExperimentResponse?> GetByIdAsync(Guid id)
+    public async Task<ExperimentResponse?> GetByIdAsync(Guid id, Guid instituteId)
     {
         var entity = await _experimentRepo.GetByIdAsync(id);
         if (entity == null) return null;
         return ExperimentMapper.ToResponse(entity);
     }
-    public async Task<SaveExperimentRequest?> GetByIdEditAsync(Guid id)
+    public async Task<SaveExperimentRequest?> GetByIdEditAsync(Guid id, Guid instituteId)
     {
         var entity = await _experimentRepo.GetByIdAsync(id);
         if (entity == null) return null;
         return ExperimentMapper.ToRequest(entity);
     }
 
-    public async Task<ExperimentResponse> CreateAsync(SaveExperimentRequest request)
+    public async Task<ExperimentResponse> CreateAsync(SaveExperimentRequest request, Guid instituteId )
     {
         var entity = ExperimentMapper.ToEntity(request);
         await _experimentRepo.AddAsync(entity);
@@ -47,7 +53,7 @@ public class ExperimentService : IExperimentService
         return ExperimentMapper.ToResponse(entity);
     }
 
-  public async Task UpdateAsync(Guid id, SaveExperimentRequest request)
+  public async Task UpdateAsync(Guid id, SaveExperimentRequest request, Guid instituteId)
     {
         var entity = await _experimentRepo.GetByIdAsync(id);
         if (entity == null) return;
@@ -57,7 +63,7 @@ public class ExperimentService : IExperimentService
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id, Guid instituteId)
     {
         var entity = await _experimentRepo.GetByIdAsync(id);
         if (entity == null) return;
@@ -65,7 +71,7 @@ public class ExperimentService : IExperimentService
         entity.DeletedAt = DateTime.Now;
         await _uow.SaveChangesAsync(); // ← actually saves now
     }
-    public async Task<List<LookupItem>> GetActivesAsync(string? culture = null)
+    public async Task<List<LookupItem>> GetActivesAsync(Guid instituteId, string? culture = null)
     {
         var entities = await _experimentRepo.GetAllAsync();
         return entities
