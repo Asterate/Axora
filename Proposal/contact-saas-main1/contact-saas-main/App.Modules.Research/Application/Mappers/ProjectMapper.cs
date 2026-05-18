@@ -71,4 +71,5 @@ public static class ProjectMapper
         entity.RequirementsFilePath = request.RequirementsFilePath;
         entity.ProjectTypeId = request.ProjectTypeId;
     }
+    
 }

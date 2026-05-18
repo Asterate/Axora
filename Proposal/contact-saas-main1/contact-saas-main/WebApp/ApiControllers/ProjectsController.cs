@@ -40,8 +40,8 @@ public class ProjectsController : ControllerBase
     {
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
-        
-        var project = await _projectService.GetByIdAsync(id);
+    
+        var project = await _projectService.GetByIdAsync(id, userId.Value);
         if (project == null) return NotFound();
 
         return Ok(project);
@@ -78,7 +78,7 @@ public class ProjectsController : ControllerBase
 
         try
         {
-            await _projectService.UpdateAsync(id, dto);
+            await _projectService.UpdateAsync(id, dto, userId.Value);
             return NoContent();
         }
         catch (InvalidOperationException ex)
@@ -96,7 +96,7 @@ public class ProjectsController : ControllerBase
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
 
-        await _projectService.DeleteAsync(id);
+        await _projectService.DeleteAsync(id, userId.Value);
 
         return NoContent();
     }

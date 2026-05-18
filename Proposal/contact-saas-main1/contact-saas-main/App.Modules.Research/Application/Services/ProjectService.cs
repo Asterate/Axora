@@ -35,16 +35,30 @@ public class ProjectService : IProjectService
     }
     
 
-    public async Task<ProjectResponse?> GetByIdAsync(Guid id)
+    public async Task<ProjectResponse?> GetByIdAsync(Guid id, Guid userId)
     {
+        var instituteId = await _mediator.Send(
+            new InstituteUserEvent.GetInstituteIdByUserIdQuery(userId));
+
         var entity = await _project.GetByIdAsync(id);
         if (entity == null) return null;
+
+        if (entity.InstituteProjects.All(ip => ip.InstituteId != instituteId))
+            return null;
+
         return ProjectMapper.ToResponse(entity);
     } 
-    public async Task<SaveProjectRequest?> GetByIdEditAsync(Guid id)
+    public async Task<SaveProjectRequest?> GetByIdEditAsync(Guid id, Guid userId)
     {
+        var instituteId = await _mediator.Send(
+            new InstituteUserEvent.GetInstituteIdByUserIdQuery(userId));
+
         var entity = await _project.GetByIdAsync(id);
         if (entity == null) return null;
+
+        if (entity.InstituteProjects.All(ip => ip.InstituteId != instituteId))
+            return null;
+
         return ProjectMapper.ToRequest(entity);
     }
 
@@ -71,23 +85,37 @@ public class ProjectService : IProjectService
         return ProjectMapper.ToResponse(saved);
     }
 
-    public async Task UpdateAsync(Guid id, SaveProjectRequest request)
+    public async Task UpdateAsync(Guid id, SaveProjectRequest request, Guid userId)
     {
+        var instituteId = await _mediator.Send(
+            new InstituteUserEvent.GetInstituteIdByUserIdQuery(userId));
+
         var entity = await _project.GetByIdAsync(id);
         if (entity == null) return;
+
+        if (entity.InstituteProjects.All(ip => ip.InstituteId != instituteId))
+            return;
+
         ProjectMapper.UpdateEntity(entity, request);
         _project.Update(entity);
         entity.UpdatedAt = DateTime.UtcNow;
-        await _uow.SaveChangesAsync(); // ← actually saves now
+        await _uow.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id, Guid userId)
     {
+        var instituteId = await _mediator.Send(
+            new InstituteUserEvent.GetInstituteIdByUserIdQuery(userId));
+
         var entity = await _project.GetByIdAsync(id);
         if (entity == null) return;
+
+        if (entity.InstituteProjects.All(ip => ip.InstituteId != instituteId))
+            return;
+
         _project.Update(entity);
         entity.DeletedAt = DateTime.UtcNow;
-        await _uow.SaveChangesAsync(); // ← actually saves now
+        await _uow.SaveChangesAsync();
     }
     public async Task<int> CountAsync()
     {

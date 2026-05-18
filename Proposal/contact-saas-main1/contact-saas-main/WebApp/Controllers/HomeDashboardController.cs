@@ -50,7 +50,10 @@ public class HomeDashboardController : Controller
     // GET: Project/Details/5
     public async Task<IActionResult> Details(Guid id)
     {
-        var item = await _projectService.GetByIdAsync(id);
+        var userId = GetUserId();
+        if (userId == null) return Unauthorized();
+
+        var item = await _projectService.GetByIdAsync(id, userId.Value);
         if (item == null) return NotFound();
         return View(item);
     }
@@ -58,7 +61,10 @@ public class HomeDashboardController : Controller
     // GET
     public async Task<IActionResult> Edit(Guid id)
     {
-        var project = await _projectService.GetByIdEditAsync(id);
+        var userId = GetUserId();
+        if (userId == null) return Unauthorized();
+
+        var project = await _projectService.GetByIdEditAsync(id, userId.Value);
         if (project == null) return NotFound();
         var model = await HomeDashboardViewModel.ForEdit(project, _projectTypeService);
         return View(model);
@@ -69,16 +75,21 @@ public class HomeDashboardController : Controller
     public async Task<IActionResult> Edit(Guid id, HomeDashboardViewModel model)
     {
         if (!ModelState.IsValid) return View(model);
-        await _projectService.UpdateAsync(id, model.ProjectRequest);
+        var userId = GetUserId();
+        if (userId == null) return Unauthorized();
+
+        await _projectService.UpdateAsync(id, model.ProjectRequest, userId.Value);
         return RedirectToAction(nameof(Index));
     }
     
     // GET: Project/Delete/5
     public async Task<IActionResult> Delete(Guid id)
     {
-        var project = await _projectService.GetByIdAsync(id);
+        var userId = GetUserId();
+        if (userId == null) return Unauthorized();
+
+        var project = await _projectService.GetByIdAsync(id, userId.Value);
         if (project == null) return NotFound();
-    
         return View(project);
     }
 
@@ -87,7 +98,12 @@ public class HomeDashboardController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(Guid id)
     {
-        await _projectService.DeleteAsync(id);
+        var userId = GetUserId();
+        if (userId == null) return Unauthorized();
+
+        await _projectService.DeleteAsync(id, userId.Value);
         return RedirectToAction(nameof(Index));
     }
+    private Guid? GetUserId() =>
+        Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : null;
 }

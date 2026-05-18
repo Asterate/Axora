@@ -6,12 +6,16 @@ namespace App.Modules.Project.Application.Interfaces.Service;
 public interface IProjectService
 {
     Task<IEnumerable<ProjectListResponse>> GetAllAsync(Guid userId);
-    Task<ProjectResponse?> GetByIdAsync(Guid id);
+    Task<ProjectResponse?> GetByIdAsync(Guid id, Guid userId);
+
     Task<ProjectResponse> CreateAsync(SaveProjectRequest request, Guid userId);
-    Task UpdateAsync(Guid id, SaveProjectRequest request);
-    Task DeleteAsync(Guid id);
+    Task UpdateAsync(Guid id, SaveProjectRequest request, Guid userId);
+
+    Task DeleteAsync(Guid id, Guid userId);
+
     Task<int> CountAsync();
     Task<IEnumerable<ProjectListResponse>> GetRecentAsync(int take);
     Task<List<LookupItem>> GetActivesAsync(string? culture = null);
-    Task<SaveProjectRequest?> GetByIdEditAsync(Guid id);
+    Task<SaveProjectRequest?> GetByIdEditAsync(Guid id, Guid userId);
+
 }

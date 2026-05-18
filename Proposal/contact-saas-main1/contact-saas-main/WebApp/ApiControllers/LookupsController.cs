@@ -1,13 +1,9 @@
-using App.DAL.EF;
 using App.DTO.v1;
-using App.Domain;
 using App.Domain.Entities;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Globalization;
-using System.Linq;
+using System.Security.Claims;
 using App.Modules.Lab.Application.Services;
 using App.Modules.Project.Application.Services;
 using App.Shared.Contracts;
@@ -125,22 +121,11 @@ public class LookupsController : ControllerBase
 
     // GET: api/v1.0/lookups/projects
     [HttpGet("projects")]
-    [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupDto>>> GetProjects(string? culture)
+    [ProducesResponseType(typeof(IEnumerable<LookupItem>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<LookupItem>>> GetProjects(string? culture)
     {
         return Ok(await _projectService.GetActivesAsync(culture));
     }
-
-    // GET: api/v1.0/lookups/institute-users
-   /* [HttpGet("institute-users")]
-    [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupDto>>> GetInstituteUsers()
-    {
-        return await _context.InstituteUsers
-            .Include(e => e.User)
-            .Select(e => new LookupDto { Id = e.Id, Name = e.User.FirstName + " " + e.User.LastName })
-            .ToListAsync();
-    }*/
 
     // GET: api/v1.0/lookups/priorities
     /// <summary>
@@ -184,5 +169,12 @@ public class LookupsController : ControllerBase
     public async Task<ActionResult<IEnumerable<LookupDto>>> GetInstitutes(string? culture)
     {
         return Ok(await _instituteService.GetActivesAsync(culture));
+    }
+    private Guid? GetUserId()
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            return null;
+        return userId;
     }
 }
