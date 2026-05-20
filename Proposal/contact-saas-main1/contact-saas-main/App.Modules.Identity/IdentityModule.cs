@@ -22,6 +22,7 @@ public static class IdentityModule
     
         services.AddScoped<IAppRefreshTokenService,AppRefreshTokenService>();
         services.AddScoped<IInstituteUserService, InstituteUserService>();
+        services.AddScoped<IAccountService, AccountService>();
         services.AddMediatR(cfg => 
             cfg.RegisterServicesFromAssembly(typeof(GetInstituteUserIdHandler.GetInstituteIdByUserIdHandler).Assembly));
     

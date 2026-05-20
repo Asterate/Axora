@@ -74,4 +74,5 @@ public class LabService : ILabService
                 Name = t.LabName.Translate(culture) ?? String.Empty,
             }).ToList();
     }
+    
 }

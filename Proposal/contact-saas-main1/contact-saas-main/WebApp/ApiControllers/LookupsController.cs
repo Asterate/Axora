@@ -4,8 +4,8 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using App.Modules.Lab.Application.Services;
-using App.Modules.Project.Application.Services;
+using App.Modules.Lab.Application.Interfaces.Service;
+using App.Modules.Project.Application.Interfaces.Service;
 using App.Shared.Contracts;
 
 namespace WebApp.ApiControllers;
@@ -16,23 +16,30 @@ namespace WebApp.ApiControllers;
 [Authorize(AuthenticationSchemes = "Bearer")]
 public class LookupsController : ControllerBase
 {
-    private readonly ExperimentTypeService _experimentTypeService;
-    private readonly ProjectTypeService _projectTypeService;
-    private readonly ExperimentTaskTypeService _experimentTaskTypeService;
-    private readonly InstituteTypeService _instituteTypeService;
-    private readonly DocumentTypeService _documentTypeService;
-    private readonly LabTypeService _labTypeService;
-    private readonly EquipmentTypeService _equipmentTypeService;
-    private readonly ReagentTypeService _reagentTypeService;
-    private readonly CertificationTypeService _certificationTypeService;
-    private readonly ProjectService _projectService;
-    private readonly InstituteService _instituteService;
+    private readonly IExperimentTypeService _experimentTypeService;
+    private readonly IProjectTypeService _projectTypeService;
+    private readonly IExperimentTaskTypeService _experimentTaskTypeService;
+    private readonly IInstituteTypeService _instituteTypeService;
+    private readonly IDocumentTypeService _documentTypeService;
+    private readonly ILabTypeService _labTypeService;
+    private readonly IEquipmentTypeService _equipmentTypeService;
+    private readonly IReagentTypeService _reagentTypeService;
+    private readonly ICertificationTypeService _certificationTypeService;
+    private readonly IProjectService _projectService;
+    private readonly IInstituteService _instituteService;
 
-    public LookupsController(ExperimentTypeService experimentTypeService,
-        ProjectTypeService projectTypeService, ExperimentTaskTypeService experimentTaskTypeService,
-        InstituteTypeService instituteTypeService, DocumentTypeService documentTypeService, LabTypeService labTypeService,
-        EquipmentTypeService equipmentTypeService, ReagentTypeService reagentTypeService, CertificationTypeService certificationTypeService,
-        ProjectService projectService, InstituteService instituteService)
+    public LookupsController(
+        IExperimentTypeService experimentTypeService,
+        IProjectTypeService projectTypeService,
+        IExperimentTaskTypeService experimentTaskTypeService,
+        IInstituteTypeService instituteTypeService,
+        IDocumentTypeService documentTypeService,
+        ILabTypeService labTypeService,
+        IEquipmentTypeService equipmentTypeService,
+        IReagentTypeService reagentTypeService,
+        ICertificationTypeService certificationTypeService,
+        IProjectService projectService,
+        IInstituteService instituteService)
     {
         _experimentTypeService = experimentTypeService;
         _projectTypeService = projectTypeService;
@@ -50,7 +57,7 @@ public class LookupsController : ControllerBase
     // GET: api/v1.0/lookups/experiment-types
     [HttpGet("experiment-types")]
     [ProducesResponseType(typeof(IEnumerable<LookupItem>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupItem>>> GetExperimentTypes(string? culture)
+    public async Task<ActionResult<IEnumerable<LookupItem>>> GetExperimentTypes([FromQuery] string? culture = null)
     {
         return Ok(await _experimentTypeService.GetActivesAsync(culture));
     }
@@ -58,63 +65,63 @@ public class LookupsController : ControllerBase
     // GET: api/v1.0/lookups/project-types
     [HttpGet("project-types")]
     [ProducesResponseType(typeof(IEnumerable<LookupItem>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupItem>>> GetProjectTypes(string? culture)
+    public async Task<ActionResult<IEnumerable<LookupItem>>> GetProjectTypes([FromQuery] string? culture = null)
     {
         return Ok(await _projectTypeService.GetActivesAsync(culture));
     }
 
     // GET: api/v1.0/lookups/task-types
     [HttpGet("experimentTask-types")]
-    [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupItem>>> GetExperimentTaskTypes(string? culture)
+    [ProducesResponseType(typeof(IEnumerable<LookupItem>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<LookupItem>>> GetExperimentTaskTypes([FromQuery] string? culture = null)
     {
         return Ok(await _experimentTaskTypeService.GetActivesAsync(culture));
     }
 
     // GET: api/v1.0/lookups/lab-types
     [HttpGet("lab-types")]
-    [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupItem>>> GetLabTypes(string? culture)
+    [ProducesResponseType(typeof(IEnumerable<LookupItem>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<LookupItem>>> GetLabTypes([FromQuery] string? culture = null)
     {
         return Ok(await _labTypeService.GetActivesAsync(culture));
     }
 
     // GET: api/v1.0/lookups/institute-types
     [HttpGet("institute-types")]
-    [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupItem>>> InstituteTypes(string? culture)
+    [ProducesResponseType(typeof(IEnumerable<LookupItem>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<LookupItem>>> InstituteTypes([FromQuery] string? culture = null)
     {
         return Ok(await _instituteTypeService.GetActivesAsync(culture));
     }
 
     // GET: api/v1.0/lookups/equipment-types
     [HttpGet("equipment-types")]
-    [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupDto>>> GetEquipmentTypes(string? culture)
+    [ProducesResponseType(typeof(IEnumerable<LookupItem>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<LookupItem>>> GetEquipmentTypes([FromQuery] string? culture = null)
     {
         return Ok(await _equipmentTypeService.GetActivesAsync(culture));
     }
 
     // GET: api/v1.0/lookups/reagent-types
     [HttpGet("reagent-types")]
-    [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupDto>>> GetReagentTypes(string? culture)
+    [ProducesResponseType(typeof(IEnumerable<LookupItem>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<LookupItem>>> GetReagentTypes([FromQuery] string? culture = null)
     {
         return Ok(await _reagentTypeService.GetActivesAsync(culture));
     }
 
     // GET: api/v1.0/lookups/document-types
     [HttpGet("document-types")]
-    [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupDto>>> GetDocumentTypes(string? culture)
+    [ProducesResponseType(typeof(IEnumerable<LookupItem>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<LookupItem>>> GetDocumentTypes([FromQuery] string? culture = null)
     {
         return Ok(await _documentTypeService.GetActivesAsync(culture));
     }
 
     // GET: api/v1.0/lookups/certification-types
     [HttpGet("certification-types")]
-    [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupDto>>> GetCertificationTypes(string? culture)
+    [ProducesResponseType(typeof(IEnumerable<LookupItem>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<LookupItem>>> GetCertificationTypes([FromQuery] string? culture = null)
     {
         return Ok(await _certificationTypeService.GetActivesAsync(culture));
     }
@@ -122,7 +129,7 @@ public class LookupsController : ControllerBase
     // GET: api/v1.0/lookups/projects
     [HttpGet("projects")]
     [ProducesResponseType(typeof(IEnumerable<LookupItem>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<LookupItem>>> GetProjects(string? culture)
+    public async Task<ActionResult<IEnumerable<LookupItem>>> GetProjects([FromQuery] string? culture = null)
     {
         return Ok(await _projectService.GetActivesAsync(culture));
     }
@@ -164,9 +171,9 @@ public class LookupsController : ControllerBase
     /// Returns available institutes for selection during registration
     /// </summary>
     [HttpGet("institutes")]
-    [ProducesResponseType(typeof(IEnumerable<LookupDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<LookupItem>), StatusCodes.Status200OK)]
     [AllowAnonymous]
-    public async Task<ActionResult<IEnumerable<LookupDto>>> GetInstitutes(string? culture)
+    public async Task<ActionResult<IEnumerable<LookupItem>>> GetInstitutes([FromQuery] string? culture = null)
     {
         return Ok(await _instituteService.GetActivesAsync(culture));
     }
