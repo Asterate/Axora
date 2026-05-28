@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using App.Modules.Project.Application.DTO;
-using App.Modules.Project.Application.Interfaces.Repository;
+using App.Modules.Project.Application.Interfaces.Service;
 using Asp.Versioning;
 
 namespace WebApp.ApiControllers;
@@ -30,7 +30,7 @@ public class ExperimentsController : ControllerBase
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
         
-        var experiments = await _experimentService.GetAllAsync();
+        var experiments = await _experimentService.GetAllAsync(userId.Value);
         return Ok(experiments);
     }
 
@@ -43,9 +43,9 @@ public class ExperimentsController : ControllerBase
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
         
-        var experiment = await _experimentService.GetByIdAsync(id);
+        var experiment = await _experimentService.GetByIdAsync(id, userId.Value);
         if (experiment == null) return NotFound();
-
+        
         return Ok(experiment);
     }
 
@@ -60,7 +60,7 @@ public class ExperimentsController : ControllerBase
 
         try
         {
-            var result = await _experimentService.CreateAsync(dto);
+            var result = await _experimentService.CreateAsync(dto, userId.Value);
             return CreatedAtAction(nameof(GetExperiment), new { id = result.Id }, result);
         }
         catch (InvalidOperationException ex)
@@ -81,8 +81,7 @@ public class ExperimentsController : ControllerBase
 
         try
         {
-            var success = await _experimentService.UpdateAsync(id, dto);
-            if (!success) return NotFound();
+            await _experimentService.UpdateAsync(id, dto, userId.Value);
             return NoContent();
         }
         catch (InvalidOperationException ex)
@@ -100,8 +99,7 @@ public class ExperimentsController : ControllerBase
         var userId = GetUserId();
         if (userId == null) return BadRequest("Invalid user token");
 
-        var success = await _experimentService.DeleteAsync(id);
-        if (!success) return NotFound();
+        await _experimentService.DeleteAsync(id, userId.Value);
 
         return NoContent();
     }

@@ -1,15 +1,26 @@
+using App.DAL.EF.Seeding;
 using App.Domain.Identity;
+using App.Modules.Audit.Infrastructure;
 using App.Modules.Identity.Infrastructure;
+using App.Modules.Lab.Infrastructure;
+using App.Modules.Project.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace App.DAL.EF.Seeding;
+namespace WebApp.Setup;
 
 public static class AppDataInit
 {
-    internal static void MigrateDatabase(IdentityModuleDbContext context)
+    internal static void MigrateDatabase(
+        IdentityModuleDbContext context,
+        AuditDbContext auditContext,
+        LabDbContext labContext,
+        ResearchDbContext researchContext)
     {
         context.Database.Migrate();
+        auditContext.Database.Migrate();
+        labContext.Database.Migrate();
+        researchContext.Database.Migrate();
     }
 
     internal static void DeleteDatabase(IdentityModuleDbContext context)

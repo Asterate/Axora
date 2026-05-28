@@ -1,6 +1,9 @@
 using App.DAL.EF.Seeding;
 using App.Domain.Identity;
+using App.Modules.Audit.Infrastructure;
 using App.Modules.Identity.Infrastructure;
+using App.Modules.Lab.Infrastructure;
+using App.Modules.Project.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +20,9 @@ public static class AppDataInitExtensions
         var logger = serviceScope.ServiceProvider.GetRequiredService<ILogger<IApplicationBuilder>>();
 
         using var context = serviceScope.ServiceProvider.GetRequiredService<IdentityModuleDbContext>();
+        using var labContext = serviceScope.ServiceProvider.GetRequiredService<LabDbContext>();
+        using var researchContext = serviceScope.ServiceProvider.GetRequiredService<ResearchDbContext>();
+        using var auditContext = serviceScope.ServiceProvider.GetRequiredService<AuditDbContext>();
 
         if (context.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory") return;
 
@@ -36,7 +42,7 @@ public static class AppDataInitExtensions
         if (configuration.GetValue<bool>("DataInitialization:MigrateDatabase"))
         {
             logger.LogInformation("MigrateDatabase");
-            AppDataInit.MigrateDatabase(context);
+            AppDataInit.MigrateDatabase(context, auditContext, labContext, researchContext);
         }
 
         if (configuration.GetValue<bool>("DataInitialization:SeedIdentity"))

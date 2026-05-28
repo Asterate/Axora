@@ -3,7 +3,6 @@ using App.Modules.Project.Application.DTO;
 using App.Modules.Project.Application.Interfaces.Service;
 using App.Modules.Project.Application.Mappers;
 using App.Shared.Contracts;
-using App.Shared.Contracts.Events;
 using MediatR;
 
 namespace App.Modules.Project.Application.Services;
@@ -50,7 +49,14 @@ public class ExperimentService : IExperimentService
         entity.CreatedAt = DateTime.Now;
         await _uow.SaveChangesAsync();
 
-        return ExperimentMapper.ToResponse(entity);
+        // Reload entity with navigation properties for proper mapping
+        var createdEntity = await _experimentRepo.GetByIdAsync(entity.Id);
+        if (createdEntity == null)
+        {
+            throw new InvalidOperationException("Failed to retrieve created experiment");
+        }
+
+        return ExperimentMapper.ToResponse(createdEntity);
     }
 
   public async Task UpdateAsync(Guid id, SaveExperimentRequest request, Guid instituteId)
